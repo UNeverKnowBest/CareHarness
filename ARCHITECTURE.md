@@ -1,6 +1,6 @@
 # CareLoop Harness Architecture
 
-Contract status: temporary Day 1 architecture contract
+Contract status: Day 1 architecture contract frozen
 
 ## Status vocabulary and authority
 
@@ -131,24 +131,27 @@ Day 1 may create only the minimal package/configuration needed for:
 It must not create placeholder evaluator, safety detector, benchmark, replay,
 adapter, reporter, UI, or infrastructure implementations.
 
-### ASSUMPTION
+### FROZEN — aggregate validation placement
 
-Domain validation that needs the owning trajectory (for finding/event turn
-references) is invoked at the trajectory aggregate boundary rather than by a
-model performing file I/O. This follows the requirement that core models remain
+Domain validation that needs the owning trajectory is invoked at the trajectory
+aggregate boundary rather than by a model performing file I/O. `Trajectory`
+validates its embedded process-marker and safety-event references and validates
+standalone findings through a domain-level operation. This keeps the core
 deterministic and infrastructure-free.
+
+`ProcessMarker` and `SafetyEvent` are embedded in `Trajectory`. `Finding` is not
+embedded because it is evaluator output rather than input trajectory evidence.
+No additional artifact-envelope model is introduced on Day 1.
+
+Every public Pydantic model rejects unknown fields. Unknown schema and policy
+versions also fail validation rather than being preserved, coerced, or
+downgraded.
+
+### ASSUMPTION — internal file organization
 
 The internal Day 1 file split defaults to small domain-focused modules under
 `src/careloop/domain/`. It is not part of the public API and may be chosen during
 implementation without changing the dependency direction in this document.
-
-### TBD — blocks relevant Day 1 implementation
-
-- Whether `ProcessMarker`, `SafetyEvent`, and `Finding` are embedded in
-  `Trajectory` or belong to a versioned artifact envelope. This changes the
-  public schema and requires owner confirmation.
-- Whether schema models reject all unknown JSON fields or preserve extension
-  fields. This changes compatibility semantics and requires owner confirmation.
 
 ## Persistence and external systems
 
