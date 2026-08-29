@@ -1,7 +1,6 @@
 # CareLoop Harness Day 1 Plan
 
-Plan status: Contract Bootstrap complete when the four contract documents are
-reviewed; Day 1 implementation remains blocked on public wire-schema TBDs.
+Plan status: Day 1 complete; D1.0 through D1.5 acceptance criteria are met.
 
 ## Status vocabulary
 
@@ -34,7 +33,7 @@ Acceptance: only these four Markdown files change during Contract Bootstrap.
 
 ### D1.1 Resolve public contract TBDs
 
-### FROZEN
+### COMPLETE — owner-frozen contract
 
 Obtain explicit owner decisions for:
 
@@ -45,9 +44,14 @@ Obtain explicit owner decisions for:
 
 Acceptance: `SPEC.md` and `ARCHITECTURE.md` contain no Day 1-blocking public TBD.
 
+Owner decision recorded: exact fields use the schema tables in `SPEC.md`;
+`Turn.role` accepts only `user` and `assistant`; `ProcessMarker` and
+`SafetyEvent` are embedded in `Trajectory`; `Finding` remains standalone; and
+all public models reject unknown fields.
+
 ### D1.2 Scaffold the package and tool configuration
 
-### FROZEN
+### COMPLETE
 
 - Add Python 3.12 `pyproject.toml`, `uv.lock`, and src-layout package.
 - Configure only Pydantic v2, Typer, pytest, Ruff, and mypy.
@@ -56,9 +60,13 @@ Acceptance: `SPEC.md` and `ARCHITECTURE.md` contain no Day 1-blocking public TBD
 Acceptance: package imports and CLI help/version execute in the locked local
 environment.
 
+Evidence is recorded in `STATUS.md`: the lock contains 23 packages, the local
+environment uses Python 3.12.11, CLI help/version exit successfully, and the
+non-domain scaffold tests pass.
+
 ### D1.3 Add failing domain contract tests
 
-### FROZEN
+### COMPLETE — expected red state
 
 Write tests before behavior for:
 
@@ -74,9 +82,13 @@ Write tests before behavior for:
 Acceptance: new tests fail for the intended missing behavior before the domain
 implementation is added.
 
+Evidence is recorded in `STATUS.md`: 19 domain contract tests fail because the
+empty scaffold package does not yet expose the D1.4 models. No domain behavior
+was implemented to make these tests pass.
+
 ### D1.4 Implement the minimum versioned domain schema
 
-### FROZEN
+### COMPLETE
 
 - Implement only the models and validation required by `SPEC.md` and the failing
   tests.
@@ -88,9 +100,12 @@ implementation is added.
 Acceptance: focused domain and architecture tests pass without changing the
 frozen contract.
 
+Evidence is recorded in `STATUS.md`: all frozen public models and aggregate
+validation are implemented, and the focused domain suite passes 24 tests.
+
 ### D1.5 Verify and record evidence
 
-### FROZEN
+### COMPLETE
 
 Run, in order:
 
@@ -105,6 +120,9 @@ uv run pytest -q
 Update `STATUS.md` with exact commands, exit statuses, test counts, modified
 public schemas, remaining risks, and the next milestone. Do not claim a command
 passed unless it ran in this environment.
+
+Evidence is recorded in `STATUS.md`: the required format, lint, type-check, and
+full test commands all exit successfully, with 27 tests passing.
 
 ## Day 1 acceptance criteria
 
@@ -129,4 +147,3 @@ passed unless it ran in this environment.
 - benchmark/gold fixtures, replay, canonical hashing, raw artifacts, or reports;
 - real or scripted model adapters;
 - Streamlit, Web API, database, network access, deployment, or UI.
-

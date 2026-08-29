@@ -1,6 +1,6 @@
 # CareLoop Harness Specification
 
-Contract status: temporary Day 1 contract bootstrap  
+Contract status: Day 1 public contract frozen
 Authority: `AGENTS.md`, `CareLoop_Codex_工程化实施指南_ZH.md`, and the approved
 implementation preflight defaults  
 Original source specification: unavailable in this worktree
@@ -76,17 +76,127 @@ The following public version fields are required where shown:
 | evaluator | `evaluator_version` | `v1` |
 | benchmark | `benchmark_version` | `v1` |
 
-### ASSUMPTION
-
-Using one opaque token format for every initial version is the smallest
-interpretation consistent with the guide's `*.v1.json` naming. Version-specific
-compatibility beyond exact `v1` matching is outside Day 1.
+The owner froze one opaque token format for every initial version.
+Version-specific compatibility beyond exact `v1` matching is outside Day 1.
 
 ## Public schema contract
 
 All field names below use `snake_case`. JSON strings are UTF-8. Public models
-reject unknown version values. The concrete implementation must not add public
-fields that are not FROZEN here or separately approved.
+reject unknown fields and unknown version values. The concrete implementation
+must not add public fields that are not FROZEN here or separately approved.
+
+### Common validation
+
+#### FROZEN
+
+- Every public Pydantic model uses `extra="forbid"`; extension fields are not
+  preserved on Day 1.
+- Identifier, reference, source, semantic label, jurisdiction, contact, and URL
+  strings must not be empty or contain only whitespace.
+- Tuple order is part of the wire contract and is preserved during round-trip.
+- No public or internal model may add a risk score/level, probability,
+  diagnosis, or clinical disposition field.
+
+### `Turn`
+
+#### FROZEN
+
+| Field | Type | Required | Constraint |
+|---|---|---:|---|
+| `turn_id` | `str` | yes | non-empty identifier |
+| `sequence` | `int` | yes | greater than or equal to zero |
+| `role` | `str` enum | yes | exact value `user` or `assistant` |
+| `text` | `str` | yes | synthetic turn content |
+
+No system, tool, clinician, or other role value is accepted on Day 1.
+
+### `ProcessMarker`
+
+#### FROZEN
+
+| Field | Type | Required | Constraint |
+|---|---|---:|---|
+| `marker_id` | `str` | yes | non-empty identifier |
+| `turn_id` | `str` | yes | resolves within the owning trajectory |
+| `marker_type` | `str` | yes | non-empty observable marker label |
+| `value` | `str` | yes | non-empty observable marker value |
+| `source_ids` | `tuple[str, ...]` | yes | non-empty source identifiers |
+| `process_policy_version` | `str` | yes | exact supported value `v1` |
+
+The schema records marker evidence only. It does not define a CBT/MI rule or
+infer a mental state.
+
+### `SafetyEvent`
+
+#### FROZEN
+
+| Field | Type | Required | Constraint |
+|---|---|---:|---|
+| `event_id` | `str` | yes | non-empty identifier |
+| `triggering_turn_ids` | `tuple[str, ...]` | yes | non-empty references resolving within the owning trajectory |
+| `action` | `SafetyAction` | yes | system action only |
+| `requires_override` | `bool` | yes | whether normal flow must be suppressed |
+| `normal_flow_suppressed` | `bool` | yes | must be true when `requires_override` is true |
+| `source_ids` | `tuple[str, ...]` | yes | non-empty source identifiers |
+| `resource_ids` | `tuple[str, ...]` | yes | may be empty; no resource is guessed |
+| `crisis_policy_version` | `str` | yes | exact supported value `v1` |
+
+This model records a typed system event. It is not a risk classification,
+detector result, diagnosis, or clinical disposition.
+
+### `Finding`
+
+#### FROZEN
+
+| Field | Type | Required | Constraint |
+|---|---|---:|---|
+| `finding_id` | `str` | yes | non-empty identifier |
+| `rule_id` | `str` | yes | non-empty policy rule identifier |
+| `outcome` | `str` enum | yes | exact value `present`, `absent`, or `uncertain` |
+| `turn_ids` | `tuple[str, ...]` | yes | non-empty references resolving within the evaluated trajectory |
+| `source_ids` | `tuple[str, ...]` | yes | non-empty source identifiers |
+| `evaluator_version` | `str` | yes | exact supported value `v1` |
+
+`Finding` is an evaluator output and is not embedded in an input trajectory. It
+contains no severity copied from policy data and no free-form diagnostic field.
+
+### `CrisisResource`
+
+#### FROZEN
+
+| Field | Type | Required | Constraint |
+|---|---|---:|---|
+| `resource_id` | `str` | yes | non-empty identifier |
+| `name` | `str` | yes | non-empty display name |
+| `jurisdiction` | `str` | yes | non-empty explicit jurisdiction |
+| `contact` | `str` | yes | non-empty contact representation |
+| `source_url` | `str` | yes | non-empty source link |
+| `is_allowlisted` | `bool` | yes | must be true for a valid resource entry |
+| `verified_on` | `date` | yes | explicit verification date |
+| `expires_on` | `date` | yes | not earlier than `verified_on` |
+| `resource_registry_version` | `str` | yes | exact supported value `v1` |
+
+The schema stores a resource registry entry but performs no selection. Future
+selection must match jurisdiction and validate dates against an explicit
+manifest `as_of`; missing jurisdiction never guesses a resource.
+
+### `Trajectory`
+
+#### FROZEN
+
+| Field | Type | Required | Constraint |
+|---|---|---:|---|
+| `trajectory_schema_version` | `str` | yes | exact supported value `v1` |
+| `trajectory_id` | `str` | yes | non-empty identifier |
+| `turns` | `tuple[Turn, ...]` | yes | non-empty, ordered trajectory |
+| `process_markers` | `tuple[ProcessMarker, ...]` | yes | embedded evidence; may be empty |
+| `safety_events` | `tuple[SafetyEvent, ...]` | yes | embedded events; may be empty |
+
+`Trajectory` owns aggregate validation for unique turn IDs, strictly increasing
+turn sequences, and embedded marker/event turn references. It also exposes a
+domain-level validation operation for a standalone `Finding`; that operation
+must verify every `Finding.turn_ids` reference without embedding findings in the
+trajectory wire representation.
 
 ### `SafetyAction`
 
@@ -166,26 +276,16 @@ The model carries exactly these required version selectors:
 - `present`, `absent`, and `uncertain` remain distinct finding outcomes when
   process evaluation is introduced after Day 1.
 
-### Wire fields not defined by the available guide
+### Aggregate nesting decision
 
-#### TBD — blocks Day 1 domain implementation
+#### FROZEN
 
-The original guide names the models and invariants but does not define the exact
-wire fields for:
-
-- `Turn`: exact `role` representation and allowed role values.
-- `Trajectory`: exact top-level identity field and whether markers/events are
-  embedded or stored beside the trajectory.
-- `ProcessMarker`: identifier, marker kind/value, source, and version field names.
-- `SafetyEvent`: event identifier, `requires_override` representation, policy and
-  source field names, and resource references.
-- `Finding`: finding identifier, exact rule/source field names, outcome field,
-  message field, and whether severity is copied from policy data.
-- `CrisisResource`: exact jurisdiction, contact, source, allowlist, verified, and
-  expiry field names.
-
-These fields must be confirmed before tests or implementation freeze a JSON
-shape. They must not be invented during Day 1 coding.
+- `ProcessMarker` and `SafetyEvent` are embedded in `Trajectory`.
+- `Finding` remains a standalone evaluator output and is validated against a
+  trajectory at the aggregate boundary.
+- `EvaluationManifest`, `BenchmarkManifest`, `CrisisResource`, and
+  `FinalAnswerView` remain standalone public models.
+- Day 1 introduces no artifact envelope beyond these frozen models.
 
 ## Canonical JSON boundary
 
@@ -232,4 +332,3 @@ shape. They must not be invented during Day 1 coding.
 - No Streamlit or property-testing framework is added by default.
 - No model/provider SDK, network client, database, service framework, container,
   message queue, or cloud dependency is allowed.
-
