@@ -1,0 +1,41 @@
+[build-system]
+requires = ["uv_build>=0.10.6,<0.11.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "careloop"
+
+[project]
+name = "careloop-harness"
+version = "0.1.0"
+description = "Offline-first deterministic evaluation harness for synthetic support-agent trajectories"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "pydantic>=2.11,<3",
+    "typer>=0.24,<1",
+]
+
+[project.scripts]
+careloop = "careloop.cli:main"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.14,<2",
+    "pytest>=8.3,<9",
+    "ruff>=0.11,<1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["careloop"]
+mypy_path = "src"
