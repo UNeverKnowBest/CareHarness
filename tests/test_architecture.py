@@ -2,6 +2,7 @@ import ast
 from pathlib import Path
 
 DOMAIN_ROOT = Path("src/careloop/domain")
+PROCESS_ROOT = Path("src/careloop/process")
 FORBIDDEN_IMPORT_ROOTS = {
     "fastapi",
     "httpx",
@@ -9,6 +10,13 @@ FORBIDDEN_IMPORT_ROOTS = {
     "streamlit",
     "tests",
     "typer",
+}
+
+CORE_FORBIDDEN_IMPORT_ROOTS = FORBIDDEN_IMPORT_ROOTS | {
+    "benchmarks",
+    "careloop.application",
+    "careloop.cli",
+    "gold",
 }
 
 
@@ -24,3 +32,23 @@ def test_domain_has_no_presentation_test_or_network_dependencies() -> None:
                 imported_roots.add(node.module.split(".")[0])
 
     assert imported_roots.isdisjoint(FORBIDDEN_IMPORT_ROOTS)
+
+
+def test_process_has_no_presentation_application_gold_or_network_dependencies() -> None:
+    imported_modules: set[str] = set()
+
+    for path in PROCESS_ROOT.rglob("*.py"):
+        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imported_modules.update(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                imported_modules.add(node.module)
+
+    assert all(
+        not any(
+            module == forbidden or module.startswith(f"{forbidden}.")
+            for forbidden in CORE_FORBIDDEN_IMPORT_ROOTS
+        )
+        for module in imported_modules
+    )

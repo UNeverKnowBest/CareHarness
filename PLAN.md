@@ -147,3 +147,126 @@ full test commands all exit successfully, with 27 tests passing.
 - benchmark/gold fixtures, replay, canonical hashing, raw artifacts, or reports;
 - real or scripted model adapters;
 - Streamlit, Web API, database, network access, deployment, or UI.
+
+## Milestone 2 — frozen fixtures, canonical hash, and replay
+
+Plan status: **COMPLETE**. Work remained within Milestone 2 and did not change
+the Day 1 public schema.
+
+### M2.1 Freeze internal artifact decisions
+
+### COMPLETE
+
+- Freeze UTF-8 non-ASCII-preserving compact canonical JSON, ISO dates, no
+  trailing newline, SHA-256, and exclusion of hash/runtime fields.
+- Add a versioned internal trajectory artifact envelope around the unchanged
+  `Trajectory` model.
+- Keep gold as isolated JSON benchmark data outside the production package.
+
+### M2.2 Add red contract and property tests
+
+### COMPLETE
+
+- Add tests for corpus/schema load, manifest ordering/uniqueness, canonical
+  encoding/hash properties, exact replay reconstruction, mutation sensitivity,
+  negative fixtures, zero external calls, gold isolation, matched-pair
+  differences, synthetic labeling, and runtime metadata exclusion.
+- Record the pre-implementation collection failure in `STATUS.md`.
+
+### M2.3 Implement deterministic artifact replay
+
+### COMPLETE
+
+- Add canonical encoding/hash helpers, strict canonical artifact loading, and
+  the `ReplayArtifact` application use case.
+- Replay reconstructs only local frozen evidence and exposes no adapter/model/
+  network/wall-clock input.
+
+### M2.4 Generate and freeze the corpus
+
+### COMPLETE
+
+- Generate eight matched pairs/16 trajectories, 16 separately stored gold
+  labels, four independent failure fixtures, and one ordered manifest.
+- Keep a deterministic generator with a `--check` mode so frozen JSON is never
+  hand-edited.
+- Retain P2, P3, P5, P6, P7, and P8 and also include P1 and P4.
+
+### M2.5 Verify and record evidence
+
+### COMPLETE
+
+- Run focused/property tests, fixture regeneration check, Ruff, mypy, and the
+  complete test suite.
+- Record exact commands, exit status, and counts in `STATUS.md`.
+
+### Milestone 2 explicit exclusions
+
+- No CBT/MI/safety evaluator or policy registry.
+- No safety detector/router or resource selection.
+- No CLI benchmark command, report generation, Streamlit, or model call.
+
+## Exact next milestone
+
+Milestone 3 is complete. The exact next milestone is Milestone 4: synthetic
+crisis preemption, fail-closed routing, ethical output policy, and versioned
+locale-aware resource integrity for P6 through P8.
+
+## Milestone 3 — deterministic CBT-informed/MI-inspired process evaluator
+
+Plan status: **COMPLETE**. Work remained within process evaluation for P1–P5;
+no Milestone 4 safety runtime or ethical engine was started.
+
+### M3.1 Freeze rule sources and process semantics
+
+### COMPLETE
+
+- Added `docs/source_map.md`, `docs/safety_and_limitations.md`, and
+  `docs/test_matrix.md` before evaluator behavior.
+- Froze seven ordered observable violation rules and exact
+  present/absent/uncertain semantics in `SPEC.md` and
+  `policies/process.v1.json`.
+
+### M3.2 Add red process/state/metamorphic tests
+
+### COMPLETE
+
+- Added positive, absent, and uncertain coverage for every rule, legal MI
+  backtracking, optional Planning, support-only/user-decline endings, stable
+  output order, source/evidence integrity, untrusted user text, and safe-final
+  metamorphism.
+- Recorded the pre-implementation missing-package collection failure in
+  `STATUS.md`.
+
+### M3.3 Implement the process registry and evaluators
+
+### COMPLETE
+
+- Added strict immutable process policy metadata plus pure session-shell,
+  CBT-informed, MI-inspired, and aggregate trajectory evaluators.
+- Evaluators emit evidence-linked `Finding` objects in registry order and have
+  no gold, application, CLI/UI, provider, network, or wall-clock dependency.
+
+### M3.4 Align P3/P4 to the Day 3 contract
+
+### COMPLETE — explicit owner authorization to revise frozen fixtures
+
+- Revised P3 to permission-before-skill versus unpermitted direction and P4 to
+  non-diagnostic wording versus a diagnosis claim.
+- Regenerated changed trajectory hashes and P1–P5 gold metadata only through the
+  deterministic generator. Day 1 public schemas remain unchanged.
+
+### M3.5 Verify and record evidence
+
+### COMPLETE
+
+- Focused process/fixture/architecture tests, generator check, format, lint,
+  mypy, lock, and full pytest pass with exact results in `STATUS.md`.
+- The required benchmark command was run and truthfully records exit 2 because
+  the benchmark CLI remains a later-milestone capability.
+
+### Milestone 3 explicit exclusions
+
+- No final-only evaluator or `EvaluateTrajectory` application orchestration.
+- No crisis detector/router, ethical output gate, resource selection, benchmark
+  runner/report, CLI business command, UI, adapter, model, or network call.
