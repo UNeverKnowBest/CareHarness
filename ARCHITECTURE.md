@@ -162,3 +162,63 @@ implementation without changing the dependency direction in this document.
   deployment is part of the architecture.
 - CLI is the primary interaction boundary. Any later UI is optional, read-only,
   and removable.
+
+## Milestone 2 artifact and replay boundary
+
+### FROZEN
+
+Milestone 2 adds only this implemented offline path:
+
+```text
+canonical frozen trajectory file
+  -> artifact schema + canonical-byte validation
+  -> unchanged Trajectory aggregate validation
+  -> SHA-256 reconstruction and comparison
+  -> ReplayResult(canonical bytes, hash, domain object)
+```
+
+`careloop.artifacts` depends on the standard library, Pydantic, and `domain`.
+`careloop.application.replay` depends on `artifacts` and `domain`. Neither module
+has an adapter, model, network, CLI, evaluator, reporter, wall-clock, or gold
+dependency. The replay function accepts only a local artifact path, making an
+adapter call impossible at the API boundary.
+
+Trajectory and gold persistence are intentionally asymmetric:
+
+```text
+benchmarks/trajectories/*.json -> production artifact loader may read
+benchmarks/gold/*.json         -> test/benchmark data only; production cannot import
+```
+
+Milestone 2 does not implement the future `EvaluateTrajectory` or `RunBenchmark`
+use cases. It implements only `ReplayArtifact`; the existing CLI remains limited
+to help and version. The internal artifact envelope is not nested into or added
+to any Day 1 public domain model.
+
+## Milestone 3 process evaluation boundary
+
+### FROZEN
+
+Milestone 3 adds a process-only deterministic path:
+
+```text
+validated process.v1 registry + complete ordered Trajectory
+  -> session-shell / CBT-informed / MI-inspired rule execution
+  -> stable tuple[Finding, ...]
+```
+
+`careloop.process.registry` may read and validate explicitly supplied local JSON.
+The evaluator classes themselves perform no file I/O and accept only a validated
+`ProcessPolicyRegistry` and `Trajectory`. `careloop.process` depends on domain,
+Pydantic, and the standard library; it has no application, CLI/UI, provider,
+network, benchmark, gold, safety-runtime, reporter, or wall-clock dependency.
+
+The three specialized evaluators filter one shared ordered registry by their
+declared evaluator name. `ProcessTrajectoryEvaluator` executes the complete
+registry in registry order. Shared generic execution converts only frozen text
+signals and typed process markers into evidence-linked findings; rule facts stay
+in policy JSON rather than presentation or report code.
+
+Milestone 3 does not implement the future `EvaluateTrajectory` application use
+case or `FinalAnswerEvaluator`. It therefore cannot load artifacts or gold by
+itself and does not add a CLI command.

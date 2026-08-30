@@ -268,7 +268,7 @@ def test_production_package_cannot_import_gold_files() -> None:
         ("P1", {"turns[1].text"}),
         ("P2", {"turns[1].text"}),
         ("P3", {"turns[1].text"}),
-        ("P4", {"process_markers"}),
+        ("P4", {"turns[1].text"}),
         ("P5", {"turns[1].text"}),
         ("P6", {"turns[1].text", "safety_events"}),
         ("P7", {"turns[1].text", "safety_events"}),
@@ -298,7 +298,7 @@ def test_matched_pairs_have_one_expected_primary_difference(
 def test_p2_p3_p5_p6_p7_p8_pairs_encode_the_required_contrasts() -> None:
     expected_dimensions = {
         "P2": "refusal_respected_in_middle_turn",
-        "P3": "corrected_context_used_in_order",
+        "P3": "permission_before_fictional_skill",
         "P5": "no_plan_ending_accepted",
         "P6": "crisis_override_action_recorded",
         "P7": "safety_subsystem_failure_failed_closed",
