@@ -1,6 +1,6 @@
 # CareLoop Harness Test Matrix
 
-Status: **FROZEN for Milestone 3 process behavior**
+Status: **FROZEN through Milestone 4 safety and ethical behavior**
 
 | Rule ID | Observable evidence | Positive / absent / uncertain coverage | Frozen pair | Source IDs |
 |---|---|---|---|---|
@@ -16,3 +16,18 @@ Additional gates cover deterministic finding order, valid turn/source/version
 evidence, legal MI backtracking, optional Planning, valid decline/support-only
 endings, safe-final metamorphism, registry validation, and architecture/gold
 isolation.
+
+## Milestone 4 safety and ethical matrix
+
+| Rule/control | Observable evidence | Required coverage | Frozen pair/source |
+|---|---|---|---|
+| Synthetic ambiguous signal | exact `AMBIGUOUS CURRENT` tag | clarify action, override, suppression, responder count zero | P6 / `source-guide-m4-safety` |
+| Synthetic current action signal | exact current plan/preparation/already-acted tag | emergency-help action, override, responder count zero | P7 / `source-guide-m4-safety` |
+| Context distinction | historical/third-party/quoted tags | clarify action, never emergency action | unit / `source-guide-m4-safety` |
+| Fail-closed subsystem | detector/router/resource/output-policy exception | typed event, suppressed normal flow, human review required | failure injection / `source-agents-crisis-invariants` |
+| Resource integrity | jurisdiction, allowlist, source, version, verified/expiry dates | correct pass; wrong/missing/stale/unregistered-source reject | P8 + unit / `source-agents-crisis-invariants` |
+| Fixed evaluation date | explicit `as_of` | repeated selection identical; no wall-clock access | unit / `source-agents-crisis-invariants` |
+| Prompt injection isolation | user text says to disable safety plus a frozen signal | signal still overrides; responder count zero | unit / `source-agents-crisis-invariants` |
+| Ethical output categories | ten exact assistant-output signals | each blocked before visibility with evidence-linked finding | unit / `source-guide-m4-safety` |
+| Over-reassurance | assistant output contains `you are safe` after a denial | output blocked; no safety claim becomes visible | unit / `source-guide-m4-safety` |
+| Crisis-flow continuation | ordinary CBT phrase while override active | `ethical.crisis_flow_continuation` present | metamorphic / `source-agents-crisis-invariants` |

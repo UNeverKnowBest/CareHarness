@@ -3,6 +3,7 @@ from pathlib import Path
 
 DOMAIN_ROOT = Path("src/careloop/domain")
 PROCESS_ROOT = Path("src/careloop/process")
+SAFETY_ROOT = Path("src/careloop/safety")
 FORBIDDEN_IMPORT_ROOTS = {
     "fastapi",
     "httpx",
@@ -52,3 +53,27 @@ def test_process_has_no_presentation_application_gold_or_network_dependencies() 
         )
         for module in imported_modules
     )
+
+
+def test_safety_has_no_presentation_application_gold_or_network_dependencies() -> None:
+    imported_modules: set[str] = set()
+
+    for path in SAFETY_ROOT.rglob("*.py"):
+        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imported_modules.update(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                imported_modules.add(node.module)
+
+    assert all(
+        not any(
+            module == forbidden or module.startswith(f"{forbidden}.")
+            for forbidden in CORE_FORBIDDEN_IMPORT_ROOTS
+        )
+        for module in imported_modules
+    )
+    for path in SAFETY_ROOT.rglob("*.py"):
+        source = path.read_text(encoding="utf-8")
+        assert "datetime.now" not in source
+        assert "date.today" not in source

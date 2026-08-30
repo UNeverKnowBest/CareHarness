@@ -1,8 +1,8 @@
 # CareLoop Harness Status
 
-Current phase: Milestone 3 complete
-Next milestone: Milestone 4 crisis preemption and ethical policy engine
-Implementation status: COMPLETE for D1.0–D1.5, M2.1–M2.5, and M3.1–M3.5
+Current phase: Milestone 4 complete
+Next milestone: Milestone 5 application services, CLI, and minimal audit UI
+Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M4.5
 
 ## Status vocabulary
 
@@ -472,3 +472,102 @@ policy tests without adding clinical risk classification or real-world claims.
 - No final-answer evaluator, safety detector/router, ethical engine, resource
   selection, benchmark/report pipeline, CLI business command, UI, adapter,
   model/provider, or network behavior was added.
+
+## Milestone 4 crisis preemption and ethical policy engine
+
+### Implemented
+
+- Added strict `crisis.v1`, `ethical.v1`, and `resources.v1` registries with exact
+  version rejection, duplicate/reference validation, and documented local source
+  provenance. Gold is not a policy source.
+- Implemented `SyntheticSafetySignalDetector` as exact matching of explicit
+  synthetic tags only. Ambiguous/historical/third-party/quoted contexts map to
+  clarify; current plan/preparation/already-acted tags map to the typed
+  emergency-help action. No risk category or probability exists.
+- Implemented crisis routing before the injected responder. Every matched signal
+  creates a typed override event, suppresses normal flow, and leaves responder
+  call count at zero.
+- Implemented resource selection using only explicit jurisdiction and `as_of`.
+  It requires exact locale, active dates, allowlisting, registered `.invalid`
+  source URL, unique ID/jurisdiction, and registry version. Missing, wrong,
+  stale, invalid, or failed resource evidence never guesses a contact.
+- Added an ethical output gate after responder execution but before visibility.
+  Ten ordered observable categories cover role impersonation, diagnosis,
+  medication, coercion, invalidation, over-reassurance, dependency,
+  confidentiality, clinical overclaim, and crisis-flow continuation.
+- Detector, router, resource-loader, and output-policy exceptions return a typed
+  `HUMAN_REVIEW_REQUIRED` fail-closed result with a suppressed event and no
+  visible normal output. No exception path resumes ordinary flow.
+- Preserved blocked output only as internal audit evidence so its Finding turn
+  reference can be validated; `visible_output` remains empty.
+- Proved scenario prompt injection remains inert data, a single denial cannot
+  release `you are safe`, and ordinary CBT continuation after override creates
+  the dedicated crisis-flow finding.
+- Under the owner's explicit authorization, updated the generator and regenerated
+  all six P6–P8 trajectory files and six gold files. P6 now freezes ambiguous
+  clarification, P7 current-plan emergency override, and P8 correct-versus-wrong
+  synthetic jurisdiction resource evidence. Generated JSON was not hand-edited.
+- Day 1 public models, dependency set, lockfile, manifest case order, and P1–P5
+  fixtures remain unchanged.
+
+### Test-first and focused evidence
+
+- Pre-implementation
+  `uv run --locked pytest tests\safety tests\test_architecture.py -q`: exit 2
+  with two expected collection errors,
+  `ModuleNotFoundError: No module named 'careloop.safety'`.
+- First post-implementation focused command: exit 1; 36 passed and three failed.
+  All three failures were the pre-identified P6/P7/P8 fixture conflict.
+- After generator-owned P6–P8 alignment,
+  `uv run --locked pytest tests\safety tests\test_milestone2_artifacts.py tests\test_architecture.py -q`:
+  exit 0; 68 passed in 0.19 seconds.
+- Final focused command after ordering, blocked-output evidence, API field, and
+  wall-clock guards: exit 0; 71 passed in 0.19 seconds.
+- `.venv\Scripts\python.exe tools\generate_milestone2_fixtures.py --check`:
+  exit 0; all generated files match generator output.
+
+### Preflight quality evidence
+
+- Initial `.venv\Scripts\ruff.exe format --check .`: exit 1; nine Python files
+  required mechanical formatting.
+- Initial `.venv\Scripts\ruff.exe check .`: exit 1; three line-length findings.
+- Initial `.venv\Scripts\mypy.exe src`: exit 0; no issues in 24 source files.
+- Initial local generator check: exit 0.
+- `.venv\Scripts\ruff.exe format .`: exit 0; nine files reformatted.
+- Final local format check: exit 0; 41 files already formatted.
+- Final local Ruff check: exit 0; all checks passed.
+- Final local mypy: exit 0; no issues in 24 source files.
+- Final local fixture generator check: exit 0.
+
+### Required full verification
+
+- `uv run ruff format --check .`: exit 0; 41 files already formatted.
+- `uv run ruff check .`: exit 0; all checks passed.
+- `uv run mypy src`: exit 0; no issues in 24 source files.
+- `uv run pytest -q`: exit 0; 120 passed in 0.32 seconds.
+- `uv lock --check`: exit 0; 23 packages resolved and the unchanged lock remains
+  synchronized.
+- `uv run careloop benchmark --manifest benchmarks/manifest.v1.json`: exit 2;
+  `No such command 'benchmark'`. The command was required because P6–P8 benchmark
+  fixtures changed. Milestone 4 explicitly excludes the Milestone 5 benchmark
+  CLI, so this is not claimed as a pass.
+
+### Remaining risks and explicit exclusions
+
+- Exact tags and exact output phrases prove only deterministic behavior on frozen
+  synthetic inputs. They provide no evidence of real-world detection, clinical
+  correctness, treatment quality, or safety improvement.
+- Resource entries are deliberately synthetic `.invalid` fixtures and must never
+  be presented as real help contacts.
+- The owner-authorized P6–P8/gold revision retains benchmark version `v1` before
+  a runner exists. This remains a documented version-history limitation.
+- No final-answer evaluator, application orchestration, benchmark/report runner,
+  CLI business command, UI, real adapter, model/provider, network access,
+  database, or deployment behavior was added.
+
+## Next exact milestone
+
+Stop after Milestone 4. Milestone 5 composes the verified core into exactly three
+application use cases (`EvaluateTrajectory`, `ReplayArtifact`, and
+`RunBenchmark`), their CLI commands, and an optional minimal read-only audit UI.
+It must not change frozen process or safety policy behavior.

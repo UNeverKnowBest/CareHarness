@@ -222,3 +222,41 @@ in policy JSON rather than presentation or report code.
 Milestone 3 does not implement the future `EvaluateTrajectory` application use
 case or `FinalAnswerEvaluator`. It therefore cannot load artifacts or gold by
 itself and does not add a CLI command.
+
+## Milestone 4 synthetic safety runtime boundary
+
+### FROZEN
+
+Milestone 4 adds this synthetic-only control-flow demonstration:
+
+```text
+validated user Turn + explicit jurisdiction/as_of
+  -> SyntheticSafetySignalDetector
+     -> override -> CrisisRouter -> ResourcePolicyRegistry -> suppressed event
+     -> continue -> injected responder -> EthicalOutputPolicy
+        -> allowed -> visible assistant Turn
+        -> blocked/exception -> suppressed fail-closed event + human review
+```
+
+`careloop.safety` depends on domain, Pydantic, and the standard library. It does
+not import application, CLI/UI, process internals, provider/network clients,
+benchmarks, gold, tests, reporters, or wall-clock services. The responder is an
+injected callable protocol; no adapter implementation or model call is added.
+
+Registry loading is explicit local JSON I/O. Once registries are validated, the
+detector, router, selector, output policy, and runtime are deterministic for
+their explicit inputs. Resource decisions accept an `as_of: date`; no code path
+reads `date.today()` or `datetime.now()`.
+
+The runtime guarantees ordering by construction: detector before responder and
+output policy after responder but before `visible_output`. Override results have
+no evaluated or visible normal output. Blocked output is retained only as typed
+audit evidence and never placed in `visible_output`.
+
+All safety subsystem exceptions cross one typed fail-closed boundary. The
+boundary returns a suppressed `SafetyEvent` and `HUMAN_REVIEW_REQUIRED`; it never
+catches an exception and resumes ordinary flow. Resource selection failure after
+an emergency action cannot guess a contact or call the responder.
+
+Milestone 4 remains separate from the future `EvaluateTrajectory` and
+`RunBenchmark` application use cases and adds no CLI command.
