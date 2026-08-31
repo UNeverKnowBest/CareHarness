@@ -208,9 +208,10 @@ the Day 1 public schema.
 
 ## Exact next milestone
 
-Milestone 4 is complete. The exact next milestone is Milestone 5: compose the
-verified core behind the three application use cases, CLI, and optional minimal
-read-only audit UI without changing process or safety policy behavior.
+Milestone 5 is complete. The exact next milestone is Milestone 6: derive all
+allowed benchmark summaries from raw JSONL, add CI and technical documentation,
+and perform the frozen mutation proof without changing evaluator or gold
+behavior.
 
 ## Milestone 3 — deterministic CBT-informed/MI-inspired process evaluator
 
@@ -328,3 +329,62 @@ versioned crisis/ethical/resource policy, P6–P8, and corresponding tests.
   claim.
 - No application orchestration, benchmark/report pipeline, CLI business command,
   UI, adapter, provider/model, network, database, or deployment work.
+
+## Milestone 5 — application services, CLI, and static audit
+
+Plan status: **COMPLETE**. The owner selected static offline HTML,
+an evidence ledger without an aggregate score, and a dedicated milestone branch.
+
+### M5.1 Freeze application and presentation contracts
+
+### COMPLETE
+
+- Froze the final-only/trajectory-aware inputs, offline P6–P8 observation
+  registry, raw result/JSONL semantics, post-evaluation gold comparison, CLI
+  exit behavior, and escaped no-script HTML boundary.
+- Preserved all Day 1 public models, existing process/safety policies, frozen
+  trajectories, gold files, dependencies, and version tokens.
+
+### M5.2 Add red application, ordering, CLI, and audit tests
+
+### COMPLETE
+
+- Add final-only leakage, final-turn construction, P1–P8 localization, stable
+  ledger order, evaluation-before-gold spy, manifest-order JSONL, repeatability,
+  CLI error/smoke, HTML escaping/evidence-link, and UI-removability tests.
+- Record the pre-implementation red result in `STATUS.md`.
+
+### M5.3 Implement the three application use cases
+
+### COMPLETE
+
+- Add the final-only and complete-trajectory evaluators, `EvaluateTrajectory`,
+  preserve `ReplayArtifact`, and add ordered `RunBenchmark` with comparison and
+  raw artifact models.
+- Add no fourth business use case and place no evaluator rule in application,
+  CLI, report, or presentation code.
+
+### M5.4 Add CLI and static audit presentation
+
+### COMPLETE
+
+- Expose `evaluate`, `replay`, and `benchmark` with deterministic outputs and
+  understandable failures.
+- Render the selected timeline/evidence/suppression/resource/hash audit page
+  using only escaped application result data and inline CSS.
+
+### M5.5 Verify, record, and deliver
+
+### COMPLETE
+
+- Run focused tests, fixture generator check, Ruff format/check, mypy, full
+  pytest, lock check, and the required benchmark command.
+- Review the complete diff, update `STATUS.md`, create one scoped commit, and
+  push the dedicated Milestone 5 branch only if every required gate passes.
+
+### Milestone 5 explicit exclusions
+
+- No summary metrics, CI workflow, mutation proof, README/technical report,
+  authentication, database, Web API, chat, model/provider, network, or deploy.
+- No changes to process/crisis/ethical/resource policy behavior, frozen
+  trajectories, gold labels, public Day 1 schemas, or dependency versions.

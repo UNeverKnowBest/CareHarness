@@ -1,6 +1,6 @@
 # CareLoop Harness Source Map
 
-Status: **FROZEN through Milestone 4**
+Status: **FROZEN through Milestone 5**
 
 This map records the local normative sources for the deterministic process
 policy. It does not claim clinical validity, treatment effectiveness, or
@@ -37,3 +37,18 @@ proficiency against a clinical coding instrument.
   harness cannot be mistaken for a real hotline directory.
 - Ethical rules inspect generated assistant output before release. They describe
   observable output-policy violations without inferring user state.
+
+## Milestone 5 evaluation interpretation boundary
+
+- `policies/evaluation.v1.json` reuses the frozen crisis source IDs to describe
+  offline observation of already-recorded artifact actions. It does not modify
+  the Milestone 4 runtime policies or claim that a synthetic signal applies to
+  real input.
+- The final-only baseline deliberately emits `uncertain` for history-dependent
+  rules. It is a constrained comparison boundary, not an inferior clinical or
+  conversational system.
+- Benchmark agreement compares observable rule outcome and evidence identity
+  fields after evaluation. It is not a quality, safety, treatment, or risk
+  score, and no aggregate score is produced in Milestone 5.
+- Static HTML is presentation of the application result only. Artifact strings
+  remain untrusted and are escaped rather than interpreted or executed.

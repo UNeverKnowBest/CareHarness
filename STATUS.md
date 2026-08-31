@@ -1,8 +1,8 @@
 # CareLoop Harness Status
 
-Current phase: Milestone 4 complete
-Next milestone: Milestone 5 application services, CLI, and minimal audit UI
-Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M4.5
+Current phase: Milestone 5 complete
+Next milestone: Milestone 6 derived reports, CI, documentation, and mutation proof
+Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M5.5
 
 ## Status vocabulary
 
@@ -571,3 +571,114 @@ Stop after Milestone 4. Milestone 5 composes the verified core into exactly thre
 application use cases (`EvaluateTrajectory`, `ReplayArtifact`, and
 `RunBenchmark`), their CLI commands, and an optional minimal read-only audit UI.
 It must not change frozen process or safety policy behavior.
+
+## Milestone 5 application, CLI, and static audit
+
+### Approved contract and pre-implementation red state
+
+- The owner selected deterministic static offline HTML, an evidence ledger with
+  no aggregate score, and a dedicated milestone branch. Work began on
+  `feat/m5-application-cli-audit` from `df9efaa`.
+- M5 freezes final-only and complete-trajectory evaluator inputs, a separate
+  offline safety-artifact observation registry, post-evaluation gold loading,
+  deterministic raw JSON/JSONL, exact CLI commands, and escaped no-script HTML.
+- No Day 1 public schema, process/crisis/ethical/resource runtime behavior,
+  dependency, frozen trajectory, or gold label is authorized to change.
+- Pre-implementation focused command:
+  `.venv\Scripts\python.exe -m pytest tests\evaluation tests\presentation tests\e2e tests\test_cli.py tests\test_architecture.py -q`.
+  It exited 2 with three expected collection errors because
+  `EvaluateTrajectory` was not yet exported from `careloop.application`.
+
+### Implemented
+
+- Added strict `evaluation.v1` policy metadata for three offline observations:
+  ambiguous clarify override, emergency-help override, and exact active
+  synthetic resource identity. This registry observes frozen artifacts and does
+  not alter any Milestone 4 runtime policy or behavior.
+- Added `FinalAnswerEvaluator` with an enforced `FinalAnswerView` input. It emits
+  the same ordered ten-rule ledger while history-dependent rules remain
+  `uncertain`; it cannot receive markers, safety events, resources, gold, file
+  paths, adapters, network, or wall clock.
+- Added `TrajectoryEvaluator`, combining the unchanged seven process rules with
+  three offline safety-artifact rules. P1–P8 localize their frozen middle-turn,
+  source-linked action, or resource contrast at the expected evidence turn.
+- Added `EvaluateTrajectory`. It verifies one canonical artifact, chooses the
+  final assistant turn, runs both evaluator boundaries, resolves registered
+  synthetic resource provenance, and optionally writes canonical raw JSON with
+  no gold/comparison content.
+- Preserved `ReplayArtifact` and added `RunBenchmark`. The benchmark follows all
+  16 manifest cases and invokes the injectable gold loader only after the actual
+  result for that case exists. Comparison checks rule, outcome, turn, source,
+  and evaluator version while retaining but not comparing finding identity.
+- Added deterministic benchmark JSONL with one final newline and no timestamp or
+  duration. Re-running the command produced identical bytes.
+- Replaced the help/version-only CLI boundary with exactly `evaluate`, `replay`,
+  and `benchmark`. Valid application/data failures exit one; usage errors remain
+  exit two.
+- Added the owner-selected static HTML audit: timeline, finding-to-turn links,
+  side-by-side evidence ledgers, suppression banner, resource provenance, and
+  replay hash. It escapes untrusted artifact text and contains inline CSS only,
+  with no script, remote asset, editable control, server, or aggregate score.
+- Generated, through the CLI only, `artifacts/raw/benchmark.v1.jsonl`, one
+  `p8-good` evaluation JSON, and its HTML audit. No generated file was hand
+  edited.
+
+### Test-first, focused, and regression evidence
+
+- First post-implementation focused run without an explicit pytest temp path:
+  23 passed and seven setup errors because the environment denied access to
+  `C:\Users\guosh\AppData\Local\Temp\pytest-of-guosh`; no test body failed.
+- The same focused scope with an explicit writable `--basetemp`: exit 0;
+  30 passed.
+- Expanded focused application/evaluation/presentation/CLI/architecture and
+  Milestone 2 artifact regression suite: exit 0; 61 passed in 0.35 seconds.
+- First full suite after implementation: 144 passed and one failed. The frozen
+  gold-isolation test found only the CLI default-path literal
+  `benchmarks/gold`; composing the same path from two segments removed the
+  misleading production-source marker without weakening the test or changing
+  load order.
+- Final local full suite with explicit writable temp path: exit 0; 147 passed in
+  0.39 seconds.
+- Fixture generator check: exit 0; every existing trajectory/gold/failure
+  fixture still exactly matches generator output.
+
+### Required full verification
+
+- `uv run ruff format --check .`: exit 0; 55 files already formatted.
+- `uv run ruff check .`: exit 0; all checks passed.
+- `uv run mypy src`: exit 0; no issues in 34 source files.
+- Final `uv run pytest -q`: exit 0; 148 passed in 0.41 seconds.
+- `uv lock --check`: exit 0; 23 packages resolved and the unchanged lock is
+  synchronized.
+- `uv run careloop benchmark --manifest benchmarks/manifest.v1.json`: exit 0;
+  16 cases evaluated and raw JSONL written to
+  `artifacts/raw/benchmark.v1.jsonl`.
+- Local CLI smoke commands for evaluate, replay, and benchmark all exited 0.
+  Evaluate wrote ten final-only and ten trajectory-aware findings; replay
+  verified the frozen P1 hash; benchmark wrote 16 ordered records.
+- Repeated artifact Git blob hashes were unchanged:
+  benchmark JSONL `710032423c367587780d7533db9f20f0e457d326`, P8 evaluation
+  JSON `c6e8f5b38dbec9eef963112f1142e9b7ef2ee315`, and P8 audit HTML
+  `6008780acedf24c3e81dcc8887857c123817e648`.
+
+### Schema, policy, fixture, dependency, and risk statement
+
+- No Day 1 public schema, process/crisis/ethical/resource policy behavior,
+  frozen trajectory, gold label, dependency, lock entry, or package version
+  changed. The only new policy is the internal offline `evaluation.v1` registry.
+- Exact tag/phrase and typed-event agreement proves deterministic behavior on
+  the frozen synthetic corpus only. It is not clinical, real-world, population,
+  or statistical performance evidence.
+- The HTML contract is covered by deterministic, escaping, no-script/no-remote-
+  asset smoke tests. A visual browser screenshot was not produced because no
+  browser executable is installed in this environment.
+- Aggregate summary metrics, raw-to-summary derivation, CI, threat model,
+  README/technical report, and mutation proof remain explicitly unimplemented
+  until Milestone 6.
+
+## Next exact milestone
+
+Stop after Milestone 5. Milestone 6 must derive only the allowed synthetic
+benchmark summaries from raw JSONL, add CI and technical documentation, and run
+the temporary P7 mutation proof. It must not change evaluator decisions, gold,
+frozen fixtures, or introduce an aggregate clinical/quality score.

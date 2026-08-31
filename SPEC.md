@@ -574,3 +574,80 @@ clinical screening instrument, complete safety plan, medication advice,
 automatic third-party contact, real hotline lookup, real-user chat entry,
 benchmark runner/report, CLI business command, UI, provider/model call, or
 network behavior.
+
+## Milestone 5 application, benchmark-record, and audit contract
+
+Contract status: **FROZEN for Milestone 5**. The owner selected a static offline
+HTML audit surface and an evidence-ledger presentation with no aggregate score.
+Milestone 5 composes the verified core without changing the Day 1 public domain
+models, the process/crisis/ethical/resource policy behavior, frozen trajectories,
+or gold labels.
+
+### Offline evaluation policy and evaluator boundaries
+
+- `policies/evaluation.v1.json` is the only executable registry for the three
+  offline safety-artifact observations used by P6 through P8. It defines typed
+  override-action and resource-integrity checks; it does not change runtime
+  detector, routing, output-gate, or resource-selection behavior.
+- `FinalAnswerEvaluator.evaluate` accepts exactly one `FinalAnswerView`. It has
+  no trajectory, marker, safety-event, resource, benchmark, gold, file, network,
+  adapter, or wall-clock input. Rules that require unavailable history emit
+  `uncertain` rather than guessing.
+- `TrajectoryEvaluator.evaluate` accepts one complete ordered `Trajectory` and
+  combines the unchanged process evaluator with deterministic safety-artifact
+  observation. It never receives or loads gold.
+- P6/P7 observation verifies that a frozen synthetic signal has the required
+  typed event, action, triggering reference, source evidence, override, and
+  normal-flow suppression. P8 additionally verifies exact active resource identity using
+  the explicit benchmark `as_of` and an explicit synthetic jurisdiction found
+  in the triggering fixture turn. Missing or ambiguous jurisdiction is
+  `uncertain`; it never selects or guesses a resource.
+- Every final-only and trajectory-aware rule emits one evidence-linked Finding
+  in stable policy order. The presentation preserves `present`, `absent`, and
+  `uncertain` and computes no combined quality, safety, or clinical score.
+
+### Evaluation result and benchmark record
+
+- `EvaluateTrajectory` loads and validates one canonical frozen artifact,
+  constructs the final assistant-only view, evaluates both boundaries, and
+  returns a versioned immutable raw result. A trajectory without an assistant
+  turn fails visibly.
+- The raw evaluation result contains case/artifact identity, all frozen version
+  selectors, explicit `as_of`, the validated trajectory, the final-only view,
+  both ordered finding ledgers, and source-linked resource references needed by
+  the audit presentation. It contains no gold or comparison result.
+- `RunBenchmark` follows manifest case order. For each case it obtains and
+  stores the actual evaluation result before invoking the gold loader. Gold is
+  used only to create a comparison record after actual evaluation.
+- Comparison ignores evaluator-generated versus gold fixture `finding_id`
+  identity. It compares rule ID, outcome, evidence turn IDs, source IDs, and
+  evaluator version. Raw records retain both identities for audit.
+- Raw single-case JSON is canonical UTF-8 without a trailing newline. Benchmark
+  JSONL contains one canonical record per manifest case in order and one final
+  newline. Repeated runs over identical inputs produce identical semantic bytes;
+  no timestamp or duration participates.
+
+### CLI and static audit surface
+
+- The CLI exposes exactly the business commands `evaluate`, `replay`, and
+  `benchmark`, in addition to help/version.
+- Successful commands exit zero. Valid command invocation with invalid local
+  data or an application failure exits one with a concise error; CLI usage
+  errors exit two.
+- `evaluate` writes the raw JSON result and, by default, a deterministic static
+  HTML audit page. `benchmark` writes raw JSONL. `replay` verifies and displays
+  canonical artifact identity without writing or invoking an adapter.
+- The HTML page is an optional removable presentation generated only from the
+  application result. It shows the trajectory timeline, final-only versus
+  trajectory findings, finding-to-turn links, suppression status, resource
+  provenance, and replay hash.
+- The HTML has inline CSS only: no script, remote asset, server, model, upload,
+  editable control, or network dependency. All scenario and finding strings are
+  HTML-escaped because artifact text remains untrusted data.
+
+### Milestone 5 exclusions
+
+Milestone 5 adds no aggregate metric summary, technical report, CI workflow,
+mutation proof, authentication, database, Web API, transcript upload, chat UI,
+provider/model call, network behavior, deployment, or change to generated
+fixtures/gold. Those documentation/report gates remain Milestone 6 work.

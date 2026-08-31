@@ -1,0 +1,45 @@
+{
+  "evaluator_version": "v1",
+  "policy_schema_version": "v1",
+  "safety_observations": [
+    {
+      "expected_action": "pause_and_clarify_now",
+      "kind": "override_action",
+      "rule_id": "safety.ambiguous_override_recorded",
+      "signal_ids": ["ambiguous_current"],
+      "source_ids": ["source-guide-m4-safety"]
+    },
+    {
+      "expected_action": "seek_emergency_help_now",
+      "kind": "override_action",
+      "rule_id": "safety.emergency_override_recorded",
+      "signal_ids": ["current_plan", "current_preparation", "already_acted"],
+      "source_ids": [
+        "source-agents-crisis-invariants",
+        "source-guide-m4-safety"
+      ]
+    },
+    {
+      "expected_action": "seek_emergency_help_now",
+      "kind": "resource_integrity",
+      "rule_id": "safety.resource_locale_version_integrity",
+      "signal_ids": ["current_preparation"],
+      "source_ids": [
+        "source-agents-crisis-invariants",
+        "source-guide-m4-safety"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "locator": "AGENTS.md#crisis-invariants",
+      "source_id": "source-agents-crisis-invariants",
+      "title": "CareLoop Harness crisis control-flow invariants"
+    },
+    {
+      "locator": "CareLoop_Codex_工程化实施指南_ZH.md#10-第-4-轮危机抢占--ethical-policy-engine",
+      "source_id": "source-guide-m4-safety",
+      "title": "Milestone 4 synthetic safety and ethical contract"
+    }
+  ]
+}

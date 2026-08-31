@@ -260,3 +260,46 @@ an emergency action cannot guess a contact or call the responder.
 
 Milestone 4 remains separate from the future `EvaluateTrajectory` and
 `RunBenchmark` application use cases and adds no CLI command.
+
+## Milestone 5 application and presentation boundary
+
+### FROZEN
+
+Milestone 5 completes the planned application boundary without adding another
+business use case:
+
+```text
+EvaluateTrajectory
+  canonical artifact -> FinalAnswerView -> FinalAnswerEvaluator
+                     -> complete Trajectory -> TrajectoryEvaluator
+                     -> immutable evidence ledger (no gold)
+
+ReplayArtifact
+  canonical artifact -> verified bytes/hash/domain object
+
+RunBenchmark
+  manifest case -> EvaluateTrajectory -> actual result
+                -> only then load gold -> comparison -> raw JSONL
+```
+
+`careloop.evaluation` depends only on domain plus public process/safety
+interfaces. It owns final-only, complete-trajectory, offline safety-artifact,
+and comparison-free result models; it cannot import application, CLI,
+presentation, benchmark files, gold, tests, adapters, network clients, or wall
+clock services.
+
+`careloop.application` composes validated registries, evaluators, local artifact
+I/O, ordered benchmark execution, post-evaluation gold comparison, and raw
+record writing. Gold loading exists only inside the benchmark use case and is
+injectable so ordering is testable. `EvaluateTrajectory` and `ReplayArtifact`
+have no gold dependency.
+
+`careloop.presentation` receives only the application evaluation result and
+renders escaped deterministic HTML. It has no policy loader, detector,
+evaluator, gold, benchmark runner, model, or network dependency. The CLI is the
+composition root and calls application services; it may pass their returned
+view model to presentation rendering but contains no evaluation rules.
+
+The audit surface is a generated local file, not a fourth application use case.
+Removing `careloop.presentation` and all generated HTML leaves evaluate,
+replay, benchmark, and every core test operational.

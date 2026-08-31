@@ -4,6 +4,9 @@ from pathlib import Path
 DOMAIN_ROOT = Path("src/careloop/domain")
 PROCESS_ROOT = Path("src/careloop/process")
 SAFETY_ROOT = Path("src/careloop/safety")
+EVALUATION_ROOT = Path("src/careloop/evaluation")
+APPLICATION_ROOT = Path("src/careloop/application")
+PRESENTATION_ROOT = Path("src/careloop/presentation")
 FORBIDDEN_IMPORT_ROOTS = {
     "fastapi",
     "httpx",
@@ -77,3 +80,59 @@ def test_safety_has_no_presentation_application_gold_or_network_dependencies() -
         source = path.read_text(encoding="utf-8")
         assert "datetime.now" not in source
         assert "date.today" not in source
+
+
+def _imported_modules(root: Path) -> set[str]:
+    imported_modules: set[str] = set()
+    for path in root.rglob("*.py"):
+        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imported_modules.update(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                imported_modules.add(node.module)
+    return imported_modules
+
+
+def test_evaluation_has_no_application_presentation_gold_or_network_dependency() -> (
+    None
+):
+    forbidden = CORE_FORBIDDEN_IMPORT_ROOTS | {
+        "careloop.presentation",
+    }
+    imported_modules = _imported_modules(EVALUATION_ROOT)
+
+    assert all(
+        not any(module == root or module.startswith(f"{root}.") for root in forbidden)
+        for module in imported_modules
+    )
+    for path in EVALUATION_ROOT.rglob("*.py"):
+        source = path.read_text(encoding="utf-8")
+        assert "datetime.now" not in source
+        assert "date.today" not in source
+
+
+def test_application_and_core_do_not_depend_on_optional_presentation() -> None:
+    imported_modules = _imported_modules(APPLICATION_ROOT)
+    imported_modules.update(_imported_modules(EVALUATION_ROOT))
+
+    assert all(
+        module != "careloop.presentation"
+        and not module.startswith("careloop.presentation.")
+        for module in imported_modules
+    )
+
+
+def test_presentation_contains_no_policy_detector_or_evaluator_logic() -> None:
+    forbidden = {
+        "careloop.process",
+        "careloop.safety",
+        "benchmarks",
+        "gold",
+    }
+    imported_modules = _imported_modules(PRESENTATION_ROOT)
+
+    assert all(
+        not any(module == root or module.startswith(f"{root}.") for root in forbidden)
+        for module in imported_modules
+    )
