@@ -303,3 +303,36 @@ view model to presentation rendering but contains no evaluation rules.
 The audit surface is a generated local file, not a fourth application use case.
 Removing `careloop.presentation` and all generated HTML leaves evaluate,
 replay, benchmark, and every core test operational.
+
+## Milestone 6 reporting and verification boundary
+
+### FROZEN
+
+Milestone 6 extends the existing `RunBenchmark` orchestration without adding a
+fourth application use case:
+
+```text
+RunBenchmark
+  -> write 16-case benchmark raw JSONL
+  -> replay the same 16 local artifacts
+  -> exercise four frozen invalid fixtures
+  -> write verification raw JSONL
+  -> pure raw parsers -> summary JSON + summary Markdown
+```
+
+`careloop.reporting` owns strict raw verification and summary models plus pure
+derivation/rendering. It may depend on immutable domain/evaluation result types,
+Pydantic, and the standard library. It does not import CLI, presentation,
+process/safety evaluators, policy registries, benchmark gold loaders, provider
+SDKs, network clients, tests, or wall-clock services.
+
+Application orchestration owns local replay/failure execution and supplies only
+raw records to reporting. Reporting never re-evaluates a trajectory, interprets
+scenario text, selects a resource, or decides a gold outcome. CLI supplies paths
+to `RunBenchmark`; it does not calculate metrics.
+
+The existing benchmark raw remains the source for evaluation/gold comparison.
+The separate verification raw prevents failure-fixture and replay evidence from
+changing the 16-record manifest-order contract. Both raw files must exist before
+summary derivation. Removing presentation or any hypothetical adapter leaves
+benchmark, verification, and reporting operational.

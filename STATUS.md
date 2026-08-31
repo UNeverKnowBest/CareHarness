@@ -1,8 +1,8 @@
 # CareLoop Harness Status
 
-Current phase: Milestone 5 complete
-Next milestone: Milestone 6 derived reports, CI, documentation, and mutation proof
-Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M5.5
+Current phase: Milestone 6 complete
+Next milestone: Milestone 7 clean reproduction and independent read-only review
+Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M6.5
 
 ## Status vocabulary
 
@@ -682,3 +682,184 @@ Stop after Milestone 5. Milestone 6 must derive only the allowed synthetic
 benchmark summaries from raw JSONL, add CI and technical documentation, and run
 the temporary P7 mutation proof. It must not change evaluator decisions, gold,
 frozen fixtures, or introduce an aggregate clinical/quality score.
+
+## Milestone 6 derived reports, CI, documentation, and mutation proof
+
+### Frozen scope and implementation
+
+- Work began on `feat/m6-benchmark-ci-docs` from Milestone 5 commit `369d586`.
+- Froze a separate verification raw stream so the existing 16-record
+  manifest-order benchmark JSONL and its bytes remain unchanged.
+- Extended `RunBenchmark`, without adding a fourth application use case, to
+  replay all 16 evaluated local artifacts and exercise the four frozen failure
+  fixtures for exact expected rejection categories.
+- Added `careloop.reporting` with strict canonical raw parsers, immutable raw and
+  summary models, nine ordered allowed metrics, canonical summary JSON, and
+  deterministic Markdown. Derivation loads neither evaluators, policy registries,
+  CLI/presentation, nor gold files.
+- Summary metrics contain only satisfied/applicable counts plus satisfied and
+  unsatisfied evidence IDs. No percentage, combined score, rank, confidence,
+  significance, clinical metric, or population estimate exists.
+- The benchmark CLI now writes benchmark raw, verification raw, summary JSON,
+  and summary Markdown. All result artifacts were generated through that CLI;
+  no generated number was edited manually.
+- Added a least-privilege GitHub Actions workflow with immutable official action
+  SHAs. It performs locked sync, format, lint, mypy, pytest, benchmark, and a
+  generated-artifact diff check in order.
+- Added README first-screen boundaries, a threat model, and a technical report
+  that links to generated evidence instead of copying result counts.
+
+### Test-first and focused evidence
+
+- Pre-implementation focused command:
+  `.venv\Scripts\python.exe -m pytest tests\reporting\test_summary.py tests\test_delivery_contract.py tests\e2e\test_cli_commands.py tests\test_architecture.py --basetemp .pytest-tmp-m6-red -q`.
+  It exited 2 during collection with the expected missing M6 export,
+  `ImportError: cannot import name 'BenchmarkReportPaths'`.
+- First post-implementation focused command: exit 1; 16 passed and two failed.
+  One README phrase crossed a line boundary. The other test incorrectly banned
+  raw `gold_*` comparison field names instead of banning gold imports/loaders;
+  it was corrected to enforce the actual architecture invariant without changing
+  application behavior.
+- Final focused command: exit 0; 18 passed in 0.30 seconds.
+- Expanded reporting/evaluation/safety/E2E/artifact/CLI/architecture regression
+  command: exit 0; 106 passed in 0.50 seconds.
+- Staged-diff review added a manifest-order regression test. Before the parser
+  guard it exited 1 because reordered canonical records were accepted; after the
+  minimum v1 order check the same test exited 0 with one pass in 0.11 seconds.
+- Initial local preflight found four unformatted files, one import-order issue,
+  line-width/generic-style issues, and seven mypy errors. Mechanical formatting
+  plus explicit typed metric/observation boundaries corrected them.
+- Final local preflight: format 71 files, Ruff passed, and mypy passed for 37
+  source files.
+
+### P7 mutation proof
+
+- Created a detached temporary worktree at Milestone 5 commit `369d586` and
+  changed only its safety runtime so `current_plan` bypassed override and called
+  the ordinary responder.
+- The first attempted mutation command loaded the main editable package and
+  passed; it was rejected as invalid evidence rather than reported as proof.
+- Valid red command, with the temporary `src` placed first by pytest:
+  `C:\Users\guosh\project\care-harness\.venv\Scripts\python.exe -m pytest -o pythonpath=src tests\safety\test_safety_runtime.py::test_p7_current_plan_fixture_uses_emergency_action_and_zero_agent_calls --basetemp C:\Users\guosh\AppData\Local\Temp\careloop-m6-mutation-proof\.pytest-mutation-2 -q`.
+  It exited 1; the assertion showed responder call count `1` instead of `0`.
+- Restored the single temporary mutation and ran the same targeted test with a
+  fresh basetemp. It exited 0; one test passed in 0.10 seconds.
+- The temporary worktree had no content diff after restoration and was removed
+  from Git's worktree registry. No deliberately broken code entered this branch.
+
+### Required full verification
+
+- First sandboxed
+  `uv run careloop benchmark --manifest benchmarks/manifest.v1.json`: exit 2
+  before project startup because the sandbox could not access the existing uv
+  cache. The same command with cache access exited 0 and generated all M6 raw and
+  summary artifacts.
+- `uv run ruff format --check .`: exit 0; 64 files already formatted.
+- `uv run ruff check .`: exit 0; all checks passed.
+- `uv run mypy src`: exit 0; no issues in 37 source files.
+- An intermediate final `uv run ruff format --check .` exited 1 for one newly
+  added test expression; Ruff mechanically formatted that file before the full
+  sequence was restarted.
+- Final `uv run ruff format --check .`: exit 0; 64 files already formatted.
+- Final `uv run ruff check .`: exit 0; all checks passed.
+- Final `uv run mypy src`: exit 0; no issues in 37 source files.
+- Final `uv run pytest -q`: exit 0; 157 passed in 1.01 seconds.
+- Final `uv run careloop benchmark --manifest benchmarks/manifest.v1.json`:
+  exit 0; 16 benchmark cases, 20 verification records, and both derived summary
+  formats written.
+- `.venv\Scripts\python.exe tools\generate_milestone2_fixtures.py --check`:
+  exit 0; all frozen generated fixtures remain unchanged.
+- `uv lock --check`: exit 0; 23 packages resolved and the unchanged lock remains
+  synchronized.
+- `uv run pytest tests\reporting\test_summary.py::test_recomputing_summary_from_unchanged_raw_is_byte_identical -q`:
+  exit 0; one raw-to-summary recomputation test passed in 0.14 seconds.
+- `git diff --exit-code -- artifacts\raw artifacts\summary`: exit 0 after the
+  final benchmark regeneration; tracked generated files match staged bytes.
+- `git diff --cached --check`: exit 0; the complete 25-file staged change has no
+  whitespace error.
+
+### Generated evidence and change boundary
+
+- Existing benchmark JSONL Git blob remained
+  `710032423c367587780d7533db9f20f0e457d326`, identical to Milestone 5.
+- New verification JSONL Git blob:
+  `4303d9f5e431e622b6f1f8dbde839b60009ec837`.
+- New summary JSON Git blob:
+  `ef1ad32376c5173d66375b7aaef4cdd403b1f0f8`.
+- New summary Markdown Git blob:
+  `7258b620cb5400d1c28e0a5acf32bafe2a4b0ef8`.
+- No public schema, evaluator decision, process/crisis/ethical/resource/evaluation
+  policy, frozen trajectory, gold label, dependency, lock entry, or package
+  version changed.
+- These counts prove only deterministic behavior for frozen synthetic artifacts.
+  The first hosted GitHub Actions execution exposed the CLI-help portability
+  regression recorded below.
+
+### M6 hosted CI portability regression
+
+- The first hosted Linux command `uv run --locked pytest -q` exited 1 with one
+  failed and 156 passed tests. Rich ANSI styling split the raw `--version` byte
+  sequence even though the rendered help was successful and showed the option.
+- The CLI contract test now forces colored output, removes ANSI control sequences
+  with a standard-library regular expression, and asserts the visible
+  `--version`, `Commands`, `evaluate`, `replay`, and `benchmark` text. This adds
+  no dependency and does not change CLI or application behavior.
+- A local forced-color run before normalization exited 0 with two passed tests,
+  confirming the triggering rendering difference is platform-specific rather
+  than reproducible on Windows.
+- The first normalization attempt imported transitive package `click`; focused
+  collection exited 2 with `ModuleNotFoundError`. It was replaced rather than
+  adding or exposing a dependency.
+- Final `uv run --locked pytest tests\test_cli.py -q`: exit 0; two passed in
+  0.17 seconds.
+- Final `uv run --locked ruff format --check .`: exit 0; 64 files already
+  formatted.
+- Final `uv run --locked ruff check .`: exit 0; all checks passed.
+- Final `uv run --locked mypy src`: exit 0; no issues in 37 source files.
+- Final `uv run --locked pytest -q`: exit 0; 157 passed in 0.53 seconds.
+- Final `uv run --locked careloop benchmark --manifest
+  benchmarks\manifest.v1.json`: exit 0; 16 cases and all four artifact paths
+  were written.
+- Final `git diff --exit-code -- artifacts\raw artifacts\summary`: exit 0;
+  tracked generated artifacts are byte-identical.
+- No evaluator, safety behavior, gold label, frozen fixture, generated artifact,
+  public schema, dependency, or lock entry changed in this CI-only correction.
+
+### M6 PR #6 merge-conflict resolution
+
+- Fetched `origin/main` at `c9b9bea` and confirmed from the GitHub PR metadata
+  that PR #6 targets `main` from `feat/m6-benchmark-ci-docs`.
+- `git merge --no-commit --no-ff origin/main` exposed 28 conflicted paths.
+  The code, architecture, test, and documentation conflicts were M6 additions
+  over the same M5 content already represented in `main`, so the M6 versions
+  were retained.
+- The only tree difference between the M6 base `369d586` and current `main` was
+  an added EOF newline in 14 frozen gold/trajectory JSON files. An initial
+  resolution that accepted those bytes made `uv run --locked python
+  tools\generate_milestone2_fixtures.py --check` exit 1 at
+  `benchmarks\gold\p1-good.json`. The files were restored to the
+  generator-produced M6 bytes; no frozen semantic content or canonical hash
+  changed.
+- Final `uv run --locked python
+  tools\generate_milestone2_fixtures.py --check`: exit 0.
+- Focused `uv run --locked pytest
+  tests\test_milestone2_artifacts.py tests\test_cli.py
+  tests\e2e\test_cli_commands.py tests\reporting\test_summary.py -q`:
+  exit 0; 40 passed in 0.38 seconds.
+- `uv run --locked ruff format --check .`: exit 0; 64 files already formatted.
+- `uv run --locked ruff check .`: exit 0; all checks passed.
+- `uv run --locked mypy src`: exit 0; no issues in 37 source files.
+- `uv run --locked pytest -q`: exit 0; 157 passed in 0.54 seconds.
+- `uv run --locked careloop benchmark --manifest
+  benchmarks\manifest.v1.json`: exit 0; 16 cases and all four artifact
+  paths were written.
+- `git diff --exit-code -- artifacts\raw artifacts\summary`: exit 0;
+  generated artifacts remain byte-identical.
+- No evaluator decision, safety behavior, public schema, dependency, lock entry,
+  frozen fixture, gold label, or generated artifact changed.
+
+## Next exact milestone
+
+Stop after Milestone 6. Milestone 7 must perform a clean reproduction from the
+lockfile and then a separate strict read-only final review. It must not add new
+features or treat README/self-reported claims as independent evidence.

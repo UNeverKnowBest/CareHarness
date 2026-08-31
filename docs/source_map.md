@@ -1,6 +1,6 @@
 # CareLoop Harness Source Map
 
-Status: **FROZEN through Milestone 5**
+Status: **FROZEN through Milestone 6**
 
 This map records the local normative sources for the deterministic process
 policy. It does not claim clinical validity, treatment effectiveness, or
@@ -52,3 +52,14 @@ proficiency against a clinical coding instrument.
   score, and no aggregate score is produced in Milestone 5.
 - Static HTML is presentation of the application result only. Artifact strings
   remain untrusted and are escaped rather than interpreted or executed.
+
+## Milestone 6 reporting interpretation boundary
+
+- Reports derive counts and evidence identifiers only from validated raw JSONL;
+  they do not load policies, rerun evaluators, or consult gold files directly.
+- The nine metric names and their grouping semantics are frozen in `SPEC.md` and
+  `docs/test_matrix.md`. They describe regression artifacts, never clinical or
+  quality outcomes.
+- Verification raw records local replay agreement and expected rejection of the
+  four frozen invalid fixtures. It is engineering evidence, not a safety or
+  treatment claim.

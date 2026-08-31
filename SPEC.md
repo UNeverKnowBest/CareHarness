@@ -651,3 +651,67 @@ Milestone 5 adds no aggregate metric summary, technical report, CI workflow,
 mutation proof, authentication, database, Web API, transcript upload, chat UI,
 provider/model call, network behavior, deployment, or change to generated
 fixtures/gold. Those documentation/report gates remain Milestone 6 work.
+
+## Milestone 6 derived-report and verification contract
+
+Contract status: **FROZEN for Milestone 6**. Milestone 6 derives descriptive
+regression evidence from the frozen Milestone 5 raw benchmark without changing
+evaluator decisions, gold labels, trajectories, policies, public Day 1 schemas,
+or dependency versions.
+
+### Raw verification evidence
+
+- `artifacts/raw/benchmark.v1.jsonl` retains exactly one canonical record for
+  each of the 16 manifest cases, in manifest order.
+- `artifacts/raw/verification.v1.jsonl` contains, in deterministic order, one
+  replay-agreement record for each manifest case followed by one rejection
+  record for each of the four frozen failure fixtures.
+- Replay agreement requires reconstructed canonical bytes, hash, and trajectory
+  identity to match the already evaluated artifact. It makes no adapter, model,
+  network, or wall-clock call.
+- Failure-fixture verification distinguishes schema validation, canonical hash
+  mismatch, and unresolved finding-turn evidence. An unrelated exception is not
+  counted as the expected rejection.
+- Both raw files use canonical UTF-8 JSONL with one final newline, no timestamp,
+  duration, percentage, score, or inferred clinical field.
+
+### Allowed derived metrics
+
+Summary JSON and Markdown are regenerated entirely from the two validated raw
+JSONL files. Every metric reports only a satisfied count, an applicable count,
+and concrete evidence IDs. The exact metric order is:
+
+1. `case_level_rule_agreement`: cases whose expected rule comparisons all match;
+2. `matched_pair_discrimination`: complete good/bad pairs with matching expected
+   comparisons and a differing actual outcome for their frozen primary rule;
+3. `final_only_missed_process_violations`: trajectory-present process violations
+   not present in the final-only ledger;
+4. `evidence_localization`: expected comparisons whose evidence turn IDs match;
+5. `crisis_action_agreement`: P6/P7 override-action rule comparisons that match;
+6. `normal_flow_suppression`: recorded required-override events that suppress
+   normal flow;
+7. `resource_locale_version_integrity`: P8 resource-integrity comparisons that
+   match;
+8. `replay_agreement`: manifest artifacts whose replay identity matches;
+9. `invalid_artifact_rejection`: frozen failure fixtures rejected for their
+   expected reason.
+
+No combined metric, ranking, percentage, clinical/quality/safety score,
+confidence interval, significance statement, or population estimate is
+permitted. Each rendered metric remains explicitly synthetic, frozen,
+non-clinical regression evidence. In particular, the report must not claim
+suicide-detection accuracy, clinical sensitivity/specificity, treatment success,
+patient-safety improvement, or general-population performance.
+
+### Generation and delivery
+
+- The benchmark CLI is the composition boundary that writes benchmark raw,
+  verification raw, canonical summary JSON, and deterministic summary Markdown.
+- Report derivation is pure after raw files are written and contains no evaluator
+  or gold decision logic.
+- Generated counts are never edited manually. Re-derivation from unchanged raw
+  files must reproduce identical summary bytes.
+- CI uses the lockfile and runs format check, Ruff, mypy, pytest, and benchmark in
+  that order, then proves generated tracked artifacts have no diff.
+- The README first screen and technical documentation state the synthetic,
+  offline, deterministic, and non-clinical boundary before reporting results.

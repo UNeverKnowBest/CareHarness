@@ -208,10 +208,9 @@ the Day 1 public schema.
 
 ## Exact next milestone
 
-Milestone 5 is complete. The exact next milestone is Milestone 6: derive all
-allowed benchmark summaries from raw JSONL, add CI and technical documentation,
-and perform the frozen mutation proof without changing evaluator or gold
-behavior.
+Milestone 6 is complete. The exact next milestone is Milestone 7: perform a
+clean locked reproduction in a fresh environment, then conduct a separate
+strict read-only final review. Milestone 7 adds no planned product behavior.
 
 ## Milestone 3 — deterministic CBT-informed/MI-inspired process evaluator
 
@@ -388,3 +387,62 @@ an evidence ledger without an aggregate score, and a dedicated milestone branch.
   authentication, database, Web API, chat, model/provider, network, or deploy.
 - No changes to process/crisis/ethical/resource policy behavior, frozen
   trajectories, gold labels, public Day 1 schemas, or dependency versions.
+
+## Milestone 6 — derived summaries, CI, documentation, and mutation proof
+
+Plan status: **COMPLETE**. Work was limited to deterministic raw verification,
+the nine allowed descriptive summaries, CI/documentation, and temporary safety
+mutation evidence.
+
+### M6.1 Freeze report and verification contracts
+
+### COMPLETE
+
+- Freeze separate benchmark and verification raw JSONL, nine ordered descriptive
+  evidence metrics, canonical JSON/deterministic Markdown, and prohibited claims.
+- Preserve evaluator/gold decisions, frozen fixtures, policies, public schemas,
+  dependency versions, and the 16-record manifest-order benchmark raw contract.
+
+### M6.2 Add red raw-to-summary and delivery tests
+
+### COMPLETE
+
+- Add strict raw parsing, recomputation, metric semantics/order, no aggregate
+  score, failure-reason, CLI output, CI order, README boundary, and reporting
+  architecture tests before implementation.
+
+### M6.3 Implement verification raw and pure derivation
+
+### COMPLETE
+
+- Extend `RunBenchmark` to record 16 replay checks and four expected invalid
+  fixture rejections after normal benchmark evaluation.
+- Derive summary JSON and Markdown only after both raw JSONL files exist, with no
+  evaluator or gold decision logic in reporting or CLI.
+
+### M6.4 Add CI and technical documentation
+
+### COMPLETE
+
+- Add lockfile-based GitHub Actions gates in the required order and verify that
+  benchmark regeneration leaves tracked generated artifacts unchanged.
+- Add README first-screen boundaries, threat model, and technical report linked
+  to raw and generated summary evidence.
+
+### M6.5 Prove mutation sensitivity, verify, and deliver
+
+### COMPLETE
+
+- In a temporary worktree, make the P7 current-plan branch continue ordinary
+  response, record the focused safety test failing, restore the mutation, and
+  record the same test passing. Never commit the mutation.
+- Run focused tests, generator check, Ruff format/check, mypy, full pytest, lock
+  check, benchmark, raw-to-summary byte recomputation, and complete diff review.
+
+### Milestone 6 explicit exclusions
+
+- No evaluator, gold, policy, frozen fixture, public schema, dependency, package
+  version, adapter, model/provider, network, database, service, deployment, or
+  audit-UI behavior change.
+- No aggregate score, percentage, statistical significance, clinical metric, or
+  real-world/population claim.

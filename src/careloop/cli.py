@@ -6,7 +6,12 @@ from typing import Annotated, NoReturn
 import typer
 
 from careloop import __version__
-from careloop.application import EvaluateTrajectory, RunBenchmark, replay_artifact
+from careloop.application import (
+    BenchmarkReportPaths,
+    EvaluateTrajectory,
+    RunBenchmark,
+    replay_artifact,
+)
 from careloop.presentation import write_static_audit
 
 app = typer.Typer(
@@ -163,8 +168,30 @@ def benchmark(
         Path,
         typer.Option("--evaluation-policy", help="Offline observation registry."),
     ] = DEFAULT_EVALUATION_POLICY,
+    verification_output: Annotated[
+        Path,
+        typer.Option(
+            "--verification-output", help="Deterministic replay/failure JSONL path."
+        ),
+    ] = Path("artifacts/raw/verification.v1.jsonl"),
+    summary_json: Annotated[
+        Path,
+        typer.Option("--summary-json", help="Canonical derived summary JSON path."),
+    ] = Path("artifacts/summary/benchmark.v1.summary.json"),
+    summary_markdown: Annotated[
+        Path,
+        typer.Option(
+            "--summary-markdown", help="Deterministic derived summary Markdown path."
+        ),
+    ] = Path("artifacts/summary/benchmark.v1.summary.md"),
+    failure_fixture_dir: Annotated[
+        Path,
+        typer.Option(
+            "--failure-fixture-dir", help="Frozen invalid artifact fixture directory."
+        ),
+    ] = Path("benchmarks/failure_fixtures"),
 ) -> None:
-    """Evaluate manifest cases, then compare with gold and write raw JSONL."""
+    """Write benchmark/verification raw evidence and derived summaries."""
     try:
         service = RunBenchmark.from_paths(
             benchmark_manifest_path=manifest,
@@ -177,12 +204,21 @@ def benchmark(
             trajectory_dir=trajectory_dir,
             gold_dir=gold_dir,
             output_path=output,
+            failure_fixture_dir=failure_fixture_dir,
+            report_paths=BenchmarkReportPaths(
+                verification_raw=verification_output,
+                summary_json=summary_json,
+                summary_markdown=summary_markdown,
+            ),
         )
     except (OSError, UnicodeError, ValueError) as exc:
         _fail(exc)
     typer.echo("BENCHMARK COMPLETE")
     typer.echo(f"Cases: {len(result.records)}")
     typer.echo(f"Raw JSONL: {result.output_path}")
+    typer.echo(f"Verification JSONL: {verification_output}")
+    typer.echo(f"Summary JSON: {summary_json}")
+    typer.echo(f"Summary Markdown: {summary_markdown}")
 
 
 def main() -> None:

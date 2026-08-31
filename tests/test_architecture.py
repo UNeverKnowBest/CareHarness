@@ -7,6 +7,7 @@ SAFETY_ROOT = Path("src/careloop/safety")
 EVALUATION_ROOT = Path("src/careloop/evaluation")
 APPLICATION_ROOT = Path("src/careloop/application")
 PRESENTATION_ROOT = Path("src/careloop/presentation")
+REPORTING_ROOT = Path("src/careloop/reporting")
 FORBIDDEN_IMPORT_ROOTS = {
     "fastapi",
     "httpx",
@@ -136,3 +137,26 @@ def test_presentation_contains_no_policy_detector_or_evaluator_logic() -> None:
         not any(module == root or module.startswith(f"{root}.") for root in forbidden)
         for module in imported_modules
     )
+
+
+def test_reporting_contains_no_evaluator_policy_gold_cli_or_network_logic() -> None:
+    forbidden = CORE_FORBIDDEN_IMPORT_ROOTS | {
+        "careloop.application",
+        "careloop.cli",
+        "careloop.presentation",
+        "careloop.process",
+        "careloop.safety",
+    }
+    imported_modules = _imported_modules(REPORTING_ROOT)
+
+    assert all(
+        not any(module == root or module.startswith(f"{root}.") for root in forbidden)
+        for module in imported_modules
+    )
+    for path in REPORTING_ROOT.rglob("*.py"):
+        source = path.read_text(encoding="utf-8").casefold()
+        assert "datetime.now" not in source
+        assert "date.today" not in source
+        assert "benchmarks/gold" not in source
+        assert "benchmarks\\gold" not in source
+        assert "load_gold_case" not in source

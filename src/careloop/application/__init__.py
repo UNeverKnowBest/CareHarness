@@ -2,6 +2,7 @@
 
 from careloop.application.benchmark import (
     BenchmarkRecord,
+    BenchmarkReportPaths,
     BenchmarkRunResult,
     FindingComparison,
     GoldCase,
@@ -16,6 +17,7 @@ from careloop.application.evaluate_trajectory import (
 from careloop.application.replay import ReplayResult, replay_artifact
 
 __all__ = [
+    "BenchmarkReportPaths",
     "BenchmarkRecord",
     "BenchmarkRunResult",
     "EvaluateTrajectory",
