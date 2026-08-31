@@ -374,6 +374,39 @@ boundaries in `AGENTS.md` and `ARCHITECTURE.md`.
   must create and freeze them before deriving evaluator rules; fixture gold is
   not an evaluator policy source.
 
+### M8 upstream pull and main merge-conflict resolution
+
+- Committed the already verified M8 tree as `2c17370`
+  (`feat-m8-freeze-agent-runtime-contract`). The owner's pre-existing
+  `.python-version` and Chinese implementation-guide file were explicitly
+  excluded.
+- `git fetch origin --prune`: exit 0; updated
+  `origin/feat/m7-final-reproduction` from `ffdd0f1` to `eceecef` and
+  `origin/main` from `c9b9bea` to `f1ef18d`.
+- `git pull --no-rebase --no-edit`: exit 0; created merge commit `a56be79`
+  with the ort strategy and no content conflict.
+- `git merge --no-edit origin/main`: exit 1 with four expected content
+  conflicts in `PLAN.md`, `README.md`, `STATUS.md`, and
+  `tests/test_delivery_contract.py`.
+- Resolved each hunk by retaining main's completed M7 history and the
+  owner-approved additive M8 contract/status. No whole-file ours/theirs
+  selection, reset, fixture edit, or generated-artifact edit was used.
+- `git diff --name-only --diff-filter=U` and `git ls-files -u`: exit 0 with
+  no output after staging the four resolutions.
+- Post-resolution `uv run --locked ruff format --check .`: exit 0; 72 files
+  already formatted.
+- Post-resolution `uv run --locked ruff check .`: exit 0; all checks passed.
+- Post-resolution `uv run --locked mypy src`: exit 0; no issues in 41 source
+  files.
+- Post-resolution `uv run --locked pytest -q`: exit 0; 198 passed in 0.60
+  seconds.
+- Concluded the main merge as `213e5c1`
+  (`merge-origin-main-resolve-m8-conflicts`).
+- Both `git merge-base --is-ancestor origin/main HEAD` and
+  `git merge-base --is-ancestor origin/feat/m7-final-reproduction HEAD`
+  exited 0. The branch is four commits ahead and zero behind its upstream.
+- No push was performed as part of the pull/merge request.
+
 ## Next exact milestone
 
 Stop after Milestone 3. Milestone 4 is the synthetic crisis-preemption and
