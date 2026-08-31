@@ -825,6 +825,39 @@ frozen fixtures, or introduce an aggregate clinical/quality score.
 - No evaluator, safety behavior, gold label, frozen fixture, generated artifact,
   public schema, dependency, or lock entry changed in this CI-only correction.
 
+### M6 PR #6 merge-conflict resolution
+
+- Fetched `origin/main` at `c9b9bea` and confirmed from the GitHub PR metadata
+  that PR #6 targets `main` from `feat/m6-benchmark-ci-docs`.
+- `git merge --no-commit --no-ff origin/main` exposed 28 conflicted paths.
+  The code, architecture, test, and documentation conflicts were M6 additions
+  over the same M5 content already represented in `main`, so the M6 versions
+  were retained.
+- The only tree difference between the M6 base `369d586` and current `main` was
+  an added EOF newline in 14 frozen gold/trajectory JSON files. An initial
+  resolution that accepted those bytes made `uv run --locked python
+  tools\generate_milestone2_fixtures.py --check` exit 1 at
+  `benchmarks\gold\p1-good.json`. The files were restored to the
+  generator-produced M6 bytes; no frozen semantic content or canonical hash
+  changed.
+- Final `uv run --locked python
+  tools\generate_milestone2_fixtures.py --check`: exit 0.
+- Focused `uv run --locked pytest
+  tests\test_milestone2_artifacts.py tests\test_cli.py
+  tests\e2e\test_cli_commands.py tests\reporting\test_summary.py -q`:
+  exit 0; 40 passed in 0.38 seconds.
+- `uv run --locked ruff format --check .`: exit 0; 64 files already formatted.
+- `uv run --locked ruff check .`: exit 0; all checks passed.
+- `uv run --locked mypy src`: exit 0; no issues in 37 source files.
+- `uv run --locked pytest -q`: exit 0; 157 passed in 0.54 seconds.
+- `uv run --locked careloop benchmark --manifest
+  benchmarks\manifest.v1.json`: exit 0; 16 cases and all four artifact
+  paths were written.
+- `git diff --exit-code -- artifacts\raw artifacts\summary`: exit 0;
+  generated artifacts remain byte-identical.
+- No evaluator decision, safety behavior, public schema, dependency, lock entry,
+  frozen fixture, gold label, or generated artifact changed.
+
 ## Next exact milestone
 
 Stop after Milestone 6. Milestone 7 must perform a clean reproduction from the
