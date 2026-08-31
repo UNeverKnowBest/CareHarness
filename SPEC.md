@@ -715,3 +715,67 @@ patient-safety improvement, or general-population performance.
   that order, then proves generated tracked artifacts have no diff.
 - The README first screen and technical documentation state the synthetic,
   offline, deterministic, and non-clinical boundary before reporting results.
+
+## Milestone 8 synthetic agent-runtime contract
+
+Contract status: **FROZEN for Milestone 8**. This is an additive contract for a
+future local research demonstration. It does not change the Day 1 public
+models, frozen corpus, evaluator decisions, replay, benchmark, or reports.
+
+### Product and state vocabulary
+
+- The runtime accepts versioned synthetic role-play only. It is not therapy,
+  diagnosis, clinical screening, risk assessment, crisis care, or a medical
+  device, and it must not accept real patient data.
+- The exact `SessionState` values are `CREATED`, `ACTIVE`, `DRAFTING`,
+  `CHECKING_DRAFT`, `AWAITING_HUMAN_REVIEW`, `RESPONSE_RELEASED`, `CLOSED`, and
+  `FAILED_CLOSED`.
+- The exact `SafetyDisposition` values are `SUPPORT_ALLOWED`,
+  `CLARIFICATION_REQUIRED`, `HUMAN_REVIEW_REQUIRED`,
+  `EMERGENCY_GUIDANCE_REQUIRED`, and `SYSTEM_FAILURE`. They describe system
+  routing only and never classify a person.
+- The exact `DraftDecision` values are `ALLOW`, `REWRITE`, `HOLD_FOR_REVIEW`,
+  and `SUPPRESS_FOR_GUIDANCE`. Only `SUPPORT_ALLOWED` may be released directly.
+- The exact `ReviewDecision` values are `APPROVE`,
+  `REPLACE_WITH_SAFE_TEMPLATE`, `HANDOFF`, and `REJECT`.
+- Model drafts remain quarantined until checked. No raw model token is exposed
+  to the participant surface. At most two rewrite attempts are permitted; a
+  further failure requires human review.
+- Any critical component failure transitions a nonterminal session to
+  `FAILED_CLOSED`. Terminal sessions cannot be reopened.
+
+### Public M8 models and port
+
+All M8 models use `extra="forbid"` and exact `contract_version=v1` or
+`plugin_api_version=v1` where present.
+
+- `SessionConfig` freezes synthetic scenario, locale, plugin profile, and the
+  literal rewrite limit `2`.
+- `PluginManifestV1` freezes plugin identity, version, kind, capabilities,
+  configuration-schema identity, dependencies, default state, and failure
+  mode. Model providers, input safety detectors, output guards, and resource
+  catalogs must use `critical_fail_closed`.
+- `ModelRequest` and `ModelDraft` form a provider-neutral boundary. The draft is
+  not a visible assistant `Turn`.
+- `DraftGateResult` records evidence-linked pre-release action, routing state,
+  and rewrite count.
+- `RuntimeEvent` records event/session identity, monotonic sequence, event,
+  before/after states, causation identity, and evidence references. Its
+  `state_after` must equal the frozen transition-table result.
+- `ArtifactProvenance` records exact scenario, provider, model, prompt hash,
+  plugin versions, and resource-registry version. It contains no hidden model
+  reasoning.
+- `ModelPort.generate` is an asynchronous dependency-inversion port. M8 adds no
+  concrete provider SDK, network client, or model call.
+
+The complete future HTTP, plugin, event-ledger, and logical persistence
+contract is normative in `docs/agent_runtime_contract.md`; the corresponding
+security boundaries are normative in `docs/threat_model.md`.
+
+### Milestone 8 exclusions
+
+- No FastAPI, database, migration, cloud SDK, provider adapter, plugin loader,
+  Web UI, Docker service, authentication, FHIR integration, or network access.
+- No change to the three supported CLI business commands.
+- No claim that the contract or tests establish real-world model safety,
+  clinical validity, treatment effectiveness, or operational human response.

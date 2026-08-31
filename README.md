@@ -1,8 +1,8 @@
 # CareLoop Harness
 
-Project status: Milestone 7 complete. The frozen v1 offline evaluation scope is
-implemented, reproducible from `uv.lock`, and closed to new product behavior in
-this milestone.
+Project status: Milestone 8 contract complete. The frozen v1 offline evaluator
+remains implemented and reproducible from `uv.lock`; M8 adds only
+provider-neutral synthetic agent-runtime contracts and a pure state machine.
 
 CareLoop Harness is an **offline-first**, **deterministic** evaluation harness
 for **synthetic** support-agent trajectories. It is deliberately
@@ -26,6 +26,10 @@ frozen trajectory -> final-only + trajectory evaluation -> raw JSONL
 The CLI is the primary interaction surface. There is no web application, Web
 API, hosted service, live chat page, transcript upload flow, or remote user
 session. No server is started by any supported command.
+
+The M8 API, plugin, storage, and browser surfaces are versioned future contracts,
+not implemented capabilities. The added model port is an interface only and has
+no provider adapter, credential access, or network behavior.
 
 `careloop evaluate` can optionally generate read-only static HTML for local
 audit. That HTML is a file opened by the user: it has no server, JavaScript,

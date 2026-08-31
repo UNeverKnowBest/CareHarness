@@ -499,3 +499,58 @@ generated result artifact.
   network runtime, database, deployment, or new application use case.
 - No clinical, real-world safety, treatment, population, aggregate-score, or
   statistical claim.
+
+## Milestone 8 — synthetic agent-runtime contracts and state machine
+
+Owner approval: the full-stack research plan approved after Milestone 7
+authorizes this additive milestone while preserving all frozen clinical,
+fixture, evaluator, replay, gold-isolation, and reporting boundaries.
+
+### M8.1 Freeze public runtime and product boundaries
+
+### COMPLETE
+
+- Freeze non-clinical state, disposition, draft, review, model-port,
+  provenance, and plugin vocabulary in `SPEC.md`.
+- Freeze the future HTTP surface, logical append-only persistence model, plugin
+  failure modes, and synthetic-only interaction contract.
+- Extend the threat model for provider, draft-release, plugin, audit, role, and
+  idempotency boundaries.
+
+### M8.2 Add red contract and transition tests
+
+### COMPLETE
+
+- Add strict-model tests for exact versions, fields, enums, bounded rewriting,
+  critical-plugin failure modes, provider neutrality, and prohibited fields.
+- Add explicit transition-table, fail-closed, terminal-state, release-bypass,
+  and review-bypass tests.
+- Add documentation and architecture-boundary tests.
+
+### M8.3 Implement the minimum provider-neutral core
+
+### COMPLETE
+
+- Add `careloop.agent_runtime` Pydantic contracts, asynchronous `ModelPort`, and
+  pure state transition function.
+- Add no provider, network, Web, persistence, authentication, or UI dependency.
+
+### M8.4 Verify, record, and stop
+
+### COMPLETE
+
+- Run focused M8 tests and the complete locked verification sequence.
+- Record exact results in `STATUS.md`, review the diff, and stop before M9.
+
+### Milestone 8 explicit exclusions
+
+- No real LLM call, provider adapter, plugin discovery, safety orchestration,
+  API server, database, worker, browser UI, deployment, or new CLI command.
+- No real-user or patient data and no clinical screening, diagnosis, risk score,
+  treatment, or crisis-service claim.
+
+## Exact next milestone
+
+Milestone 9 — allowlisted plugin discovery and provider-neutral model runtime,
+using deterministic test adapters first. It must not start until M8 passes all
+required verification.

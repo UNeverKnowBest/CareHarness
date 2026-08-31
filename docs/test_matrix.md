@@ -65,3 +65,18 @@ isolation.
 | Prohibited aggregation | summary schema and Markdown | no aggregate score, percentage, ranking, clinical metric, confidence, or significance claim |
 | CI delivery | GitHub Actions workflow | locked sync; format, lint, mypy, pytest, benchmark order; generated-artifact diff gate |
 | Mutation proof | temporary P7 ordinary-response mutation | focused crisis-preemption regression is red under mutation and green after restoration |
+
+## Milestone 8 synthetic agent-runtime matrix
+
+| Boundary/control | Observable evidence | Required coverage |
+|---|---|---|
+| Strict runtime schemas | exact model fields and `v1` selectors | valid round trip; unknown field/version rejected; prohibited clinical and hidden-reasoning fields absent |
+| Non-clinical vocabulary | exact state/disposition/action enums | values match frozen contract and contain no score, diagnosis, or clinical disposition |
+| Draft quarantine | state transition table | release reachable only after checking or explicit review; direct draft release rejects |
+| Bounded rewrite | `DraftGateResult.rewrite_count` | maximum two; rewrite at limit rejects; rewrite requires finding evidence |
+| Critical plugin failure | `PluginManifestV1.failure_mode` | model, input safety, output guard, and resource catalog cannot be optional-isolated |
+| Fail closed | every nonterminal state plus `RUNTIME_FAILURE` | deterministic transition to `FAILED_CLOSED`; terminal states cannot reopen |
+| Review hold | `AWAITING_HUMAN_REVIEW` transitions | new participant turn cannot bypass hold; typed review decision controls exit |
+| Provider neutrality | `ModelPort`, request, and draft types | no provider SDK/network/framework import; malformed prompt hash and context reject |
+| Provenance | exact prompt/model/plugin/resource identities | duplicate plugin identity rejects; no chain-of-thought field |
+| Future delivery boundary | API, event-ledger, storage, and threat documents | status-only SSE, participant draft isolation, append-only evidence, synthetic-only use |

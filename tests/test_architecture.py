@@ -2,6 +2,7 @@ import ast
 from pathlib import Path
 
 DOMAIN_ROOT = Path("src/careloop/domain")
+AGENT_RUNTIME_ROOT = Path("src/careloop/agent_runtime")
 PROCESS_ROOT = Path("src/careloop/process")
 SAFETY_ROOT = Path("src/careloop/safety")
 EVALUATION_ROOT = Path("src/careloop/evaluation")
@@ -37,6 +38,25 @@ def test_domain_has_no_presentation_test_or_network_dependencies() -> None:
                 imported_roots.add(node.module.split(".")[0])
 
     assert imported_roots.isdisjoint(FORBIDDEN_IMPORT_ROOTS)
+
+
+def test_agent_runtime_contracts_have_no_adapter_or_outer_layer_dependencies() -> None:
+    forbidden = CORE_FORBIDDEN_IMPORT_ROOTS | {
+        "careloop.application",
+        "careloop.evaluation",
+        "careloop.presentation",
+        "careloop.reporting",
+        "careloop.safety",
+        "openai",
+        "pydantic_ai",
+        "sqlalchemy",
+    }
+    imported_modules = _imported_modules(AGENT_RUNTIME_ROOT)
+
+    assert all(
+        not any(module == root or module.startswith(f"{root}.") for root in forbidden)
+        for module in imported_modules
+    )
 
 
 def test_process_has_no_presentation_application_gold_or_network_dependencies() -> None:
