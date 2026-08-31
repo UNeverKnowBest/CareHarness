@@ -792,7 +792,38 @@ frozen fixtures, or introduce an aggregate clinical/quality score.
   policy, frozen trajectory, gold label, dependency, lock entry, or package
   version changed.
 - These counts prove only deterministic behavior for frozen synthetic artifacts.
-  Hosted GitHub Actions execution remains unverified until the branch is pushed.
+  The first hosted GitHub Actions execution exposed the CLI-help portability
+  regression recorded below.
+
+### M6 hosted CI portability regression
+
+- The first hosted Linux command `uv run --locked pytest -q` exited 1 with one
+  failed and 156 passed tests. Rich ANSI styling split the raw `--version` byte
+  sequence even though the rendered help was successful and showed the option.
+- The CLI contract test now forces colored output, removes ANSI control sequences
+  with a standard-library regular expression, and asserts the visible
+  `--version`, `Commands`, `evaluate`, `replay`, and `benchmark` text. This adds
+  no dependency and does not change CLI or application behavior.
+- A local forced-color run before normalization exited 0 with two passed tests,
+  confirming the triggering rendering difference is platform-specific rather
+  than reproducible on Windows.
+- The first normalization attempt imported transitive package `click`; focused
+  collection exited 2 with `ModuleNotFoundError`. It was replaced rather than
+  adding or exposing a dependency.
+- Final `uv run --locked pytest tests\test_cli.py -q`: exit 0; two passed in
+  0.17 seconds.
+- Final `uv run --locked ruff format --check .`: exit 0; 64 files already
+  formatted.
+- Final `uv run --locked ruff check .`: exit 0; all checks passed.
+- Final `uv run --locked mypy src`: exit 0; no issues in 37 source files.
+- Final `uv run --locked pytest -q`: exit 0; 157 passed in 0.53 seconds.
+- Final `uv run --locked careloop benchmark --manifest
+  benchmarks\manifest.v1.json`: exit 0; 16 cases and all four artifact paths
+  were written.
+- Final `git diff --exit-code -- artifacts\raw artifacts\summary`: exit 0;
+  tracked generated artifacts are byte-identical.
+- No evaluator, safety behavior, gold label, frozen fixture, generated artifact,
+  public schema, dependency, or lock entry changed in this CI-only correction.
 
 ## Next exact milestone
 
