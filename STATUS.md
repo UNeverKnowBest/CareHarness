@@ -374,6 +374,39 @@ boundaries in `AGENTS.md` and `ARCHITECTURE.md`.
   must create and freeze them before deriving evaluator rules; fixture gold is
   not an evaluator policy source.
 
+### M8 upstream pull and main merge-conflict resolution
+
+- Committed the already verified M8 tree as `2c17370`
+  (`feat-m8-freeze-agent-runtime-contract`). The owner's pre-existing
+  `.python-version` and Chinese implementation-guide file were explicitly
+  excluded.
+- `git fetch origin --prune`: exit 0; updated
+  `origin/feat/m7-final-reproduction` from `ffdd0f1` to `eceecef` and
+  `origin/main` from `c9b9bea` to `f1ef18d`.
+- `git pull --no-rebase --no-edit`: exit 0; created merge commit `a56be79`
+  with the ort strategy and no content conflict.
+- `git merge --no-edit origin/main`: exit 1 with four expected content
+  conflicts in `PLAN.md`, `README.md`, `STATUS.md`, and
+  `tests/test_delivery_contract.py`.
+- Resolved each hunk by retaining main's completed M7 history and the
+  owner-approved additive M8 contract/status. No whole-file ours/theirs
+  selection, reset, fixture edit, or generated-artifact edit was used.
+- `git diff --name-only --diff-filter=U` and `git ls-files -u`: exit 0 with
+  no output after staging the four resolutions.
+- Post-resolution `uv run --locked ruff format --check .`: exit 0; 72 files
+  already formatted.
+- Post-resolution `uv run --locked ruff check .`: exit 0; all checks passed.
+- Post-resolution `uv run --locked mypy src`: exit 0; no issues in 41 source
+  files.
+- Post-resolution `uv run --locked pytest -q`: exit 0; 198 passed in 0.60
+  seconds.
+- Concluded the main merge as `213e5c1`
+  (`merge-origin-main-resolve-m8-conflicts`).
+- Both `git merge-base --is-ancestor origin/main HEAD` and
+  `git merge-base --is-ancestor origin/feat/m7-final-reproduction HEAD`
+  exited 0. The branch is four commits ahead and zero behind its upstream.
+- No push was performed as part of the pull/merge request.
+
 ## Next exact milestone
 
 Stop after Milestone 3. Milestone 4 is the synthetic crisis-preemption and
@@ -960,9 +993,86 @@ frozen fixtures, or introduce an aggregate clinical/quality score.
 - The hosted CI run for the final M7 branch is not independently observed until
   the branch is pushed.
 
-## Next exact milestone
+## M7 closing state (superseded by M8 owner approval)
 
-Stop after Milestone 7. No Milestone 8 is planned. Any future work must begin
-with an owner-approved versioned milestone and must preserve the frozen
+At M7 close, no Milestone 8 had been planned. The later owner-approved
+full-stack research contract authorized M8 while preserving the frozen
 professional, safety, architecture, replay, gold-isolation, and reporting
 boundaries.
+
+## Milestone 8 synthetic agent-runtime contracts and state machine
+
+### Owner-approved change boundary
+
+- The owner approved the full-stack research plan after M7. In accordance with
+  the one-milestone rule, this delivery implements M8 only and stops before the
+  provider/plugin runtime planned for M9.
+- Added a provider-neutral inner `careloop.agent_runtime` package. It contains
+  strict `v1` schemas, an asynchronous model port, an explicit session
+  transition table, and a validated append-only runtime-event model.
+- Frozen non-clinical routing, draft, review, provenance, plugin manifest, future
+  HTTP, logical persistence, and threat boundaries. The interaction remains
+  synthetic role-play for researchers and admissions reviewers.
+- Draft release requires a checked or explicitly reviewed path. Critical
+  runtime failure fails closed, terminal states cannot reopen, and rewriting is
+  limited to two attempts.
+- The existing Day 1 domain models, evaluator rules, CLI commands, frozen
+  fixtures, gold data, benchmark, generated artifacts, dependencies, and
+  lockfile did not change.
+- No Web server, database, plugin loader, cloud adapter, model call, credential
+  access, network behavior, real-user workflow, or clinical capability was
+  added.
+
+### Test-first and focused evidence
+
+- Initial `uv run --locked pytest tests\agent_runtime
+  tests\test_agent_runtime_contract_docs.py -q`: exit 2 during collection with
+  two expected `ModuleNotFoundError` errors because
+  `careloop.agent_runtime` did not exist.
+- After the initial implementation, `uv run --locked pytest
+  tests\agent_runtime tests\test_agent_runtime_contract_docs.py
+  tests\test_architecture.py -q`: exit 0; 42 passed in 0.17 seconds.
+- After the complete documentation contract, `uv run --locked pytest
+  tests\agent_runtime tests\test_agent_runtime_contract_docs.py
+  tests\test_architecture.py tests\test_delivery_contract.py -q`: exit 0;
+  47 passed in 0.15 seconds.
+- The first full `uv run --locked pytest -q`: exit 2 during collection because
+  the new test basename duplicated `tests/domain/test_contracts.py`. The new
+  test file was renamed without changing behavior.
+- The next full `uv run --locked pytest -q`: exit 0; 194 passed in 0.77
+  seconds.
+- Runtime-event completeness red test, `uv run --locked pytest
+  tests\agent_runtime -q`: exit 2 during collection because `RuntimeEvent`
+  was intentionally not implemented yet.
+- After adding the event schema and remaining validation, the same focused
+  command exited 0; 37 passed in 0.09 seconds.
+
+### Required final verification
+
+- `uv run --locked ruff format --check .`: exit 0; 72 files already
+  formatted.
+- `uv run --locked ruff check .`: exit 0; all checks passed.
+- `uv run --locked mypy src`: exit 0; no issues in 41 source files.
+- `uv run --locked pytest -q`: exit 0; 198 passed in 0.56 seconds.
+- `git diff --exit-code -- pyproject.toml uv.lock benchmarks artifacts
+  policies`: exit 0; dependencies, lock entries, frozen inputs, policies, and
+  generated evidence are unchanged.
+- Benchmark regeneration was not run because M8 changes no benchmark input,
+  evaluator, raw record, summary, or generated artifact.
+
+### Residual limitations
+
+- The model port and future HTTP/database/plugin descriptions are contracts,
+  not implemented adapters or an operational full-stack product.
+- Deterministic state-machine and schema tests do not establish model-output
+  safety, clinical validity, real-world crisis handling, or effective human
+  review.
+- The working tree still contains the owner's pre-existing untracked
+  `.python-version` and Chinese implementation-guide file; M8 did not modify
+  or add them to its change set.
+
+## Next exact milestone
+
+Stop after Milestone 8. Milestone 9 is allowlisted plugin discovery and a
+provider-neutral model runtime using deterministic test adapters before any
+real cloud connection.

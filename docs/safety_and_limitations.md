@@ -53,3 +53,15 @@ Replay and invalid-fixture results prove only that the local deterministic
 artifact contracts accept or reject the frozen inputs as specified. Mutation
 proof shows that one existing P7 regression test detects a deliberately broken
 control-flow branch; it does not validate real-world crisis handling.
+
+Milestone 8 defines only a future synthetic agent-runtime contract and pure
+state machine. `SafetyDisposition` values are system-routing states, not risk
+levels, diagnoses, clinical dispositions, or statements about a person. The
+model port has no concrete adapter and makes no request. Draft quarantine,
+bounded rewrite, plugin failure modes, and human-review states are design and
+control-flow properties; they do not prove that a future model output is safe.
+
+The planned participant-shaped interface remains restricted to researchers
+role-playing versioned synthetic personas. It is not approved for real patient
+data or ordinary public use. Human review is a local demonstration workflow,
+not a staffed clinical or emergency service.

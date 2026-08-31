@@ -37,11 +37,12 @@ def test_readme_first_screen_states_product_boundary() -> None:
         assert phrase in first_screen
 
 
-def test_readme_closes_milestone_seven_with_cli_only_interaction_contract() -> None:
+def test_readme_records_milestone_eight_contract_with_cli_only_runtime() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8").casefold()
 
     for phrase in (
-        "project status: milestone 7 complete",
+        "project status: milestone 8 contract complete",
+        "interface only",
         "cli is the primary interaction surface",
         "no web application",
         "read-only static html",

@@ -336,3 +336,46 @@ The separate verification raw prevents failure-fixture and replay evidence from
 changing the 16-record manifest-order contract. Both raw files must exist before
 summary derivation. Removing presentation or any hypothetical adapter leaves
 benchmark, verification, and reporting operational.
+
+## Milestone 8 agent-runtime contract boundary
+
+### FROZEN
+
+Milestone 8 adds `careloop.agent_runtime` as a pure inner contract layer:
+
+```text
+future Web/API/provider/database/plugin adapters
+                    |
+                    v
+        future application orchestration
+                    |
+                    v
+            careloop.agent_runtime
+                    |
+                    v
+              careloop.domain
+```
+
+`careloop.agent_runtime` may import the standard library, Pydantic, and frozen
+domain types. It never imports application, CLI, presentation, reporting,
+evaluation, safety implementations, provider SDKs, network clients, database
+libraries, Web frameworks, plugin packages, gold data, or tests.
+
+The state machine is an explicit transition table. A model draft can reach
+`RESPONSE_RELEASED` only from `CHECKING_DRAFT` or from an explicit review
+decision. `RUNTIME_FAILURE` moves any nonterminal state to `FAILED_CLOSED`.
+Closed and failed-closed sessions cannot be reopened. The rewrite-count
+constraint lives in the versioned draft-gate contract, not in UI or adapter
+code.
+
+The asynchronous `ModelPort` is dependency inversion only. Concrete cloud or
+local providers belong to removable outer adapters added by a later milestone.
+The existing offline evaluator and replay paths do not import or call the port.
+
+The planned HTTP surface calls future application services only. Participant
+queries project released turns; reviewer queries may project quarantined drafts
+and evidence. SSE is status-only. Persistence uses an authoritative append-only
+event ledger plus replaceable projections; database timestamps never become
+replay identity. The logical table and endpoint contracts are frozen in
+`docs/agent_runtime_contract.md`, while actual Web and persistence technology is
+deferred.
