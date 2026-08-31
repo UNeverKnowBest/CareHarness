@@ -37,6 +37,20 @@ def test_readme_first_screen_states_product_boundary() -> None:
         assert phrase in first_screen
 
 
+def test_readme_closes_milestone_seven_with_cli_only_interaction_contract() -> None:
+    readme = (ROOT / "README.md").read_text(encoding="utf-8").casefold()
+
+    for phrase in (
+        "project status: milestone 7 complete",
+        "cli is the primary interaction surface",
+        "no web application",
+        "read-only static html",
+        "no server",
+        "generated artifacts",
+    ):
+        assert phrase in readme
+
+
 def test_required_technical_documents_exist_without_handwritten_result_counts() -> None:
     threat_model = (ROOT / "docs" / "threat_model.md").read_text(encoding="utf-8")
     technical_report = (ROOT / "docs" / "technical_report.md").read_text(
