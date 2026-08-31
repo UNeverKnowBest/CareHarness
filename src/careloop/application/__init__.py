@@ -1,5 +1,30 @@
-"""Application use cases implemented by the current milestone."""
+"""The three CareLoop Harness application use cases and their raw results."""
 
+from careloop.application.benchmark import (
+    BenchmarkRecord,
+    BenchmarkRunResult,
+    FindingComparison,
+    GoldCase,
+    RunBenchmark,
+    load_gold_case,
+)
+from careloop.application.evaluate_trajectory import (
+    EvaluateTrajectory,
+    EvaluationError,
+    load_benchmark_manifest,
+)
 from careloop.application.replay import ReplayResult, replay_artifact
 
-__all__ = ["ReplayResult", "replay_artifact"]
+__all__ = [
+    "BenchmarkRecord",
+    "BenchmarkRunResult",
+    "EvaluateTrajectory",
+    "EvaluationError",
+    "FindingComparison",
+    "GoldCase",
+    "ReplayResult",
+    "RunBenchmark",
+    "load_benchmark_manifest",
+    "load_gold_case",
+    "replay_artifact",
+]

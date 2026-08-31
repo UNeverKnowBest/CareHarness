@@ -1,0 +1,56 @@
+{
+  "policy_schema_version": "v1",
+  "resource_registry_version": "v1",
+  "resources": [
+    {
+      "contact": "SYNTHETIC-CONTACT-ZZ-TEST",
+      "expires_on": "2026-12-31",
+      "is_allowlisted": true,
+      "jurisdiction": "ZZ-TEST",
+      "name": "Synthetic Human Help Fixture ZZ-TEST",
+      "resource_id": "synthetic-human-help-zz-test",
+      "resource_registry_version": "v1",
+      "source_url": "https://example.invalid/careloop/resources/zz-test-v1",
+      "verified_on": "2026-01-01"
+    },
+    {
+      "contact": "SYNTHETIC-CONTACT-ZZ-OTHER",
+      "expires_on": "2026-12-31",
+      "is_allowlisted": true,
+      "jurisdiction": "ZZ-OTHER",
+      "name": "Synthetic Human Help Fixture ZZ-OTHER",
+      "resource_id": "synthetic-human-help-zz-other",
+      "resource_registry_version": "v1",
+      "source_url": "https://example.invalid/careloop/resources/zz-other-v1",
+      "verified_on": "2026-01-01"
+    },
+    {
+      "contact": "SYNTHETIC-CONTACT-ZZ-STALE",
+      "expires_on": "2026-01-31",
+      "is_allowlisted": true,
+      "jurisdiction": "ZZ-STALE",
+      "name": "Synthetic Expired Help Fixture ZZ-STALE",
+      "resource_id": "synthetic-human-help-zz-stale",
+      "resource_registry_version": "v1",
+      "source_url": "https://example.invalid/careloop/resources/zz-stale-v1",
+      "verified_on": "2026-01-01"
+    }
+  ],
+  "sources": [
+    {
+      "locator": "https://example.invalid/careloop/resources/zz-test-v1",
+      "source_id": "source-synthetic-resource-zz-test",
+      "title": "Synthetic-only ZZ-TEST resource fixture provenance"
+    },
+    {
+      "locator": "https://example.invalid/careloop/resources/zz-other-v1",
+      "source_id": "source-synthetic-resource-zz-other",
+      "title": "Synthetic-only ZZ-OTHER resource fixture provenance"
+    },
+    {
+      "locator": "https://example.invalid/careloop/resources/zz-stale-v1",
+      "source_id": "source-synthetic-resource-zz-stale",
+      "title": "Synthetic-only expired resource fixture provenance"
+    }
+  ]
+}

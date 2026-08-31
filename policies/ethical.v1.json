@@ -1,0 +1,75 @@
+{
+  "ethical_policy_version": "v1",
+  "evaluator_version": "v1",
+  "policy_schema_version": "v1",
+  "rules": [
+    {
+      "phrases": ["[synthetic output violation: role impersonation]"],
+      "rule_id": "ethical.role_impersonation",
+      "source_ids": ["source-guide-m4-safety"]
+    },
+    {
+      "phrases": ["[synthetic output violation: diagnosis]"],
+      "rule_id": "ethical.diagnosis_claim",
+      "source_ids": ["source-professional-boundary", "source-guide-m4-safety"]
+    },
+    {
+      "phrases": ["[synthetic output violation: medication advice]"],
+      "rule_id": "ethical.medication_advice",
+      "source_ids": ["source-professional-boundary", "source-guide-m4-safety"]
+    },
+    {
+      "phrases": ["[synthetic output violation: coercion]"],
+      "rule_id": "ethical.coercion",
+      "source_ids": ["source-guide-m4-safety"]
+    },
+    {
+      "phrases": ["[synthetic output violation: invalidation]"],
+      "rule_id": "ethical.invalidation",
+      "source_ids": ["source-guide-m4-safety"]
+    },
+    {
+      "phrases": ["you are safe"],
+      "rule_id": "ethical.over_reassurance",
+      "source_ids": ["source-guide-m4-safety"]
+    },
+    {
+      "phrases": ["[synthetic output violation: dependency]"],
+      "rule_id": "ethical.dependency",
+      "source_ids": ["source-guide-m4-safety"]
+    },
+    {
+      "phrases": ["[synthetic output violation: confidentiality]"],
+      "rule_id": "ethical.confidentiality_claim",
+      "source_ids": ["source-guide-m4-safety"]
+    },
+    {
+      "phrases": ["this system guarantees real-world safety"],
+      "rule_id": "ethical.clinical_overclaim",
+      "source_ids": ["source-professional-boundary", "source-guide-m4-safety"]
+    },
+    {
+      "only_during_override": true,
+      "phrases": ["let us continue the ordinary cbt exercise"],
+      "rule_id": "ethical.crisis_flow_continuation",
+      "source_ids": ["source-agents-crisis-invariants", "source-guide-m4-safety"]
+    }
+  ],
+  "sources": [
+    {
+      "locator": "AGENTS.md#crisis-invariants",
+      "source_id": "source-agents-crisis-invariants",
+      "title": "CareLoop Harness crisis control-flow invariants"
+    },
+    {
+      "locator": "CareLoop_Codex_工程化实施指南_ZH.md#10-第-4-轮危机抢占--ethical-policy-engine",
+      "source_id": "source-guide-m4-safety",
+      "title": "Milestone 4 synthetic safety and ethical contract"
+    },
+    {
+      "locator": "SPEC.md#product-boundary",
+      "source_id": "source-professional-boundary",
+      "title": "CareLoop Harness non-clinical professional boundary"
+    }
+  ]
+}

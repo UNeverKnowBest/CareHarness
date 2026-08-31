@@ -1,8 +1,8 @@
 # CareLoop Harness Status
 
-Current phase: Milestone 3 complete
-Next milestone: Milestone 4 crisis preemption and ethical policy engine
-Implementation status: COMPLETE for D1.0–D1.5, M2.1–M2.5, and M3.1–M3.5
+Current phase: Milestone 5 complete
+Next milestone: Milestone 6 derived reports, CI, documentation, and mutation proof
+Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M5.5
 
 ## Status vocabulary
 
@@ -472,3 +472,213 @@ policy tests without adding clinical risk classification or real-world claims.
 - No final-answer evaluator, safety detector/router, ethical engine, resource
   selection, benchmark/report pipeline, CLI business command, UI, adapter,
   model/provider, or network behavior was added.
+
+## Milestone 4 crisis preemption and ethical policy engine
+
+### Implemented
+
+- Added strict `crisis.v1`, `ethical.v1`, and `resources.v1` registries with exact
+  version rejection, duplicate/reference validation, and documented local source
+  provenance. Gold is not a policy source.
+- Implemented `SyntheticSafetySignalDetector` as exact matching of explicit
+  synthetic tags only. Ambiguous/historical/third-party/quoted contexts map to
+  clarify; current plan/preparation/already-acted tags map to the typed
+  emergency-help action. No risk category or probability exists.
+- Implemented crisis routing before the injected responder. Every matched signal
+  creates a typed override event, suppresses normal flow, and leaves responder
+  call count at zero.
+- Implemented resource selection using only explicit jurisdiction and `as_of`.
+  It requires exact locale, active dates, allowlisting, registered `.invalid`
+  source URL, unique ID/jurisdiction, and registry version. Missing, wrong,
+  stale, invalid, or failed resource evidence never guesses a contact.
+- Added an ethical output gate after responder execution but before visibility.
+  Ten ordered observable categories cover role impersonation, diagnosis,
+  medication, coercion, invalidation, over-reassurance, dependency,
+  confidentiality, clinical overclaim, and crisis-flow continuation.
+- Detector, router, resource-loader, and output-policy exceptions return a typed
+  `HUMAN_REVIEW_REQUIRED` fail-closed result with a suppressed event and no
+  visible normal output. No exception path resumes ordinary flow.
+- Preserved blocked output only as internal audit evidence so its Finding turn
+  reference can be validated; `visible_output` remains empty.
+- Proved scenario prompt injection remains inert data, a single denial cannot
+  release `you are safe`, and ordinary CBT continuation after override creates
+  the dedicated crisis-flow finding.
+- Under the owner's explicit authorization, updated the generator and regenerated
+  all six P6–P8 trajectory files and six gold files. P6 now freezes ambiguous
+  clarification, P7 current-plan emergency override, and P8 correct-versus-wrong
+  synthetic jurisdiction resource evidence. Generated JSON was not hand-edited.
+- Day 1 public models, dependency set, lockfile, manifest case order, and P1–P5
+  fixtures remain unchanged.
+
+### Test-first and focused evidence
+
+- Pre-implementation
+  `uv run --locked pytest tests\safety tests\test_architecture.py -q`: exit 2
+  with two expected collection errors,
+  `ModuleNotFoundError: No module named 'careloop.safety'`.
+- First post-implementation focused command: exit 1; 36 passed and three failed.
+  All three failures were the pre-identified P6/P7/P8 fixture conflict.
+- After generator-owned P6–P8 alignment,
+  `uv run --locked pytest tests\safety tests\test_milestone2_artifacts.py tests\test_architecture.py -q`:
+  exit 0; 68 passed in 0.19 seconds.
+- Final focused command after ordering, blocked-output evidence, API field, and
+  wall-clock guards: exit 0; 71 passed in 0.19 seconds.
+- `.venv\Scripts\python.exe tools\generate_milestone2_fixtures.py --check`:
+  exit 0; all generated files match generator output.
+
+### Preflight quality evidence
+
+- Initial `.venv\Scripts\ruff.exe format --check .`: exit 1; nine Python files
+  required mechanical formatting.
+- Initial `.venv\Scripts\ruff.exe check .`: exit 1; three line-length findings.
+- Initial `.venv\Scripts\mypy.exe src`: exit 0; no issues in 24 source files.
+- Initial local generator check: exit 0.
+- `.venv\Scripts\ruff.exe format .`: exit 0; nine files reformatted.
+- Final local format check: exit 0; 41 files already formatted.
+- Final local Ruff check: exit 0; all checks passed.
+- Final local mypy: exit 0; no issues in 24 source files.
+- Final local fixture generator check: exit 0.
+
+### Required full verification
+
+- `uv run ruff format --check .`: exit 0; 41 files already formatted.
+- `uv run ruff check .`: exit 0; all checks passed.
+- `uv run mypy src`: exit 0; no issues in 24 source files.
+- `uv run pytest -q`: exit 0; 120 passed in 0.32 seconds.
+- `uv lock --check`: exit 0; 23 packages resolved and the unchanged lock remains
+  synchronized.
+- `uv run careloop benchmark --manifest benchmarks/manifest.v1.json`: exit 2;
+  `No such command 'benchmark'`. The command was required because P6–P8 benchmark
+  fixtures changed. Milestone 4 explicitly excludes the Milestone 5 benchmark
+  CLI, so this is not claimed as a pass.
+
+### Remaining risks and explicit exclusions
+
+- Exact tags and exact output phrases prove only deterministic behavior on frozen
+  synthetic inputs. They provide no evidence of real-world detection, clinical
+  correctness, treatment quality, or safety improvement.
+- Resource entries are deliberately synthetic `.invalid` fixtures and must never
+  be presented as real help contacts.
+- The owner-authorized P6–P8/gold revision retains benchmark version `v1` before
+  a runner exists. This remains a documented version-history limitation.
+- No final-answer evaluator, application orchestration, benchmark/report runner,
+  CLI business command, UI, real adapter, model/provider, network access,
+  database, or deployment behavior was added.
+
+## Next exact milestone
+
+Stop after Milestone 4. Milestone 5 composes the verified core into exactly three
+application use cases (`EvaluateTrajectory`, `ReplayArtifact`, and
+`RunBenchmark`), their CLI commands, and an optional minimal read-only audit UI.
+It must not change frozen process or safety policy behavior.
+
+## Milestone 5 application, CLI, and static audit
+
+### Approved contract and pre-implementation red state
+
+- The owner selected deterministic static offline HTML, an evidence ledger with
+  no aggregate score, and a dedicated milestone branch. Work began on
+  `feat/m5-application-cli-audit` from `df9efaa`.
+- M5 freezes final-only and complete-trajectory evaluator inputs, a separate
+  offline safety-artifact observation registry, post-evaluation gold loading,
+  deterministic raw JSON/JSONL, exact CLI commands, and escaped no-script HTML.
+- No Day 1 public schema, process/crisis/ethical/resource runtime behavior,
+  dependency, frozen trajectory, or gold label is authorized to change.
+- Pre-implementation focused command:
+  `.venv\Scripts\python.exe -m pytest tests\evaluation tests\presentation tests\e2e tests\test_cli.py tests\test_architecture.py -q`.
+  It exited 2 with three expected collection errors because
+  `EvaluateTrajectory` was not yet exported from `careloop.application`.
+
+### Implemented
+
+- Added strict `evaluation.v1` policy metadata for three offline observations:
+  ambiguous clarify override, emergency-help override, and exact active
+  synthetic resource identity. This registry observes frozen artifacts and does
+  not alter any Milestone 4 runtime policy or behavior.
+- Added `FinalAnswerEvaluator` with an enforced `FinalAnswerView` input. It emits
+  the same ordered ten-rule ledger while history-dependent rules remain
+  `uncertain`; it cannot receive markers, safety events, resources, gold, file
+  paths, adapters, network, or wall clock.
+- Added `TrajectoryEvaluator`, combining the unchanged seven process rules with
+  three offline safety-artifact rules. P1–P8 localize their frozen middle-turn,
+  source-linked action, or resource contrast at the expected evidence turn.
+- Added `EvaluateTrajectory`. It verifies one canonical artifact, chooses the
+  final assistant turn, runs both evaluator boundaries, resolves registered
+  synthetic resource provenance, and optionally writes canonical raw JSON with
+  no gold/comparison content.
+- Preserved `ReplayArtifact` and added `RunBenchmark`. The benchmark follows all
+  16 manifest cases and invokes the injectable gold loader only after the actual
+  result for that case exists. Comparison checks rule, outcome, turn, source,
+  and evaluator version while retaining but not comparing finding identity.
+- Added deterministic benchmark JSONL with one final newline and no timestamp or
+  duration. Re-running the command produced identical bytes.
+- Replaced the help/version-only CLI boundary with exactly `evaluate`, `replay`,
+  and `benchmark`. Valid application/data failures exit one; usage errors remain
+  exit two.
+- Added the owner-selected static HTML audit: timeline, finding-to-turn links,
+  side-by-side evidence ledgers, suppression banner, resource provenance, and
+  replay hash. It escapes untrusted artifact text and contains inline CSS only,
+  with no script, remote asset, editable control, server, or aggregate score.
+- Generated, through the CLI only, `artifacts/raw/benchmark.v1.jsonl`, one
+  `p8-good` evaluation JSON, and its HTML audit. No generated file was hand
+  edited.
+
+### Test-first, focused, and regression evidence
+
+- First post-implementation focused run without an explicit pytest temp path:
+  23 passed and seven setup errors because the environment denied access to
+  `C:\Users\guosh\AppData\Local\Temp\pytest-of-guosh`; no test body failed.
+- The same focused scope with an explicit writable `--basetemp`: exit 0;
+  30 passed.
+- Expanded focused application/evaluation/presentation/CLI/architecture and
+  Milestone 2 artifact regression suite: exit 0; 61 passed in 0.35 seconds.
+- First full suite after implementation: 144 passed and one failed. The frozen
+  gold-isolation test found only the CLI default-path literal
+  `benchmarks/gold`; composing the same path from two segments removed the
+  misleading production-source marker without weakening the test or changing
+  load order.
+- Final local full suite with explicit writable temp path: exit 0; 147 passed in
+  0.39 seconds.
+- Fixture generator check: exit 0; every existing trajectory/gold/failure
+  fixture still exactly matches generator output.
+
+### Required full verification
+
+- `uv run ruff format --check .`: exit 0; 55 files already formatted.
+- `uv run ruff check .`: exit 0; all checks passed.
+- `uv run mypy src`: exit 0; no issues in 34 source files.
+- Final `uv run pytest -q`: exit 0; 148 passed in 0.41 seconds.
+- `uv lock --check`: exit 0; 23 packages resolved and the unchanged lock is
+  synchronized.
+- `uv run careloop benchmark --manifest benchmarks/manifest.v1.json`: exit 0;
+  16 cases evaluated and raw JSONL written to
+  `artifacts/raw/benchmark.v1.jsonl`.
+- Local CLI smoke commands for evaluate, replay, and benchmark all exited 0.
+  Evaluate wrote ten final-only and ten trajectory-aware findings; replay
+  verified the frozen P1 hash; benchmark wrote 16 ordered records.
+- Repeated artifact Git blob hashes were unchanged:
+  benchmark JSONL `710032423c367587780d7533db9f20f0e457d326`, P8 evaluation
+  JSON `c6e8f5b38dbec9eef963112f1142e9b7ef2ee315`, and P8 audit HTML
+  `6008780acedf24c3e81dcc8887857c123817e648`.
+
+### Schema, policy, fixture, dependency, and risk statement
+
+- No Day 1 public schema, process/crisis/ethical/resource policy behavior,
+  frozen trajectory, gold label, dependency, lock entry, or package version
+  changed. The only new policy is the internal offline `evaluation.v1` registry.
+- Exact tag/phrase and typed-event agreement proves deterministic behavior on
+  the frozen synthetic corpus only. It is not clinical, real-world, population,
+  or statistical performance evidence.
+- The HTML contract is covered by deterministic, escaping, no-script/no-remote-
+  asset smoke tests. A visual browser screenshot was not produced because no
+  browser executable is installed in this environment.
+- Aggregate summary metrics, raw-to-summary derivation, CI, threat model,
+  README/technical report, and mutation proof remain explicitly unimplemented
+  until Milestone 6.
+
+## Next exact milestone
+
+Stop after Milestone 5. Milestone 6 must derive only the allowed synthetic
+benchmark summaries from raw JSONL, add CI and technical documentation, and run
+the temporary P7 mutation proof. It must not change evaluator decisions, gold,
+frozen fixtures, or introduce an aggregate clinical/quality score.

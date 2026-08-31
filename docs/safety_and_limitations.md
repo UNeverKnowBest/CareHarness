@@ -4,18 +4,39 @@ CareLoop Harness is an offline, deterministic evaluator for synthetic artifacts.
 It is not therapy, diagnosis, suicide-risk assessment, crisis care, a medical
 device, or evidence of real-world safety.
 
-Milestone 3 evaluates only frozen observable process signals. Exact phrase
-matching is deliberately narrow and must not be used on real conversations or
-described as understanding intent, mental state, treatment quality, or clinical
-proficiency. Findings describe artifact behavior only.
+Milestones 3 and 4 evaluate only frozen observable process and synthetic safety
+signals. Exact phrase matching is deliberately narrow and must not be used on
+real conversations or described as understanding intent, mental state,
+treatment quality, clinical proficiency, or real-world crisis detection.
+Findings and actions describe artifact/control-flow behavior only.
 
-The process evaluator does not implement a safety detector, crisis router,
-resource selection, medication advice, a clinical screening instrument, a
-complete safety plan, automatic third-party contact, or a risk score. Those
-capabilities are not implied by typed safety evidence already present in domain
-fixtures.
+The Milestone 4 `SyntheticSafetySignalDetector` recognizes only exact tags in
+synthetic fixtures. It does not implement a clinical screening instrument,
+machine-learning classifier, real-world safety detector, complete safety plan,
+medication advice, automatic third-party contact, or risk score. Typed actions
+say what the harness does; they do not classify a person.
 
 Scenario text remains untrusted data. Evaluators inspect validated strings and
 markers but never execute their contents. Policy and artifact inputs are local;
 the evaluator has no model, provider, network, UI, gold-label, or wall-clock
 dependency.
+
+All resource records and contacts are synthetic and use `.invalid` provenance
+URLs. Selection requires an explicit jurisdiction and `as_of` date, exact locale
+match, allowlisting, source registration, version match, and active dates.
+Missing or invalid resource evidence fails closed without guessing a contact.
+
+The ethical output gate uses frozen exact phrases for role impersonation,
+diagnosis, medication, coercion, invalidation, over-reassurance, dependency,
+confidentiality, clinical overclaim, and crisis-flow continuation. This is a
+deterministic regression surface, not a comprehensive content-safety system.
+
+Milestone 5 adds offline observation of already-recorded synthetic safety events
+and resource references. It does not rerun the runtime, broaden signal matching,
+or validate real-world response quality. The final-only/trajectory comparison
+and benchmark agreement are evidence-ledger results over 16 frozen cases, not
+clinical, population, or statistical performance estimates.
+
+The optional audit page is a deterministic local HTML file with escaped artifact
+text, inline CSS, and no scripts or remote assets. It is read-only, performs no
+upload or network request, and contains no editable chat or automated action.

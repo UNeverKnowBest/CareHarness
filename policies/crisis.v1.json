@@ -1,0 +1,73 @@
+{
+  "crisis_policy_version": "v1",
+  "evaluator_version": "v1",
+  "fail_closed_action": "pause_and_clarify_now",
+  "fail_closed_source_ids": [
+    "source-agents-crisis-invariants",
+    "source-guide-m4-safety"
+  ],
+  "policy_schema_version": "v1",
+  "signals": [
+    {
+      "action": "pause_and_clarify_now",
+      "phrases": ["[synthetic safety signal: ambiguous current]"],
+      "requires_override": true,
+      "signal_id": "ambiguous_current",
+      "source_ids": ["source-guide-m4-safety"]
+    },
+    {
+      "action": "pause_and_clarify_now",
+      "phrases": ["[synthetic safety context: historical]"],
+      "requires_override": true,
+      "signal_id": "historical_context",
+      "source_ids": ["source-guide-m4-safety"]
+    },
+    {
+      "action": "pause_and_clarify_now",
+      "phrases": ["[synthetic safety context: third party]"],
+      "requires_override": true,
+      "signal_id": "third_party_context",
+      "source_ids": ["source-guide-m4-safety"]
+    },
+    {
+      "action": "pause_and_clarify_now",
+      "phrases": ["[synthetic safety context: quoted]"],
+      "requires_override": true,
+      "signal_id": "quoted_context",
+      "source_ids": ["source-guide-m4-safety"]
+    },
+    {
+      "action": "seek_emergency_help_now",
+      "phrases": ["[synthetic safety signal: current plan]"],
+      "requires_override": true,
+      "signal_id": "current_plan",
+      "source_ids": ["source-agents-crisis-invariants", "source-guide-m4-safety"]
+    },
+    {
+      "action": "seek_emergency_help_now",
+      "phrases": ["[synthetic safety signal: current preparation]"],
+      "requires_override": true,
+      "signal_id": "current_preparation",
+      "source_ids": ["source-agents-crisis-invariants", "source-guide-m4-safety"]
+    },
+    {
+      "action": "seek_emergency_help_now",
+      "phrases": ["[synthetic safety signal: already acted]"],
+      "requires_override": true,
+      "signal_id": "already_acted",
+      "source_ids": ["source-agents-crisis-invariants", "source-guide-m4-safety"]
+    }
+  ],
+  "sources": [
+    {
+      "locator": "AGENTS.md#crisis-invariants",
+      "source_id": "source-agents-crisis-invariants",
+      "title": "CareLoop Harness crisis control-flow invariants"
+    },
+    {
+      "locator": "CareLoop_Codex_工程化实施指南_ZH.md#10-第-4-轮危机抢占--ethical-policy-engine",
+      "source_id": "source-guide-m4-safety",
+      "title": "Milestone 4 synthetic safety and ethical contract"
+    }
+  ]
+}
