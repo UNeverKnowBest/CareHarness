@@ -40,3 +40,16 @@ clinical, population, or statistical performance estimates.
 The optional audit page is a deterministic local HTML file with escaped artifact
 text, inline CSS, and no scripts or remote assets. It is read-only, performs no
 upload or network request, and contains no editable chat or automated action.
+
+Milestone 6 summaries are descriptive counts derived from 16 frozen synthetic
+benchmark cases and four frozen invalid fixtures. They are regression evidence,
+not measurements of a population, person, treatment, clinical process, or
+real-world safety system. The harness reports no aggregate score, percentage,
+confidence interval, statistical significance, suicide-detection accuracy,
+clinical sensitivity/specificity, treatment success, or patient-safety
+improvement.
+
+Replay and invalid-fixture results prove only that the local deterministic
+artifact contracts accept or reject the frozen inputs as specified. Mutation
+proof shows that one existing P7 regression test detects a deliberately broken
+control-flow branch; it does not validate real-world crisis handling.

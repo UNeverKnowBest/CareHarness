@@ -2,4 +2,6 @@ benchmarks/**/*.json text eol=lf
 policies/*.json text eol=lf
 artifacts/raw/*.json text eol=lf
 artifacts/raw/*.jsonl text eol=lf
+artifacts/summary/*.json text eol=lf
+artifacts/summary/*.md text eol=lf
 artifacts/audit/*.html text eol=lf

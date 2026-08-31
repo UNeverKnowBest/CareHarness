@@ -50,6 +50,9 @@ def test_benchmark_command_writes_sixteen_ordered_raw_records(
     tmp_path: Path,
 ) -> None:
     output_path = tmp_path / "benchmark.v1.jsonl"
+    verification_path = tmp_path / "verification.v1.jsonl"
+    summary_json = tmp_path / "benchmark.v1.summary.json"
+    summary_markdown = tmp_path / "benchmark.v1.summary.md"
 
     result = runner.invoke(
         app,
@@ -59,6 +62,14 @@ def test_benchmark_command_writes_sixteen_ordered_raw_records(
             str(ROOT / "benchmarks" / "manifest.v1.json"),
             "--output",
             str(output_path),
+            "--verification-output",
+            str(verification_path),
+            "--summary-json",
+            str(summary_json),
+            "--summary-markdown",
+            str(summary_markdown),
+            "--failure-fixture-dir",
+            str(ROOT / "benchmarks" / "failure_fixtures"),
         ],
     )
 
@@ -66,6 +77,11 @@ def test_benchmark_command_writes_sixteen_ordered_raw_records(
     assert "BENCHMARK COMPLETE" in result.stdout
     assert "Cases: 16" in result.stdout
     assert len(output_path.read_bytes().splitlines()) == 16
+    assert len(verification_path.read_bytes().splitlines()) == 20
+    assert summary_json.is_file()
+    assert summary_markdown.is_file()
+    assert f"Summary JSON: {summary_json}" in result.stdout
+    assert f"Summary Markdown: {summary_markdown}" in result.stdout
 
 
 def test_invalid_artifact_returns_application_error_exit_one() -> None:

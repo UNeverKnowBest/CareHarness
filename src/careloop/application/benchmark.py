@@ -1,20 +1,35 @@
 """Ordered benchmark execution with post-evaluation gold comparison."""
 
+import json
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 from typing import Annotated, Literal, Protocol, Self
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validator
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationError,
+    model_validator,
+)
 
 from careloop.application.evaluate_trajectory import (
     EvaluateTrajectory,
     load_benchmark_manifest,
 )
-from careloop.artifacts import canonical_json_bytes
+from careloop.application.replay import replay_artifact
+from careloop.artifacts import ArtifactHashMismatchError, canonical_json_bytes
 from careloop.domain import BenchmarkManifest, Finding, Trajectory
 from careloop.evaluation import TrajectoryEvaluationResult
+from careloop.reporting import (
+    BenchmarkSummary,
+    VerificationObservation,
+    VerificationRecord,
+    write_benchmark_summary,
+)
 
 
 def _non_blank(value: str) -> str:
@@ -51,6 +66,12 @@ class GoldCase(BenchmarkResultModel):
         if len(set(rule_ids)) != len(rule_ids):
             raise ValueError("gold rule_id values must be unique per case")
         return self
+
+
+class InvalidFindingFixture(BenchmarkResultModel):
+    failure_fixture_version: Literal["v1"]
+    finding: Finding
+    trajectory: Trajectory
 
 
 class FindingComparison(BenchmarkResultModel):
@@ -117,10 +138,28 @@ GoldLoader = Callable[[Path, Trajectory], GoldCase]
 
 
 @dataclass(frozen=True, slots=True)
+class BenchmarkReportPaths:
+    verification_raw: Path
+    summary_json: Path
+    summary_markdown: Path
+
+
+@dataclass(frozen=True, slots=True)
 class BenchmarkRunResult:
     records: tuple[BenchmarkRecord, ...]
     raw_bytes: bytes
     output_path: Path
+    verification_records: tuple[VerificationRecord, ...] = ()
+    summary: BenchmarkSummary | None = None
+    report_paths: BenchmarkReportPaths | None = None
+
+
+FAILURE_EXPECTATIONS: tuple[tuple[str, VerificationObservation], ...] = (
+    ("duplicate_turn_id", "schema_validation_error"),
+    ("hash_mismatch", "artifact_hash_mismatch"),
+    ("invalid_finding_turn", "finding_reference_error"),
+    ("unknown_schema", "schema_validation_error"),
+)
 
 
 def load_gold_case(path: Path, trajectory: Trajectory) -> GoldCase:
@@ -128,6 +167,81 @@ def load_gold_case(path: Path, trajectory: Trajectory) -> GoldCase:
     for finding in gold.observable_findings:
         trajectory.validate_finding(finding)
     return gold
+
+
+def _observe_failure_fixture(path: Path, evidence_id: str) -> VerificationObservation:
+    try:
+        if evidence_id == "invalid_finding_turn":
+            fixture = InvalidFindingFixture.model_validate_json(
+                path.read_text(encoding="utf-8")
+            )
+            fixture.trajectory.validate_finding(fixture.finding)
+        else:
+            replay_artifact(path)
+    except ArtifactHashMismatchError:
+        return "artifact_hash_mismatch"
+    except ValidationError:
+        return "schema_validation_error"
+    except ValueError:
+        if evidence_id == "invalid_finding_turn":
+            return "finding_reference_error"
+        return "unexpected_error"
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return "unexpected_error"
+    return "accepted"
+
+
+def _verification_records(
+    records: tuple[BenchmarkRecord, ...],
+    *,
+    trajectory_root: Path,
+    failure_fixture_root: Path,
+) -> tuple[VerificationRecord, ...]:
+    verifications: list[VerificationRecord] = []
+    for record in records:
+        replayed = replay_artifact(trajectory_root / f"{record.case_id}.json")
+        observation: VerificationObservation = (
+            "canonical_replay_identity"
+            if replayed.canonical_hash == record.evaluation.canonical_hash
+            and replayed.trajectory == record.evaluation.trajectory
+            else "replay_identity_mismatch"
+        )
+        verifications.append(
+            VerificationRecord(
+                verification_schema_version="v1",
+                verification_kind="replay_agreement",
+                evidence_id=record.case_id,
+                expected_observation="canonical_replay_identity",
+                observed_observation=observation,
+                canonical_hash=replayed.canonical_hash,
+                matches=observation == "canonical_replay_identity",
+            )
+        )
+    for evidence_id, expected in FAILURE_EXPECTATIONS:
+        observed = _observe_failure_fixture(
+            failure_fixture_root / f"{evidence_id}.json", evidence_id
+        )
+        verifications.append(
+            VerificationRecord(
+                verification_schema_version="v1",
+                verification_kind="invalid_artifact_rejection",
+                evidence_id=evidence_id,
+                expected_observation=expected,
+                observed_observation=observed,
+                canonical_hash=None,
+                matches=observed == expected,
+            )
+        )
+    return tuple(verifications)
+
+
+def _write_verification_raw(
+    records: tuple[VerificationRecord, ...], path: Path
+) -> bytes:
+    raw_bytes = b"\n".join(record.canonical_bytes() for record in records) + b"\n"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(raw_bytes)
+    return raw_bytes
 
 
 def _compare_findings(
@@ -212,6 +326,8 @@ class RunBenchmark:
         trajectory_dir: str | Path,
         gold_dir: str | Path,
         output_path: str | Path,
+        failure_fixture_dir: str | Path | None = None,
+        report_paths: BenchmarkReportPaths | None = None,
     ) -> BenchmarkRunResult:
         trajectory_root = Path(trajectory_dir)
         gold_root = Path(gold_dir)
@@ -250,6 +366,30 @@ class RunBenchmark:
         destination = Path(output_path)
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_bytes(raw_bytes)
+        verification_records: tuple[VerificationRecord, ...] = ()
+        summary: BenchmarkSummary | None = None
+        if report_paths is not None:
+            if failure_fixture_dir is None:
+                raise ValueError(
+                    "failure_fixture_dir is required when report paths are supplied"
+                )
+            verification_records = _verification_records(
+                tuple(records),
+                trajectory_root=trajectory_root,
+                failure_fixture_root=Path(failure_fixture_dir),
+            )
+            _write_verification_raw(verification_records, report_paths.verification_raw)
+            summary = write_benchmark_summary(
+                destination,
+                report_paths.verification_raw,
+                summary_json_path=report_paths.summary_json,
+                summary_markdown_path=report_paths.summary_markdown,
+            )
         return BenchmarkRunResult(
-            records=tuple(records), raw_bytes=raw_bytes, output_path=destination
+            records=tuple(records),
+            raw_bytes=raw_bytes,
+            output_path=destination,
+            verification_records=verification_records,
+            summary=summary,
+            report_paths=report_paths,
         )

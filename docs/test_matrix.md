@@ -1,6 +1,6 @@
 # CareLoop Harness Test Matrix
 
-Status: **FROZEN through Milestone 5 application and audit behavior**
+Status: **FROZEN through Milestone 6 reporting and delivery behavior**
 
 | Rule ID | Observable evidence | Positive / absent / uncertain coverage | Frozen pair | Source IDs |
 |---|---|---|---|---|
@@ -47,3 +47,21 @@ isolation.
 | CLI | `evaluate`, `replay`, `benchmark` | correct output files, concise failures, and exit 0/1/2 contract |
 | Static audit | application result only | timeline, evidence links, suppression, resource provenance, hash, HTML escaping, no script/remote asset/aggregate score |
 | UI removability | application and core imports | no core/application dependency on `careloop.presentation` |
+
+## Milestone 6 report, verification, and delivery matrix
+
+| Boundary/control | Raw evidence | Required coverage |
+|---|---|---|
+| Case-level rule agreement | 16 benchmark records and their comparison tuples | count only cases with every expected comparison matched; retain mismatch case IDs |
+| Matched-pair discrimination | complete good/bad records grouped by pair and primary rule | require both variants, matching expected comparisons, and differing actual outcomes |
+| Final-only missed process violations | final-only and trajectory ledgers in benchmark raw | count trajectory-present `session`/`cbt`/`mi` violations absent from final-only evidence |
+| Evidence localization | each comparison's turn-reference match | count matches and preserve `case_id:rule_id` evidence IDs |
+| Crisis action agreement | P6/P7 safety observation comparisons | count only the two frozen override-action rule IDs; do not infer risk |
+| Normal-flow suppression | typed safety events embedded in raw evaluations | every applicable required override has `normal_flow_suppressed=true` |
+| Resource locale/version | P8 resource-integrity comparisons and references | exact good/bad comparison agreement remains evidence, not a real resource claim |
+| Replay agreement | 16 verification raw records | canonical bytes, hash, and trajectory agree with the evaluated local artifact |
+| Invalid artifact rejection | four verification raw records | duplicate turn, hash mismatch, unknown schema, and invalid finding reference reject for the expected reason |
+| Raw-to-summary derivation | benchmark and verification JSONL | canonical summary JSON and deterministic Markdown recompute byte-for-byte; malformed/noncanonical raw rejects |
+| Prohibited aggregation | summary schema and Markdown | no aggregate score, percentage, ranking, clinical metric, confidence, or significance claim |
+| CI delivery | GitHub Actions workflow | locked sync; format, lint, mypy, pytest, benchmark order; generated-artifact diff gate |
+| Mutation proof | temporary P7 ordinary-response mutation | focused crisis-preemption regression is red under mutation and green after restoration |
