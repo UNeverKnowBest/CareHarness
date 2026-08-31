@@ -208,9 +208,9 @@ the Day 1 public schema.
 
 ## Exact next milestone
 
-Milestone 6 is complete. The exact next milestone is Milestone 7: perform a
-clean locked reproduction in a fresh environment, then conduct a separate
-strict read-only final review. Milestone 7 adds no planned product behavior.
+Milestone 7 is complete. No Milestone 8 or additional product behavior is
+planned. Any future work requires a new owner-approved, versioned milestone that
+preserves the frozen synthetic, offline, deterministic, non-clinical boundary.
 
 ## Milestone 3 — deterministic CBT-informed/MI-inspired process evaluator
 
@@ -446,3 +446,56 @@ mutation evidence.
   audit-UI behavior change.
 - No aggregate score, percentage, statistical significance, clinical metric, or
   real-world/population claim.
+
+## Milestone 7 — clean reproduction and final read-only review
+
+Plan status: **COMPLETE**. Milestone 7 added no product behavior and changed no
+runtime dependency, public schema, evaluator, policy, fixture, gold label, or
+generated result artifact.
+
+### M7.1 Freeze the project-closing README contract
+
+### COMPLETE
+
+- State the completed milestone status, lockfile reproduction sequence,
+  generated-artifact ownership, interpretation boundary, and maintenance rules.
+- State that the CLI is the primary interface, there is no web application or
+  server, and optional audit HTML is a local read-only file.
+- Protect these statements with a delivery-contract test before editing README.
+
+### M7.2 Reproduce from a clean locked environment
+
+### COMPLETE
+
+- Create an isolated detached worktree at the M7 README/test commit and verify it
+  has no existing `.venv`.
+- Run `uv sync --locked`, lock/version/help checks, the complete quality gate,
+  benchmark regeneration, fixture generator check, and artifact diff check.
+- Require a clean worktree after reproduction and remove the temporary worktree.
+
+### M7.3 Conduct a separate strict read-only final review
+
+### COMPLETE
+
+- After reproduction, inspect only versioned files and Git evidence; do not edit
+  the isolated checkout during review.
+- Verify M7 changes no source, policy, benchmark, generated artifact, dependency,
+  or lockfile; confirm no web/server dependency and inspect static HTML rendering.
+- Treat tests, source, lockfile, raw artifacts, and Git diffs as evidence. README
+  and status statements are not independent proof.
+
+### M7.4 Record, verify, and deliver
+
+### COMPLETE
+
+- Record exact commands, exit statuses, counts, review findings, and residual
+  limitations in `STATUS.md`.
+- Re-run the complete locked quality gate in the primary worktree, review the
+  final diff, commit the M7 evidence, and push the dedicated branch.
+
+### Milestone 7 explicit exclusions
+
+- No Web UI, Web API, server, chat surface, upload flow, provider/model adapter,
+  network runtime, database, deployment, or new application use case.
+- No clinical, real-world safety, treatment, population, aggregate-score, or
+  statistical claim.

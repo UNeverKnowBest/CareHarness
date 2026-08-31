@@ -1,8 +1,8 @@
 # CareLoop Harness Status
 
-Current phase: Milestone 6 complete
-Next milestone: Milestone 7 clean reproduction and independent read-only review
-Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M6.5
+Current phase: Milestone 7 complete; planned v1 scope closed
+Next milestone: none planned; future work requires a new owner-approved versioned milestone
+Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M7.4
 
 ## Status vocabulary
 
@@ -858,8 +858,111 @@ frozen fixtures, or introduce an aggregate clinical/quality score.
 - No evaluator decision, safety behavior, public schema, dependency, lock entry,
   frozen fixture, gold label, or generated artifact changed.
 
+## Milestone 7 clean reproduction and final review
+
+### README and interaction contract
+
+- Work began on `feat/m7-final-reproduction` from the conflict-free M6 commit
+  `dd9adb4`.
+- Added a delivery-contract test before the README change. The red command
+  `uv run --locked pytest tests\test_delivery_contract.py -q` exited 1
+  with one failed and three passed tests because the M7 completion/interaction
+  statements were absent.
+- The README now records the closed v1 milestone status, complete lockfile
+  reproduction sequence, generated-artifact ownership, maintenance rules, and
+  evidence/interpretation boundary.
+- The README explicitly states that CLI is the primary interaction surface,
+  there is no web application/API/server/chat/upload session, and optional
+  audit HTML is a local read-only static file.
+- The same focused delivery-contract command after the README change exited 0;
+  four tests passed in 0.01 seconds.
+- README/test commit used for clean reproduction:
+  `44cbce745f1d5d23a001e0daa627aebd0de471b1`.
+
+### Clean lockfile reproduction
+
+- Created detached worktree
+  `C:\Users\guosh\AppData\Local\Temp\careloop-m7-repro-44cbce7`
+  at `44cbce7`; `Test-Path .venv` returned `False` before synchronization.
+- `uv sync --locked`: exit 0; created a new `.venv` with CPython 3.12.11,
+  resolved and installed 23 locked packages, and installed CareLoop Harness
+  0.1.0 from the isolated checkout.
+- `uv lock --check`: exit 0; 23 packages resolved.
+- `uv run --locked python --version`: exit 0; Python 3.12.11.
+- `uv run --locked careloop --version`: exit 0; `0.1.0`.
+- `uv run --locked careloop --help`: exit 0; exposed help/version plus exactly
+  `evaluate`, `replay`, and `benchmark`.
+- `uv run --locked ruff format --check .`: exit 0; 63 files already formatted.
+- `uv run --locked ruff check .`: exit 0; all checks passed.
+- `uv run --locked mypy src`: exit 0; no issues in 37 source files.
+- `uv run --locked pytest -q`: exit 0; 158 passed in 0.66 seconds.
+- `uv run --locked careloop benchmark --manifest
+  benchmarks\manifest.v1.json`: exit 0; 16 cases and all four artifact
+  paths were written.
+- `uv run --locked python
+  tools\generate_milestone2_fixtures.py --check`: exit 0.
+- `git diff --exit-code -- artifacts\raw artifacts\summary`: exit 0;
+  regenerated artifacts were byte-identical.
+- Final isolated `git status --short`: exit 0 with no tracked or untracked
+  output. The exact temporary worktree and its generated `.venv` were removed
+  after review; `Test-Path` returned `False`.
+
+### Separate strict read-only final review
+
+- After reproduction, no file in the isolated checkout was edited during the
+  review phase.
+- `git diff --exit-code dd9adb4 44cbce7 -- src policies benchmarks artifacts
+  pyproject.toml uv.lock`: exit 0; M7 changed no implementation, policy, frozen
+  input, generated evidence, dependency declaration, or lock entry.
+- `git diff --check dd9adb4..44cbce7`: exit 0.
+- An initial dependency search using unquoted pipe-separated alternatives
+  exited 255 because `cmd.exe` interpreted the pipes. It changed no file and
+  was replaced with explicit ripgrep `-e` arguments.
+- Final `rg -n -i -e streamlit -e fastapi -e flask -e uvicorn -e websocket
+  -e httpx -e requests -e socketserver -e http.server pyproject.toml src`:
+  exit 1 with no matches, which is the expected negative result.
+- Direct inspection of `pyproject.toml` confirmed only Pydantic and Typer at
+  runtime and pytest, Ruff, and mypy for development. The sole project entry
+  point is `careloop = careloop.cli:main`.
+- Direct inspection of `src/careloop/presentation/audit_html.py` confirmed
+  deterministic escaped HTML bytes, inline CSS, local file output, and no
+  script, remote asset, server, editable control, or network implementation.
+- Final isolated `git status --porcelain=v1`: exit 0 with no output.
+- Review result: no blocker. README is operating guidance, not independent
+  evidence; the source, lockfile, tests, raw artifacts, and Git diff support
+  the recorded conclusions.
+
+### Final primary-worktree verification
+
+- `uv lock --check`: exit 0; 23 packages resolved.
+- `uv run --locked ruff format --check .`: exit 0; 64 files already formatted.
+- `uv run --locked ruff check .`: exit 0; all checks passed.
+- `uv run --locked mypy src`: exit 0; no issues in 37 source files.
+- `uv run --locked pytest -q`: exit 0; 158 passed in 0.55 seconds.
+- `uv run --locked careloop benchmark --manifest
+  benchmarks\manifest.v1.json`: exit 0; 16 cases and all generated paths
+  were written.
+- `uv run --locked python
+  tools\generate_milestone2_fixtures.py --check`: exit 0.
+- `git diff --exit-code -- artifacts\raw artifacts\summary`: exit 0.
+- No public schema, evaluator decision, process/crisis/ethical/resource/
+  evaluation policy, frozen fixture, gold label, dependency, lock entry,
+  package version, generated artifact, or application behavior changed.
+
+### Residual limitations
+
+- Deterministic success applies only to the frozen synthetic corpus and exact
+  local contracts. It provides no clinical, real-world safety, treatment,
+  population, or statistical evidence.
+- There is deliberately no interactive web product. The optional audit surface
+  is a generated local static HTML file and was not turned into a server or UI
+  application in M7.
+- The hosted CI run for the final M7 branch is not independently observed until
+  the branch is pushed.
+
 ## Next exact milestone
 
-Stop after Milestone 6. Milestone 7 must perform a clean reproduction from the
-lockfile and then a separate strict read-only final review. It must not add new
-features or treat README/self-reported claims as independent evidence.
+Stop after Milestone 7. No Milestone 8 is planned. Any future work must begin
+with an owner-approved versioned milestone and must preserve the frozen
+professional, safety, architecture, replay, gold-isolation, and reporting
+boundaries.
