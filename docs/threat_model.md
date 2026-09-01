@@ -1,6 +1,6 @@
 # Agent Runtime Threat Model
 
-Status: **FROZEN for the synthetic Milestone 8 design**
+Status: **FROZEN through the synthetic Milestone 10 runtime boundary**
 
 ## Assets and trust boundaries
 
@@ -26,6 +26,38 @@ The project uses Synthetic data only and is not approved for real patient data.
 | Replay nondeterminism | Clock, network, random provider result, or mutable plugin profile changes evidence. | Replay reads frozen artifacts only; store exact prompt/plugin/model identities; exclude runtime metadata from canonical identity. |
 | False clinical interpretation | A reviewer mistakes system routing for diagnosis or validated safety assessment. | Use non-clinical vocabulary and persistent research-only limitations in UI and reports; do not expose scores or probabilities. |
 | Resource guessing | Missing locale causes an invented emergency contact. | Select only allowlisted, versioned, jurisdiction-matched resources at explicit `as_of`; otherwise require review with no guessed contact. |
+
+## Milestone 9 implemented controls
+
+- Plugin discovery matches the exact local entry-point group, name, and value
+  before load, then validates exact manifest identity/version and the complete
+  dependency graph. Unallowlisted entries are not loaded.
+- The project bundles no plugin or default allowlist. Discovery does not install
+  packages, access credentials, or use the network.
+- Provider output is revalidated even when an adapter returns a `ModelDraft`
+  instance. Request, provider, and model identity mismatches fail closed.
+- Provider exception text is not copied into failure evidence. The result stores
+  only a stable failure category and the validated `RUNTIME_FAILURE` event.
+- Successful generation yields quarantined data only. M9 has no release field,
+  raw-token stream, fallback provider, or participant projection.
+
+## Milestone 10 implemented controls
+
+- Input pre-routing completes before a session enters drafting or a model port
+  is called. Synthetic override evidence never coexists with an ordinary
+  released response for that command.
+- Draft text remains reviewer-only until the gate allows it and the
+  `DRAFT_APPROVED` event is durably appended to the in-memory ledger. A failed
+  approval append produces no released turn.
+- Exact request retries use an immutable local result projection; changed input
+  under the same request ID rejects. This does not claim distributed
+  idempotency.
+- The in-memory ledger validates the full state/sequence chain before append and
+  exposes tuple snapshots only. There is no update/delete method or wall-clock
+  identity.
+- Persistent ledger unavailability can prevent recording even the failure
+  transition. The service still exposes no reply, but durable recovery and
+  multi-process consistency remain deferred to a later versioned milestone.
 
 ## Existing offline harness controls retained
 

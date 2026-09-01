@@ -3,6 +3,8 @@ from pathlib import Path
 
 DOMAIN_ROOT = Path("src/careloop/domain")
 AGENT_RUNTIME_ROOT = Path("src/careloop/agent_runtime")
+PLUGIN_RUNTIME_ROOT = Path("src/careloop/plugin_runtime")
+RUNTIME_STORAGE_ROOT = Path("src/careloop/runtime_storage")
 PROCESS_ROOT = Path("src/careloop/process")
 SAFETY_ROOT = Path("src/careloop/safety")
 EVALUATION_ROOT = Path("src/careloop/evaluation")
@@ -47,6 +49,7 @@ def test_agent_runtime_contracts_have_no_adapter_or_outer_layer_dependencies() -
         "careloop.presentation",
         "careloop.reporting",
         "careloop.safety",
+        "careloop.plugin_runtime",
         "openai",
         "pydantic_ai",
         "sqlalchemy",
@@ -56,6 +59,89 @@ def test_agent_runtime_contracts_have_no_adapter_or_outer_layer_dependencies() -
     assert all(
         not any(module == root or module.startswith(f"{root}.") for root in forbidden)
         for module in imported_modules
+    )
+
+
+def test_plugin_runtime_is_removable_and_has_no_outer_or_network_dependency() -> None:
+    forbidden = CORE_FORBIDDEN_IMPORT_ROOTS | {
+        "careloop.application",
+        "careloop.cli",
+        "careloop.evaluation",
+        "careloop.presentation",
+        "careloop.reporting",
+        "careloop.safety",
+        "http",
+        "openai",
+        "pydantic_ai",
+        "requests",
+        "socket",
+        "subprocess",
+        "urllib",
+    }
+    imported_modules = _imported_modules(PLUGIN_RUNTIME_ROOT)
+
+    assert all(
+        not any(module == root or module.startswith(f"{root}.") for root in forbidden)
+        for module in imported_modules
+    )
+
+
+def test_runtime_storage_is_removable_and_has_no_outer_dependency() -> None:
+    forbidden = CORE_FORBIDDEN_IMPORT_ROOTS | {
+        "careloop.application",
+        "careloop.cli",
+        "careloop.evaluation",
+        "careloop.plugin_runtime",
+        "careloop.presentation",
+        "careloop.reporting",
+        "careloop.safety",
+        "http",
+        "openai",
+        "pydantic_ai",
+        "requests",
+        "socket",
+        "sqlalchemy",
+        "subprocess",
+        "urllib",
+    }
+    imported_modules = _imported_modules(RUNTIME_STORAGE_ROOT)
+
+    assert all(
+        not any(module == root or module.startswith(f"{root}.") for root in forbidden)
+        for module in imported_modules
+    )
+
+
+def test_m10_application_has_no_cli_ui_gold_provider_network_or_clock_logic() -> None:
+    source_path = APPLICATION_ROOT / "synthetic_turn.py"
+    imported_modules = _imported_modules(source_path.parent)
+    forbidden = {
+        "careloop.cli",
+        "careloop.plugin_runtime",
+        "careloop.presentation",
+        "benchmarks",
+        "gold",
+        "httpx",
+        "openai",
+        "requests",
+        "socket",
+        "sqlalchemy",
+        "urllib",
+    }
+
+    assert all(
+        not any(module == root or module.startswith(f"{root}.") for root in forbidden)
+        for module in imported_modules
+    )
+    source = source_path.read_text(encoding="utf-8").casefold()
+    assert "datetime.now" not in source
+    assert "date.today" not in source
+    assert "benchmarks/gold" not in source
+    assert "synthetic_turn" not in (APPLICATION_ROOT / "__init__.py").read_text(
+        encoding="utf-8"
+    )
+    assert "synthetic_turn" not in Path("src/careloop/cli.py").read_text(
+        encoding="utf-8"
     )
 
 

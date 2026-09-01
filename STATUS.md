@@ -1,8 +1,8 @@
 # CareLoop Harness Status
 
-Current phase: Milestone 7 complete; planned v1 scope closed
-Next milestone: none planned; future work requires a new owner-approved versioned milestone
-Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M7.4
+Current phase: Milestone 10 complete
+Next milestone: none approved; future work requires a new versioned milestone
+Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M10.4
 
 ## Status vocabulary
 
@@ -1076,3 +1076,234 @@ boundaries.
 Stop after Milestone 8. Milestone 9 is allowlisted plugin discovery and a
 provider-neutral model runtime using deterministic test adapters before any
 real cloud connection.
+
+## Milestone 9 allowlisted plugin discovery and model runtime
+
+### Implemented change boundary
+
+- Added strict immutable `PluginAllowlistEntry` and `PluginAllowlistV1`
+  contracts for exact local entry-point name/value and plugin ID/version
+  pinning. The only discovery group is `careloop.plugins.v1`.
+- Added removable `careloop.plugin_runtime` discovery. It matches the allowlist
+  before `load()`, never loads unapproved candidates, validates the returned
+  `PluginManifestV1`, rejects missing/ambiguous/invalid/mismatched entries, and
+  returns a deterministic dependency-before-dependant catalog. Missing
+  dependencies and cycles reject.
+- Added `ProviderNeutralModelRuntime` over the existing asynchronous `ModelPort`.
+  A valid exact request/provider/model response remains a `quarantined_draft`
+  and emits the validated `DRAFT_GENERATED` transition.
+- Added five stable `ModelRuntimeFailureCode` categories for provider exception,
+  invalid draft, request mismatch, provider mismatch, and model mismatch. Each
+  failure retains no draft or exception text and emits `RUNTIME_FAILURE` to
+  `FAILED_CLOSED` with category-only evidence.
+- Provider-returned `ModelDraft` instances are dumped and revalidated, so an
+  adapter cannot bypass validation with `model_construct`.
+- Froze M9 behavior and limitations in `SPEC.md`, `ARCHITECTURE.md`, the agent
+  runtime contract, threat model, safety limitations, test matrix, and README.
+- Added no dependency, project entry point, plugin package, default allowlist,
+  provider SDK, real adapter, credential access, network call, CLI command,
+  persistence, Web/API/UI behavior, evaluator/policy change, or generated
+  artifact change. Deterministic adapters exist only in tests.
+
+### Test-first and focused evidence
+
+- Baseline `uv run --locked pytest -q`: exit 0; 198 tests passed in 0.57
+  seconds before M9 edits.
+- First sandboxed focused command, `uv run --locked pytest
+  tests\plugin_runtime\test_discovery.py
+  tests\agent_runtime\test_model_runtime.py -q`: exit 2 before test startup
+  because the sandbox could not read the existing uv cache.
+- The same pre-implementation command with cache access: exit 2 with the two
+  expected collection errors: missing `careloop.plugin_runtime` and missing
+  `ModelRuntimeFailureCode` export.
+- First post-implementation focused command: exit 0; 17 passed in 0.12 seconds,
+  with two Pydantic instance-field deprecation warnings in the new test. The
+  tests were corrected to inspect the model class without changing behavior.
+- Initial focused format/lint/mypy preflight found six unformatted files, five
+  Ruff findings, and three mypy errors. Scoped formatting and type-safe callable/
+  state imports corrected them; final focused tests then passed 18 cases and
+  mypy passed 45 source files.
+- Documentation/delivery red command, `uv run --locked pytest
+  tests\test_m9_contract_docs.py tests\test_delivery_contract.py -q`: exit 1;
+  three failed and three passed because the normative documents and README still
+  described M8 only.
+- Draft-result consistency red command, `uv run --locked pytest
+  tests\agent_runtime\test_model_runtime.py -q`: exit 1; one failed and ten
+  passed because inconsistent success evidence was initially accepted. After
+  enforcing exact success/failure evidence tuples, the same command exited 0;
+  11 passed.
+- Intermediate documentation/architecture runs exposed line-wrap-sensitive
+  contract assertions: first one failed and 14 passed, then the expanded scope
+  had one failed and 73 passed. Whitespace normalization made the assertion
+  formatting-independent without weakening its required phrases.
+- Final focused command, `uv run --locked pytest tests\plugin_runtime
+  tests\agent_runtime tests\test_m9_contract_docs.py
+  tests\test_agent_runtime_contract_docs.py tests\test_architecture.py
+  tests\test_delivery_contract.py -q`: exit 0; 74 passed in 0.18 seconds.
+
+### Required final verification
+
+- Initial `uv run --locked ruff format --check .`: exit 1; four changed test
+  files required mechanical formatting. `uv run --locked ruff format .` exited
+  0 and reformatted exactly four files.
+- Final `uv run --locked ruff format --check .`: exit 0; 79 files already
+  formatted.
+- Final `uv run --locked ruff check .`: exit 0; all checks passed.
+- Final `uv run --locked mypy src`: exit 0; no issues in 45 source files.
+- Final `uv run --locked pytest -q`: exit 0; 221 passed in 0.61 seconds in the
+  post-documentation rerun.
+- `uv run --locked careloop benchmark --manifest
+  benchmarks\manifest.v1.json`: exit 0; 16 cases completed and all four existing
+  raw/summary artifact paths were regenerated.
+- `uv run --locked python tools\generate_milestone2_fixtures.py --check`:
+  exit 0; all generator-owned frozen fixtures remain unchanged.
+- `uv lock --check`: exit 0; 23 packages resolved and the unchanged lock remains
+  synchronized.
+- `git diff --exit-code -- artifacts\raw artifacts\summary`: exit 0;
+  regenerated evidence is byte-identical.
+- `git diff --exit-code -- pyproject.toml uv.lock benchmarks artifacts
+  policies`: exit 0; dependency declarations, lock data, frozen inputs,
+  generated evidence, and evaluator/safety policies are unchanged.
+- `rg` checks for network/provider/process/clock/random imports in the M9 source
+  and for a registered `careloop.plugins` entry point in `pyproject.toml` each
+  exited 1 with no matches, the expected negative result.
+- `git diff --check`: exit 0; only Windows LF-to-CRLF conversion warnings were
+  emitted.
+
+### Residual limitations
+
+- An allowlisted Python entry point is trusted enough to execute its manifest
+  factory in-process; M9 validates identity and dependency metadata but adds no
+  package signature, process sandbox, installer, or supply-chain attestation.
+- The runtime verifies only one provider call and draft quarantine. It does not
+  yet compose input routing, output guards, bounded rewrite, review, release,
+  or append-only session persistence.
+- Deterministic synthetic adapters and failure tests do not establish model
+  quality, model-output safety, clinical validity, real-world crisis handling,
+  or effective human review.
+- The owner's pre-existing untracked `.python-version` and Chinese engineering
+  guide remain untouched and outside the M9 change set.
+
+## Exact next milestone
+
+Milestone 10 is the planned deterministic synthetic `RunSyntheticTurn`
+orchestration plus append-only in-memory event ledger described in `PLAN.md`.
+It must preserve draft/reviewer projection isolation and prove input routing,
+bounded rewriting, atomic release, and fail-closed failure injection using only
+deterministic adapters. It must not add a real plugin/provider, network, Web/API,
+database, credential, deployment, real-user workflow, or clinical capability.
+
+## Milestone 10 deterministic synthetic turn orchestration and event ledger
+
+### Implemented change boundary
+
+- Added strict `SyntheticTurnCommand`, `ParticipantTurnView`, and
+  `ResearchReviewTurnView` contracts plus exact application status/failure
+  enums. The participant projection cannot contain quarantined drafts, gate
+  results, internal runtime events, or failure details.
+- Added `RunSyntheticTurn` as an explicitly imported, library-only application
+  service. The existing `careloop.application` exports and CLI remain limited to
+  the original three offline use cases, so removing the M10 module does not
+  break evaluate, replay, benchmark, or reporting.
+- Added `SyntheticSafetyRuntime.route_input` and refactored the unchanged
+  synchronous `handle` method through it. Input detector/router/resource
+  routing now has an explicit pre-model API while all existing safety behavior
+  and tests remain unchanged.
+- Safe input appends `SUBMIT_TURN`, invokes M9 `ProviderNeutralModelRuntime`,
+  quarantines and revalidates the draft, then invokes an injected gate. A turn
+  is constructed only after `DRAFT_APPROVED` is successfully appended.
+- Added `EthicalDraftGate`, which maps the existing deterministic ethical output
+  policy to allow, rewrite, or review-hold decisions. It permits at most two
+  rewrites and holds the third blocked draft for review.
+- Added category-only failure handling for input/router/resource, model, gate,
+  and ledger failures. Failures release no ordinary output; a writable ledger
+  receives `RUNTIME_FAILURE` from the last persisted state.
+- Added exact in-process request idempotency. Commands and cached results are
+  deep-revalidated snapshots, so caller mutation cannot change a prior command
+  or result. Changed content under the same request ID rejects.
+- Added `RuntimeEventLedgerPort` and removable
+  `InMemoryRuntimeEventLedger`. It binds immutable session configuration,
+  revalidates every event, enforces zero-based contiguous sequence, exact state
+  chaining, globally unique event IDs, and returns detached tuple snapshots.
+  It exposes no update/delete operation.
+- Added no dependency, provider/plugin implementation, entry-point registration,
+  network, credential, clock, randomness, database, Web/API/UI, worker,
+  deployment, or new CLI command. Existing public domain schemas, policies,
+  frozen fixtures, gold, evaluator decisions, benchmark, and generated reports
+  remain unchanged.
+
+### Test-first and focused evidence
+
+- Pre-implementation `uv run --locked pytest tests\runtime_storage
+  tests\application_runtime tests\test_m10_contract_docs.py -q`: exit 2 with
+  the two expected collection errors: missing `careloop.runtime_storage` and
+  missing `EthicalDraftGate`/M10 application exports.
+- First post-implementation focused command including existing safety runtime
+  regressions: exit 0; 37 passed in 0.20 seconds.
+- Boundary-hardening red command covering deep idempotency snapshots,
+  pre-mutation command validation, strict override state, and detached ledger
+  snapshots: exit 1; three failed and one passed for the intended missing
+  protections.
+- After boundary revalidation and deep snapshot implementation, the same four
+  tests exited 0; four passed in 0.14 seconds.
+- README/architecture red command: exit 1; one failed and 14 passed because the
+  README still reported M9. The architecture boundary tests already passed.
+- Initial M10 focused/static preflight found six unformatted files, three Ruff
+  findings, and one mypy import error. Mechanical formatting and scoped import/
+  line-length corrections resolved them.
+- An expanded focused run after the first README update had one failed and 54
+  passed because a required phrase crossed a Markdown line boundary. The test
+  now normalizes whitespace while preserving every required phrase.
+- Final focused command, `uv run --locked pytest tests\runtime_storage
+  tests\application_runtime tests\test_m10_contract_docs.py
+  tests\safety\test_safety_runtime.py tests\test_architecture.py
+  tests\test_delivery_contract.py -q`: exit 0; 56 passed in 0.25 seconds.
+
+### Required final verification
+
+- `uv run --locked ruff format --check .`: exit 0; 85 files already formatted.
+- `uv run --locked ruff check .`: exit 0; all checks passed.
+- `uv run --locked mypy src`: exit 0; no issues in 48 source files.
+- Final post-documentation `uv run --locked pytest -q`: exit 0; 245 passed in
+  0.67 seconds.
+- `uv run --locked careloop benchmark --manifest
+  benchmarks\manifest.v1.json`: exit 0; 16 cases completed and all four existing
+  raw/summary artifact paths were regenerated.
+- `uv run --locked python tools\generate_milestone2_fixtures.py --check`:
+  exit 0; all generator-owned frozen fixtures remain unchanged.
+- `uv lock --check`: exit 0; 23 packages resolved and the unchanged lock remains
+  synchronized.
+- `git diff --exit-code -- artifacts\raw artifacts\summary`: exit 0;
+  regenerated evidence is byte-identical.
+- `git diff --exit-code -- pyproject.toml uv.lock benchmarks artifacts
+  policies`: exit 0; dependencies, lock data, frozen inputs, generated evidence,
+  and process/safety/evaluation policies are unchanged.
+- Negative `rg` checks found no provider/network/database/clock/random imports
+  in M10 source and no M10 import or command in CLI/application exports; both
+  exited 1 with no matches as expected.
+- `git diff --check`: exit 0; only Windows LF-to-CRLF conversion warnings were
+  emitted.
+
+### Residual limitations
+
+- The ledger and idempotency cache are process-local demonstrations. They do not
+  provide durability, concurrency control, transaction recovery, or
+  multi-process/distributed idempotency.
+- If ledger writes remain persistently unavailable, even the failure transition
+  cannot be recorded. `RuntimeLedgerUnavailable` exposes no participant reply,
+  but durable recovery remains outside M10.
+- M10 stops at review hold. It does not implement review decisions, session
+  close/evaluation/report orchestration, a participant endpoint, or staffed
+  human response.
+- Exact synthetic routing and output phrases plus deterministic test adapters do
+  not establish model quality, real-world output safety, clinical validity,
+  crisis detection, treatment effect, or effective review.
+- The owner's pre-existing untracked `.python-version` and Chinese engineering
+  guide remain untouched and outside the M10 change set.
+
+## Exact next milestone
+
+No Milestone 11 is approved. Stop after M10. Any later implementation requires a
+new owner-approved versioned milestone that preserves the existing offline core,
+professional/safety boundaries, draft isolation, append-only evidence, and
+generated-artifact ownership.

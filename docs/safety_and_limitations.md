@@ -65,3 +65,19 @@ The planned participant-shaped interface remains restricted to researchers
 role-playing versioned synthetic personas. It is not approved for real patient
 data or ordinary public use. Human review is a local demonstration workflow,
 not a staffed clinical or emergency service.
+
+Milestone 9 discovers only explicitly allowlisted local plugin manifests and
+uses deterministic test adapters to verify the provider-neutral model boundary.
+No plugin or provider is bundled or enabled, and no network call is made. A
+successful result is still a quarantined draft, not participant-visible output;
+provider, validation, or identity failure transitions the synthetic runtime to
+`FAILED_CLOSED`. These controls do not establish that any future model output,
+plugin, reviewer, or operational workflow is safe or clinically effective.
+
+Milestone 10 composes the exact synthetic input router, quarantined model port,
+and deterministic draft-gate decisions in one local application service. A
+typed override suppresses ordinary generation, and a critical component failure
+produces no released reply. The two-rewrite limit and in-memory event ledger are
+control-flow evidence only. They do not validate model meaning, detect real
+crises, provide staffed review, make synthetic resources real, or establish an
+operationally safe participant system.

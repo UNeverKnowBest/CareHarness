@@ -111,35 +111,13 @@ class SyntheticSafetyRuntime:
         as_of: date,
         responder: Callable[[Turn], str],
     ) -> SafetyRuntimeResult:
-        try:
-            detection = self._detector.detect(turn)
-        except Exception:
-            return self._fail_closed(turn)
-
-        if detection.requires_override:
-            try:
-                routed = self._router.route(
-                    turn,
-                    detection,
-                    jurisdiction=jurisdiction,
-                    as_of=as_of,
-                )
-            except Exception:
-                return self._fail_closed(turn)
-            status = (
-                SafetyRuntimeStatus.HUMAN_REVIEW_REQUIRED
-                if routed.human_review_required
-                else SafetyRuntimeStatus.CRISIS_OVERRIDE
-            )
-            return SafetyRuntimeResult(
-                status=status,
-                event=routed.event,
-                resources=routed.resources,
-                resource_status=routed.resource_status,
-                findings=(),
-                evaluated_output=None,
-                visible_output=None,
-            )
+        routed_input = self.route_input(
+            turn,
+            jurisdiction=jurisdiction,
+            as_of=as_of,
+        )
+        if routed_input is not None:
+            return routed_input
 
         response_text = responder(turn)
         output = Turn(
@@ -169,3 +147,42 @@ class SyntheticSafetyRuntime:
             evaluated_output=output,
             visible_output=output,
         )
+
+    def route_input(
+        self,
+        turn: Turn,
+        *,
+        jurisdiction: str | None,
+        as_of: date,
+    ) -> SafetyRuntimeResult | None:
+        """Return override/failure evidence or None before any responder call."""
+        try:
+            detection = self._detector.detect(turn)
+        except Exception:
+            return self._fail_closed(turn)
+
+        if detection.requires_override:
+            try:
+                routed = self._router.route(
+                    turn,
+                    detection,
+                    jurisdiction=jurisdiction,
+                    as_of=as_of,
+                )
+            except Exception:
+                return self._fail_closed(turn)
+            status = (
+                SafetyRuntimeStatus.HUMAN_REVIEW_REQUIRED
+                if routed.human_review_required
+                else SafetyRuntimeStatus.CRISIS_OVERRIDE
+            )
+            return SafetyRuntimeResult(
+                status=status,
+                event=routed.event,
+                resources=routed.resources,
+                resource_status=routed.resource_status,
+                findings=(),
+                evaluated_output=None,
+                visible_output=None,
+            )
+        return None

@@ -1,4 +1,4 @@
-"""The three CareLoop Harness application use cases and their raw results."""
+"""The three removable offline CareLoop Harness application use cases."""
 
 from careloop.application.benchmark import (
     BenchmarkRecord,

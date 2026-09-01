@@ -554,3 +554,147 @@ fixture, evaluator, replay, gold-isolation, and reporting boundaries.
 Milestone 9 — allowlisted plugin discovery and provider-neutral model runtime,
 using deterministic test adapters first. It must not start until M8 passes all
 required verification.
+
+## Milestone 9 — allowlisted plugin discovery and provider-neutral model runtime
+
+Plan status: **COMPLETE**. Work was limited to local manifest discovery and a
+single quarantined draft-generation boundary. It does not add a live plugin,
+real provider, complete session, new CLI command, or network behavior.
+
+### M9.1 Freeze discovery and invocation contracts
+
+### COMPLETE
+
+- Freeze exact `careloop.plugins.v1` entry-point matching,
+  `PluginAllowlistV1`, manifest identity/version pinning, complete dependency
+  validation, and stable dependency-before-dependant order.
+- Freeze the model-runtime success and failure result, exact failure categories,
+  draft quarantine, explicit event identity/sequence, and exception-detail
+  exclusion.
+- Extend architecture, threat, safety/limitation, and test-matrix boundaries
+  without changing existing evaluator, safety-policy, fixture, or report rules.
+
+### M9.2 Add red discovery, adapter, and delivery tests
+
+### COMPLETE
+
+- Add pre-load allowlist, unapproved-entry isolation, identity/version,
+  dependency/cycle, strict-schema, and deterministic-order tests.
+- Add deterministic async adapter coverage for valid quarantined drafts,
+  provider exceptions, invalid constructed models, and request/provider/model
+  mismatch.
+- Add failed-closed event, non-sensitive evidence, no-release-field,
+  architecture, documentation, and README contract tests.
+
+### M9.3 Implement the minimum removable runtime
+
+### COMPLETE
+
+- Add `careloop.plugin_runtime` using only local `importlib.metadata`, strict
+  allowlist models, `PluginManifestV1` validation, and pure dependency ordering.
+- Add `ProviderNeutralModelRuntime` over the existing `ModelPort`, revalidate
+  all returned drafts, and return either quarantined evidence or a typed
+  `RUNTIME_FAILURE`/`FAILED_CLOSED` result.
+- Keep every adapter in tests. Register no project entry point or provider and
+  add no dependency, credential, fallback, clock, random, file, or network use.
+
+### M9.4 Verify, record, and stop
+
+### COMPLETE
+
+- Run focused M9 tests, the complete locked format/lint/mypy/pytest gate, the
+  unchanged benchmark, fixture-generator check, generated-artifact diff, lock
+  check, and final change-boundary review.
+- Record exact exit statuses and counts in `STATUS.md`, then stop before M10
+  implementation.
+
+### Milestone 9 explicit exclusions
+
+- No installed/default plugin, concrete provider, prompt builder, safety-plugin
+  execution, rewrite/review/release orchestration, persistence, API, Web UI,
+  worker, deployment, authentication, or new CLI command.
+- No real-person data, clinical screening, diagnosis, risk classification,
+  treatment, crisis-service behavior, model-quality claim, or real-world safety
+  claim.
+
+## Milestone 10 — deterministic synthetic turn orchestration and event ledger
+
+Plan status: **COMPLETE**. The owner-authorized delivery remained limited to the
+frozen application service and in-memory evidence boundary below.
+
+### M10.1 Freeze one application use case and evidence boundary
+
+### COMPLETE
+
+- Define one `RunSyntheticTurn` application service for versioned synthetic
+  role-play only. Freeze its request/result fields and exact composition of
+  input routing, provider-neutral drafting, draft checks, bounded rewrite,
+  review hold, atomic release, and failed-closed termination.
+- Freeze a local append-only in-memory runtime ledger for acceptance evidence.
+  Require monotonic `(session_id, sequence)`, exact causation/evidence
+  references, no updates/deletes, and replay from events without clock/random
+  identity.
+- Freeze participant versus reviewer projections: participant output contains
+  released turns only; drafts, failed attempts, and review evidence remain
+  quarantined.
+
+### M10.2 Add red orchestration and failure-injection tests
+
+### COMPLETE
+
+- Cover input safety before any model call, override with zero model calls,
+  output checking before release, two rewrites maximum, review hold, no bypass,
+  and atomic release.
+- Inject model, input-router, output-guard, resource, and ledger failures and
+  require a final append-only `RUNTIME_FAILURE` transition with no visible
+  ordinary output or fallback reply.
+- Cover idempotent causation, monotonic ledger sequence, reconstruction,
+  participant/reviewer projection isolation, plugin-profile immutability, and
+  deterministic repeated results.
+
+### M10.3 Implement the minimum in-memory orchestration
+
+### COMPLETE
+
+- Compose only existing versioned contracts, the existing synthetic safety
+  runtime, M9 model runtime, injected deterministic draft-check adapters, and a
+  local in-memory ledger behind declared ports.
+- Implement no database, HTTP endpoint, background worker, browser UI, real
+  plugin package, or provider/network adapter. Add no CLI command unless a
+  separately frozen M10 contract explicitly requires one before tests.
+
+### M10.4 Verify, record, and stop
+
+### COMPLETE
+
+- Run focused failure/metamorphic/architecture tests and the complete locked
+  verification sequence, including the unchanged offline benchmark and
+  generated-artifact diff.
+- Update `STATUS.md` with exact evidence and stop before any Web, database,
+  cloud-provider, credential, or real-participant milestone.
+
+### Milestone 10 acceptance gates
+
+- No draft or partial token reaches the participant projection before every
+  required gate passes; an override or critical failure releases no ordinary
+  response.
+- Rewrites stop after two attempts and then enter typed review hold. Review hold
+  cannot be bypassed by another turn.
+- The append-only ledger alone reconstructs the exact session state and rejects
+  duplicate/non-monotonic events without rewriting history.
+- Removing the orchestration package leaves evaluator, replay, benchmark,
+  reporting, existing CLI commands, frozen fixtures, and generated artifacts
+  fully operational.
+
+### Milestone 10 explicit exclusions
+
+- No FastAPI, PostgreSQL, SQLAlchemy, Alembic, WebSocket/SSE server, React,
+  Docker, authentication, real provider/plugin, credential access, deployment,
+  FHIR, real-user data, or clinical claim.
+
+## Exact next milestone
+
+No Milestone 11 is currently approved. Stop after M10. Any later work requires a
+new owner-approved versioned milestone and must not assume authorization for a
+Web/API server, database, real provider/plugin, credentials, deployment, or
+real-participant workflow.

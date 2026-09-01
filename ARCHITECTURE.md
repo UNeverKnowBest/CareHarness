@@ -379,3 +379,78 @@ event ledger plus replaceable projections; database timestamps never become
 replay identity. The logical table and endpoint contracts are frozen in
 `docs/agent_runtime_contract.md`, while actual Web and persistence technology is
 deferred.
+
+## Milestone 9 plugin and model-runtime boundary
+
+### FROZEN
+
+Milestone 9 adds two removable paths without composing a live session:
+
+```text
+local importlib metadata + PluginAllowlistV1
+  -> pre-load group/name/value match
+  -> PluginManifestV1 validation + exact identity/version
+  -> dependency-before-dependant catalog
+
+ModelRequest + injected ModelPort + exact provider manifest/model name
+  -> provider call
+  -> revalidated quarantined ModelDraft + DRAFT_GENERATED
+  -> any provider/draft/correlation failure -> RUNTIME_FAILURE -> FAILED_CLOSED
+```
+
+`careloop.plugin_runtime` is an outer, removable local-discovery adapter. It may
+depend on the standard library, Pydantic, and `careloop.agent_runtime` contracts.
+It cannot import application, CLI, presentation, reporting, evaluation, safety
+implementations, benchmark/gold data, network clients, provider SDKs, or tests.
+The inner `careloop.agent_runtime` package cannot import `plugin_runtime`.
+
+`ProviderNeutralModelRuntime` remains inside the provider-neutral runtime core.
+It depends only on the existing port, runtime contracts, and state machine. It
+returns either a quarantined draft or a typed failed-closed result; it does not
+construct a visible `Turn`, run policy gates, choose a resource, retry, fall
+back to another provider, or write persistence.
+
+The only adapter used by M9 verification is a deterministic test adapter. No
+plugin package is registered in project metadata, no default allowlist is
+shipped, and the existing evaluator/replay/benchmark paths do not import or call
+either M9 path.
+
+## Milestone 10 application orchestration and storage boundary
+
+### FROZEN
+
+```text
+SyntheticTurnCommand
+  -> existing synthetic input pre-route
+     -> override: no model call, no ordinary release
+     -> failure: append RUNTIME_FAILURE, fail closed
+     -> support: SUBMIT_TURN
+        -> ProviderNeutralModelRuntime -> quarantined draft
+        -> injected draft gate
+           -> rewrite (maximum two) -> model runtime
+           -> review hold -> no release
+           -> allow -> persist DRAFT_APPROVED -> construct released Turn
+
+all lifecycle transitions -> RuntimeEventLedgerPort
+                         -> InMemoryRuntimeEventLedger
+```
+
+`careloop.application.synthetic_turn` owns `RunSyntheticTurn`, strict command
+and result projections, idempotent command handling, and composition. It may
+depend on domain, public agent-runtime contracts/ports, and public synthetic
+safety interfaces. It contains no detector phrase, output-policy rule, resource
+record, provider implementation, persistence technology, CLI, UI, gold,
+benchmark, report, network, or wall-clock logic.
+
+`careloop.runtime_storage` is a removable outer in-memory adapter implementing
+`RuntimeEventLedgerPort`. It depends inward on agent-runtime contracts only and
+cannot import application, safety, evaluation, reporting, presentation, CLI,
+provider/plugin implementations, benchmark/gold data, or network/database code.
+Removing both M10 packages leaves the original three offline use cases and all
+frozen evidence paths operational.
+
+Participant and research-review projections are separate types. The participant
+projection can contain an atomically released turn and typed synthetic override
+evidence, but never a model draft, draft-gate result, internal runtime event, or
+failure detail. The research-review projection may contain quarantined drafts
+and ordered evidence but is not a participant response.
