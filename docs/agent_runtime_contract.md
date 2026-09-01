@@ -1,6 +1,6 @@
 # Agent Runtime Contract
 
-Contract status: **FROZEN for Milestone 8**
+Contract status: **FROZEN through Milestone 10**
 
 ## Product and release boundary
 
@@ -100,3 +100,50 @@ FastAPI, PostgreSQL, SQLAlchemy, Alembic, cloud SDKs, React, Docker Compose,
 authentication, FHIR, and model calls are not part of M8. Their future adapters
 must depend inward on this provider-neutral contract. The existing evaluator,
 replay, CLI, frozen benchmark, and public Day 1 schemas remain unchanged.
+
+## Milestone 9 implemented boundary
+
+M9 implements local manifest discovery only for the exact entry-point group
+`careloop.plugins.v1`. `PluginAllowlistV1` pins each approved entry-point
+name/value and plugin ID/version. Discovery checks those strings before load,
+validates the returned `PluginManifestV1`, rejects missing dependencies and
+cycles, and returns a stable dependency-before-dependant catalog.
+No plugin package is bundled or enabled by default.
+
+`ProviderNeutralModelRuntime` invokes one injected `ModelPort`. The M9 tests use
+a deterministic test adapter; there is no real provider adapter and no network
+call. A correlated, identity-matching `ModelDraft` remains available only as
+`quarantined_draft` and advances from `DRAFTING` to `CHECKING_DRAFT`. Provider
+exceptions, invalid drafts, and request/provider/model mismatches produce a
+stable `ModelRuntimeFailureCode`, emit `RUNTIME_FAILURE`, and transition to
+`FAILED_CLOSED` without retaining draft text or exception details.
+
+Input routing, output-guard execution, bounded rewrite, review/release logic,
+append-only storage and API endpoints remain deferred. Complete session
+orchestration remains deferred. M9 adds no CLI command and does not alter the offline evaluator,
+replay, benchmark, generated evidence, or reporting paths.
+
+## Milestone 10 implemented contract
+
+`RunSyntheticTurn` is the sole M10 application use case. It binds an immutable
+`SessionConfig`, pre-routes the synthetic input with the existing safety
+runtime, invokes the M9 model runtime only after support is allowed, and checks
+every quarantined draft before release. `SyntheticTurnCommand`,
+`ParticipantTurnView`, and `ResearchReviewTurnView` freeze the application and
+audience boundaries. Participant data never contains drafts, gate decisions,
+internal runtime events, or failure details.
+
+An allowed gate result is persisted as `DRAFT_APPROVED` before an assistant
+`Turn` is constructed. Rewrite decisions return to `DRAFTING` and permit at
+most two new attempts. Hold or guidance suppression enters
+`AWAITING_HUMAN_REVIEW`; M10 does not implement reviewer decisions. Critical
+input, resource, model, gate, or ledger failure exposes no ordinary response
+and records `RUNTIME_FAILURE` from the last persisted state whenever the ledger
+remains writable.
+
+`InMemoryRuntimeEventLedger` is append-only acceptance evidence. It enforces one
+immutable session configuration, zero-based contiguous sequence, state-chain
+continuity, and unique event IDs. Exact command retries are served from an
+immutable in-process result projection; conflicting reuse of a request ID is
+rejected. This is neither durable persistence nor a multi-process idempotency
+claim.

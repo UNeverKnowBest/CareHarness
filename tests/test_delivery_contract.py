@@ -37,12 +37,16 @@ def test_readme_first_screen_states_product_boundary() -> None:
         assert phrase in first_screen
 
 
-def test_readme_records_milestone_eight_contract_with_cli_only_runtime() -> None:
-    readme = (ROOT / "README.md").read_text(encoding="utf-8").casefold()
+def test_readme_records_milestone_ten_runtime_with_cli_only_interaction() -> None:
+    readme = " ".join(
+        (ROOT / "README.md").read_text(encoding="utf-8").split()
+    ).casefold()
 
     for phrase in (
-        "project status: milestone 8 contract complete",
-        "interface only",
+        "project status: milestone 10 complete",
+        "runsyntheticturn",
+        "append-only in-memory",
+        "no installed plugin is enabled by default",
         "cli is the primary interaction surface",
         "no web application",
         "read-only static html",

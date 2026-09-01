@@ -1,4 +1,4 @@
-"""Public M8 contracts for the synthetic CareLoop agent runtime."""
+"""Public contracts for the synthetic CareLoop agent runtime through M10."""
 
 from careloop.agent_runtime.contracts import (
     MAX_DRAFT_REWRITE_ATTEMPTS,
@@ -16,7 +16,12 @@ from careloop.agent_runtime.contracts import (
     SessionConfig,
     SessionState,
 )
-from careloop.agent_runtime.ports import ModelPort
+from careloop.agent_runtime.model_runtime import (
+    ModelRuntimeFailureCode,
+    ModelRuntimeResult,
+    ProviderNeutralModelRuntime,
+)
+from careloop.agent_runtime.ports import ModelPort, RuntimeEventLedgerPort
 from careloop.agent_runtime.state_machine import (
     InvalidSessionTransition,
     RuntimeEvent,
@@ -33,12 +38,16 @@ __all__ = [
     "ModelDraft",
     "ModelPort",
     "ModelRequest",
+    "ModelRuntimeFailureCode",
+    "ModelRuntimeResult",
     "PluginFailureMode",
     "PluginKind",
     "PluginManifestV1",
     "PluginVersionRef",
+    "ProviderNeutralModelRuntime",
     "ReviewDecision",
     "RuntimeEvent",
+    "RuntimeEventLedgerPort",
     "SafetyDisposition",
     "SessionConfig",
     "SessionEvent",

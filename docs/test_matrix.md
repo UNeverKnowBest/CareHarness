@@ -80,3 +80,31 @@ isolation.
 | Provider neutrality | `ModelPort`, request, and draft types | no provider SDK/network/framework import; malformed prompt hash and context reject |
 | Provenance | exact prompt/model/plugin/resource identities | duplicate plugin identity rejects; no chain-of-thought field |
 | Future delivery boundary | API, event-ledger, storage, and threat documents | status-only SSE, participant draft isolation, append-only evidence, synthetic-only use |
+
+## Milestone 9 plugin discovery and model-runtime matrix
+
+| Boundary/control | Observable evidence | Required coverage |
+|---|---|---|
+| Pre-load allowlist | exact `careloop.plugins.v1` group plus entry-point name/value | approved entry loads once; unallowlisted and mismatched entries never load |
+| Manifest pinning | `PluginAllowlistV1` ID/version versus `PluginManifestV1` | exact match passes; missing, ambiguous, invalid, duplicate, ID/version mismatch reject |
+| Dependency integrity | complete discovered manifest graph | missing dependency and cycle reject; success is dependency-before-dependant and stable |
+| Draft quarantine | `ProviderNeutralModelRuntime` result | valid correlated draft emits `DRAFT_GENERATED`; no visible/released field exists |
+| Provider failure | deterministic test adapter exception | stable `ModelRuntimeFailureCode`, no exception detail/draft, `RUNTIME_FAILURE`, `FAILED_CLOSED` |
+| Boundary revalidation | malformed, constructed-invalid, or identity-mismatched draft | invalid/request/provider/model mismatch categories fail closed |
+| Determinism | explicit request/event IDs and identical adapter output | result JSON repeats byte-for-byte; no clock, randomness, network, fallback, or secret input |
+| Removability | source import graph and existing offline suites | plugin runtime depends inward only; evaluator, replay, benchmark, CLI, and generated evidence remain unchanged |
+
+## Milestone 10 orchestration and in-memory ledger matrix
+
+| Boundary/control | Observable evidence | Required coverage |
+|---|---|---|
+| Input-first routing | safety pre-route and model/gate spies | safe input routes before model; override has zero model/gate calls and no released turn |
+| Atomic release | ordered runtime events and participant view | gate runs before `DRAFT_APPROVED`; ledger append succeeds before `released_turn` exists |
+| Bounded rewrite | scripted gate/model adapters | zero, one, and two rewrites; third failed draft enters review hold with no release |
+| Critical failures | input/router/resource/model/gate/one-shot-ledger exceptions | category-only `RUNTIME_FAILURE`, `FAILED_CLOSED`, no fallback or visible ordinary output |
+| Review hold | `DRAFT_HELD_FOR_REVIEW` and next command | state is `AWAITING_HUMAN_REVIEW`; another participant turn cannot bypass it |
+| Idempotent causation | exact versus conflicting request-ID retry | exact retry is byte-identical with no calls/appends; changed payload rejects |
+| Session configuration | same session and `SessionConfig` | exact rebind passes; plugin-profile or configuration change rejects |
+| Append-only ledger | event tuples and reconstruction | zero-based contiguous sequence, unique IDs, exact state chain; duplicate/skip/divergence rejects before mutation; no update/delete API |
+| Projection isolation | exact participant/research-review model fields | participant sees only released/override projection; drafts/gates/events/failure details remain reviewer-only |
+| Removability | architecture and unchanged offline regressions | M10 application/storage have no CLI/UI/provider/network/database/gold dependency; benchmark artifacts remain identical |

@@ -1,8 +1,9 @@
 # CareLoop Harness
 
-Project status: Milestone 8 contract complete. The frozen v1 offline evaluator
-remains implemented and reproducible from `uv.lock`; M8 adds only
-provider-neutral synthetic agent-runtime contracts and a pure state machine.
+Project status: Milestone 10 complete. The frozen v1 offline evaluator remains
+implemented and reproducible from `uv.lock`; M10 adds the library-only
+`RunSyntheticTurn` orchestration service and an append-only in-memory runtime
+event ledger, verified with deterministic adapters.
 
 CareLoop Harness is an **offline-first**, **deterministic** evaluation harness
 for **synthetic** support-agent trajectories. It is deliberately
@@ -27,9 +28,12 @@ The CLI is the primary interaction surface. There is no web application, Web
 API, hosted service, live chat page, transcript upload flow, or remote user
 session. No server is started by any supported command.
 
-The M8 API, plugin, storage, and browser surfaces are versioned future contracts,
-not implemented capabilities. The added model port is an interface only and has
-no provider adapter, credential access, or network behavior.
+The API, durable storage, and browser surfaces remain versioned future
+contracts, not implemented capabilities. No installed plugin is enabled by
+default, and the model runtime has no real provider adapter, credential access,
+or network behavior. `RunSyntheticTurn` is not a CLI command: it releases a
+complete synthetic turn only after input routing, quarantined drafting, gate
+approval, and event append all succeed.
 
 `careloop evaluate` can optionally generate read-only static HTML for local
 audit. That HTML is a file opened by the user: it has no server, JavaScript,

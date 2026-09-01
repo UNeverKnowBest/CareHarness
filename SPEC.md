@@ -779,3 +779,130 @@ security boundaries are normative in `docs/threat_model.md`.
 - No change to the three supported CLI business commands.
 - No claim that the contract or tests establish real-world model safety,
   clinical validity, treatment effectiveness, or operational human response.
+
+## Milestone 9 allowlisted plugin discovery and model-runtime contract
+
+Contract status: **FROZEN for Milestone 9**. This additive contract implements
+only local plugin-manifest discovery and one provider-neutral draft-generation
+boundary. It does not change the Day 1 models, evaluators, safety policies,
+frozen corpus, replay, benchmark, reports, or supported CLI commands.
+
+### Allowlisted discovery
+
+- The only entry-point group is the exact string `careloop.plugins.v1`.
+- `PluginAllowlistEntry` freezes exact entry-point name/value and plugin
+  ID/version. `PluginAllowlistV1` carries exact `contract_version=v1`, contains
+  at least one entry, rejects unknown fields, and requires unique entry-point
+  names and plugin IDs.
+- Discovery filters by group, name, and entry-point value before calling
+  `load()`. An installed but unallowlisted entry point is never imported or
+  executed.
+- The loaded object is a zero-argument manifest factory. Its return value must
+  validate as the unchanged `PluginManifestV1`, and its plugin ID/version must
+  exactly match the allowlist entry.
+- Missing, ambiguous, invalid, or identity-mismatched allowlisted entries fail
+  visibly. Every declared dependency must be in the same discovered catalog;
+  cycles reject. Successful catalogs use stable dependency-before-dependant
+  order.
+- No plugin distribution or default allowlist is bundled. Discovery uses only
+  local Python metadata and performs no network access, installation, or
+  credential lookup.
+
+### Provider-neutral model runtime
+
+- `ProviderNeutralModelRuntime` accepts an injected asynchronous `ModelPort`,
+  an exact `model_provider` manifest with `critical_fail_closed`, and an
+  explicit non-blank model name. It adds no concrete adapter or provider SDK.
+- Generation is valid only as the `DRAFTING` to `CHECKING_DRAFT` boundary. A
+  valid result contains `quarantined_draft`, emits `DRAFT_GENERATED`, and does
+  not expose visible output or a released assistant turn.
+- The runtime revalidates provider output at the boundary. Provider exceptions,
+  invalid drafts, request mismatch, provider mismatch, and model mismatch map
+  to exact `ModelRuntimeFailureCode` values, retain no draft, emit
+  `RUNTIME_FAILURE`, and transition to `FAILED_CLOSED`.
+- Failure evidence contains only the stable failure category. Provider
+  exception messages, credentials, hidden reasoning, and raw-token streams are
+  not stored in `ModelRuntimeResult`.
+- Event ID and sequence are explicit inputs. The runtime reads no clock, random
+  source, file, gold label, benchmark, network, or environment secret.
+
+### Milestone 9 exclusions
+
+- No real or bundled plugin, real provider adapter, cloud SDK, network call,
+  credential access, fallback provider, prompt construction, input-safety
+  orchestration, output guard execution, rewrite loop, release decision,
+  session service, persistence, HTTP surface, UI, worker, or deployment.
+- Deterministic test adapters prove only the frozen port and failure behavior;
+  they establish no model quality, output safety, clinical validity, or
+  real-world safety.
+
+## Milestone 10 synthetic turn orchestration and ledger contract
+
+Contract status: **FROZEN for Milestone 10**. M10 adds one application use case,
+`RunSyntheticTurn`, and one removable append-only in-memory ledger. It composes
+only versioned synthetic inputs and deterministic injected boundaries. It does
+not change Day 1 domain schemas, evaluator or safety-policy decisions, frozen
+fixtures, replay, benchmark, reporting, or existing CLI commands.
+
+### Command and projection models
+
+- `SyntheticTurnCommand` has exactly `contract_version`, `request_id`,
+  `input_turn`, `context_turns`, `jurisdiction`, `as_of`,
+  `prompt_template_id`, and `prompt_template_hash`. The version is exact `v1`,
+  the input role is `user`, context is unique/ordered and precedes the input,
+  and unknown fields reject.
+- `SyntheticTurnStatus` has exactly `released`, `override_suppressed`,
+  `awaiting_human_review`, and `failed_closed`.
+- `SyntheticTurnFailureCode` has exactly `input_safety_failure`,
+  `model_runtime_failure`, `draft_gate_failure`, and `ledger_failure`.
+- `ParticipantTurnView` has exactly `contract_version`, `request_id`,
+  `session_id`, `status`, `state`, `released_turn`, `safety_event`, and
+  `resources`. It contains no draft, gate result, failure detail, internal
+  event, hidden reasoning, score, diagnosis, or clinical disposition.
+- `ResearchReviewTurnView` has exactly `contract_version`, `participant`,
+  `quarantined_drafts`, `draft_gate_results`, `runtime_events`, and
+  `failure_code`. It is the application result and is never returned through a
+  participant projection.
+
+### Orchestration order and decisions
+
+- A `SessionConfig` is bound immutably to one explicit session ID. A different
+  plugin profile or other session configuration cannot be substituted later.
+- Input routing uses the existing synthetic detector/router/resource boundary
+  before `SUBMIT_TURN` and before any model call. A typed crisis override returns
+  `override_suppressed`, no released turn, and zero model/gate calls. A critical
+  input/resource subsystem failure appends `RUNTIME_FAILURE` and fails closed.
+- After safe input, the service appends `SUBMIT_TURN`, calls the M9 model runtime,
+  and retains every model response as a quarantined draft. The draft gate runs
+  before any `DRAFT_APPROVED` event or released `Turn` is constructed.
+- `ALLOW` appends `DRAFT_APPROVED` before constructing the atomic released turn.
+  `REWRITE` appends `DRAFT_REWRITE_REQUESTED` and makes a new correlated model
+  request. At most two rewrites are allowed. `HOLD_FOR_REVIEW` and
+  `SUPPRESS_FOR_GUIDANCE` append `DRAFT_HELD_FOR_REVIEW` and expose no turn.
+- Model failures, invalid gate results, gate exceptions, or normal-event ledger
+  failure append a category-only `RUNTIME_FAILURE` from the last persisted
+  state. No fallback reply is generated.
+- Repeating the exact command request ID on the same service returns the same
+  immutable result without another safety/model/gate call or ledger append.
+  Reusing the ID with different command content rejects visibly.
+
+### Append-only in-memory ledger
+
+- `InMemoryRuntimeEventLedger` binds one immutable `SessionConfig` per session,
+  accepts only validated `RuntimeEvent` records, and exposes tuple snapshots.
+- The first event has sequence zero and starts from `CREATED`; later events are
+  contiguous, use the last persisted state as `state_before`, and have unique
+  event IDs. Duplicate, skipped, non-monotonic, cross-session, or state-divergent
+  appends reject before mutation.
+- State reconstruction derives only from the ordered event tuple and the pure
+  transition table. The ledger has no update/delete operation, file, database,
+  network, clock, random source, or generated summary.
+
+### Milestone 10 exclusions
+
+- No real plugin/provider, SDK, network, credential, prompt generator, database,
+  migration, HTTP/API/SSE/WebSocket server, worker, UI, authentication,
+  deployment, or new CLI command.
+- No complete reviewer decision service, session-close evaluation/report flow,
+  real-person data, clinical screening, diagnosis, risk classification,
+  treatment, crisis service, or real-world/model-safety claim.
