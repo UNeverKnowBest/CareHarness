@@ -145,6 +145,49 @@ def test_m10_application_has_no_cli_ui_gold_provider_network_or_clock_logic() ->
     )
 
 
+def test_m11_review_resolution_is_removable_and_has_no_outer_logic() -> None:
+    source_path = APPLICATION_ROOT / "synthetic_review.py"
+    tree = ast.parse(source_path.read_text(encoding="utf-8"), filename=str(source_path))
+    imported_modules: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            imported_modules.update(alias.name for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            imported_modules.add(node.module)
+    forbidden = {
+        "careloop.cli",
+        "careloop.evaluation",
+        "careloop.plugin_runtime",
+        "careloop.presentation",
+        "careloop.process",
+        "careloop.reporting",
+        "careloop.safety",
+        "benchmarks",
+        "gold",
+        "httpx",
+        "openai",
+        "requests",
+        "socket",
+        "sqlalchemy",
+        "urllib",
+    }
+
+    assert all(
+        not any(module == root or module.startswith(f"{root}.") for root in forbidden)
+        for module in imported_modules
+    )
+    source = source_path.read_text(encoding="utf-8").casefold()
+    assert "datetime.now" not in source
+    assert "date.today" not in source
+    assert "random" not in source
+    assert "synthetic_review" not in (APPLICATION_ROOT / "__init__.py").read_text(
+        encoding="utf-8"
+    )
+    assert "synthetic_review" not in Path("src/careloop/cli.py").read_text(
+        encoding="utf-8"
+    )
+
+
 def test_process_has_no_presentation_application_gold_or_network_dependencies() -> None:
     imported_modules: set[str] = set()
 

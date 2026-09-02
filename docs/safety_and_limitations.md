@@ -81,3 +81,11 @@ produces no released reply. The two-rewrite limit and in-memory event ledger are
 control-flow evidence only. They do not validate model meaning, detect real
 crises, provide staffed review, make synthetic resources real, or establish an
 operationally safe participant system.
+
+Milestone 11 resolves a synthetic pre-release review hold using explicit typed
+decisions and append-only events. Approval or replacement is deterministic
+control flow, not evidence that the content is safe, clinically appropriate, or
+professionally reviewed. Handoff is only a closed local state; it does not
+contact a person, clinician, emergency service, or external system. No reviewer
+identity, staffing, notification, authentication, durable queue, or operational
+response is implemented.

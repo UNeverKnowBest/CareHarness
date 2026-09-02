@@ -1,6 +1,6 @@
 # Agent Runtime Contract
 
-Contract status: **FROZEN through Milestone 10**
+Contract status: **FROZEN through Milestone 11**
 
 ## Product and release boundary
 
@@ -147,3 +147,26 @@ continuity, and unique event IDs. Exact command retries are served from an
 immutable in-process result projection; conflicting reuse of a request ID is
 rejected. This is neither durable persistence nor a multi-process idempotency
 claim.
+
+## Milestone 11 implemented contract
+
+`ResolveSyntheticReview` resolves only the pre-release hold produced by M10. A
+strict `SyntheticReviewCommand` carries one existing typed `ReviewDecision`, the
+reviewed quarantined draft, an optional decision-appropriate assistant turn,
+and explicit evidence references. The resolver binds a detached authoritative
+draft snapshot from the M10 research-review result and accepts the command only
+when its complete revalidated draft equals that snapshot, the append-only ledger
+is in `AWAITING_HUMAN_REVIEW`, and the last held event matches the draft identity.
+
+Approval releases exactly the reviewed draft text; replacement releases the
+explicit reviewer-supplied synthetic replacement; handoff and rejection close
+the session without output. In every release path, the matching `REVIEW_*`
+event is appended before the participant projection receives a turn. A failed
+append releases nothing and attempts the existing `RUNTIME_FAILURE` transition.
+
+Participant and research-review resolution projections are distinct. Draft,
+decision evidence, runtime event, and failure category remain research-review
+only. Exact local retries are idempotent and conflicting reuse rejects. M11
+adds no reviewer queue, identity/authentication, durable decision table,
+endpoint, staffed response, session-close evaluation, or claim that human
+approval establishes model or clinical safety.

@@ -1,6 +1,6 @@
 # Agent Runtime Threat Model
 
-Status: **FROZEN through the synthetic Milestone 10 runtime boundary**
+Status: **FROZEN through the synthetic Milestone 11 runtime boundary**
 
 ## Assets and trust boundaries
 
@@ -58,6 +58,24 @@ The project uses Synthetic data only and is not approved for real patient data.
 - Persistent ledger unavailability can prevent recording even the failure
   transition. The service still exposes no reply, but durable recovery and
   multi-process consistency remain deferred to a later versioned milestone.
+
+## Milestone 11 implemented controls
+
+- Review resolution binds a detached authoritative held-draft snapshot and
+  requires both complete draft equality and the ledger's exact current
+  last-held identity. A stale, cross-session, same-ID-content-substituted, or
+  different-ID draft rejects before an event append.
+- Approval text must be byte-identical to the reviewed draft; replacement text
+  is explicit reviewer-supplied synthetic data. Neither becomes participant
+  visible until the matching append-only review event succeeds.
+- Handoff and rejection transition to `CLOSED` without exposing draft or
+  replacement content. Terminal state cannot be reopened through review.
+- Participant resolution data excludes the draft, decision evidence, internal
+  event, and failure category. Exact local retries return detached snapshots
+  and do not append another decision.
+- A one-shot decision append failure records `RUNTIME_FAILURE` when possible;
+  persistent ledger failure exposes no reply. This remains process-local
+  control-flow evidence, not durable audit or effective human oversight.
 
 ## Existing offline harness controls retained
 

@@ -1,9 +1,9 @@
 # CareLoop Harness
 
-Project status: Milestone 10 complete. The frozen v1 offline evaluator remains
-implemented and reproducible from `uv.lock`; M10 adds the library-only
-`RunSyntheticTurn` orchestration service and an append-only in-memory runtime
-event ledger, verified with deterministic adapters.
+Project status: Milestone 11 complete. The frozen v1 offline evaluator
+remains implemented and reproducible from `uv.lock`; M11 is limited to a
+library-only deterministic resolver for an M10 synthetic review hold over the
+same append-only in-memory runtime-event ledger.
 
 CareLoop Harness is an **offline-first**, **deterministic** evaluation harness
 for **synthetic** support-agent trajectories. It is deliberately
@@ -40,6 +40,11 @@ audit. That HTML is a file opened by the user: it has no server, JavaScript,
 remote assets, editable controls, model calls, uploads, or network dependency.
 Deleting the presentation package and generated HTML does not affect evaluation,
 replay, benchmark execution, or reporting.
+
+`ResolveSyntheticReview` is also library-only. It maps the existing four typed
+review decisions to existing append-only transitions; it is not a reviewer
+queue, staffed service, participant endpoint, or claim that approved model text
+is safe.
 
 ## Reproduce from the lockfile
 
