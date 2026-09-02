@@ -1,6 +1,6 @@
 # Agent Runtime Threat Model
 
-Status: **FROZEN through the synthetic Milestone 12 runtime boundary**
+Status: **FROZEN through the Milestone 13 full-stack research contract**
 
 ## Assets and trust boundaries
 
@@ -114,3 +114,46 @@ Human review in the local demo is simulated and is not an emergency response
 service. A later real-participant study requires a new threat model, ethics and
 privacy approval, operational response ownership, and jurisdiction-specific
 legal review.
+
+## Milestone 13 future full-stack threats
+
+These controls are frozen acceptance requirements, not implemented M13
+capabilities.
+
+| Threat | Required future control |
+|---|---|
+| Demo identity enabled in production | Production startup rejects local identity configuration; CI tests both environment modes. |
+| OIDC role bypass | Validate issuer, audience, expiry, nonce, and server-side role mapping on every protected request; deny by default. |
+| SSE content leakage | Participant streams use a strict public envelope and contain status plus only an atomic already gated answer; test every internal field as prohibited. |
+| Cross-instance event loss | Commit PostgreSQL event first, resume by `Last-Event-ID`, and treat Redis only as a wake-up hint. |
+| Tool-call excessive agency | Permit only session-profile allowlisted tools, validate arguments and authorization server-side, and require application-service execution. |
+| Report injection | Escape untrusted text in HTML, prohibit active content, isolate PDF rendering, and test malicious bilingual fixtures. |
+| Server-side request forgery | No model-selected URL fetching; external adapters use fixed allowlisted destinations and deny private/link-local targets. |
+| Secret disclosure | Keep provider/OIDC/database secrets in server-side secret stores; redact headers, tool arguments, errors, traces, and reports. |
+| Database race or duplicate release | Transactionally lock session state, enforce unique idempotency/event constraints, and append before projection. |
+| Retention bypass | Apply visible synthetic-session retention and audited whole-session purge without mutating frozen benchmark evidence. |
+| Unstaffed review mistaken for care | Persistent UI/report disclosure states the queue is simulated and supplies no emergency response or clinical SLA. |
+| Model or guard disagreement | Map uncertainty to `hold_for_review`; no voting rule, rewrite, or provider fallback may create an allow decision. |
+| Resource exhaustion | Bound request size, concurrency, provider duration, repair count, SSE lifetime, and queued work; failure releases no ordinary answer. |
+| Dependency or image compromise | Pin Python/Node/container/IaC dependencies, scan artifacts, use minimal images, and record build provenance before cloud delivery. |
+
+## Milestone 14 implemented controls
+
+- Authoritative event, outbox, and projection writes share one SQL transaction;
+  the adapter locks the session row and enforces state and sequence again before
+  commit.
+- Database uniqueness protects event and request identity. Exact idempotency
+  replay is immutable; changed reuse rejects.
+- Redis contains notifications only. A failed publish leaves the SQL outbox
+  pending and a replacement worker can retry it. Delivery is at least once, so
+  downstream consumers must deduplicate.
+- Plugin profiles require all safety-critical kinds enabled and locked and
+  reject duplicate or changed identities.
+- Provider credentials are `SecretStr` constructor inputs and are not included
+  in drafts, outbox events, failure categories, or object representations.
+- Provider parsing accepts only a complete non-blank string and never exposes a
+  partial token or executes a tool call. The existing model runtime converts
+  adapter exceptions into a category-only failed-closed result.
+- Live PostgreSQL/Redis availability, TLS, credential rotation, connection-pool
+  sizing, database backup, and multi-instance load behavior are not proven by
+  M14 local tests and remain deployment risks for M16/M17.

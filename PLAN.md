@@ -844,3 +844,91 @@ No Milestone 13 is approved. Stop after M12. Any later work requires a new
 versioned milestone that preserves the offline core, synthetic-only data,
 draft/projection isolation, append-only evidence, and generated-artifact
 ownership.
+
+## Milestone 13 — full-stack research contract freeze
+
+Plan status: **COMPLETE**. The later owner-approved M13–M17 plan supersedes
+the M12 closing statement above without changing M12 history.
+
+### M13.1 Freeze governance and public boundaries
+
+- Align `AGENTS.md` and normative documents to adult synthetic role-play, no
+  protected health information, non-diagnostic release routing, bounded repair,
+  and a simulated human-review queue.
+- Freeze `ReleaseDispositionV1`, HTTP v1 endpoints, status-only SSE, OIDC roles,
+  locked safety plugins, authoritative persistence, retention, and evidence
+  registry contracts.
+
+### M13.2 Add red documentation and registry tests
+
+- Require the M13 product boundary, API paths, plugin/persistence invariants,
+  full-stack threats, test matrix, five-milestone sequence, and strict evidence
+  registry shape before changing normative documents.
+- Preserve every existing public schema and regression test.
+
+### M13.3 Complete and verify the contract freeze
+
+- Update architecture, runtime contract, threat model, safety limitations,
+  source map, README, and status without adding runtime behavior or dependency.
+- Run focused tests followed by format, lint, mypy, full pytest, and the
+  unchanged benchmark; prove generated evidence and frozen inputs unchanged.
+
+### M13 acceptance gates
+
+- All product and API language is explicitly research-only, synthetic-only,
+  non-diagnostic, non-treatment, and non-emergency.
+- No raw token or quarantined draft is participant-visible; rewrites never mean
+  risk has cleared.
+- Safety-critical plugins cannot be disabled and model output has no direct
+  authority.
+- Evidence sources are linked, versioned, and still advisor-review pending.
+- No M14 implementation or dependency is present.
+
+## Milestone 14 — durable runtime, model gateway, and plugin profiles
+
+Plan status: **COMPLETE**.
+
+- Add PostgreSQL/Alembic persistence, Redis/ARQ coordination, transactional
+  idempotency, SSE replay projections, and crash recovery behind existing ports.
+- Add provider-neutral vLLM, Ollama, and DeepSeek adapters with server-side
+  secrets, timeout/cancellation, strict response validation, and no fallback
+  release.
+- Add immutable plugin profiles with locked safety dependencies and session
+  snapshots. Do not add participant Web pages.
+- Acceptance evidence includes strict profile tests, SQL repository recovery,
+  PostgreSQL DDL/Alembic offline SQL, Redis outbox retry, ARQ discovery, model
+  response validation, architecture isolation, and the unchanged offline suite.
+- Live PostgreSQL/Redis integration is environment-dependent and must be
+  reported truthfully when services are unavailable; SQLite cannot be claimed
+  as PostgreSQL validation.
+
+## Milestone 15 — supervised safety orchestration and review queue
+
+- Compose input-first routing, complete draft quarantine, deterministic output
+  gates, at most two repairs, and fail-closed durable review holds.
+- Add the simulated reviewer queue, decision concurrency controls, audit SLA
+  metrics, and fixed bilingual synthetic golden/red-team corpus.
+- Prove every safety or subsystem-failure path releases zero ordinary responses.
+
+## Milestone 16 — FastAPI, Next.js, OIDC, reports, and Docker Compose
+
+- Implement the frozen API, resumable status-only SSE, role-separated bilingual
+  UI, OIDC adapter, local synthetic identities, and admin plugin profiles.
+- Produce canonical JSON research reports plus derived reviewer HTML/PDF and an
+  approved non-diagnostic participant summary.
+- Deliver Docker Compose, health checks, seed scenarios, observability, and
+  end-to-end browser tests.
+
+## Milestone 17 — final evaluation, cloud template, and delivery
+
+- Extend matched-pair evaluation and red-team suites without weakening existing
+  gold isolation or deterministic replay.
+- Add Terraform for GCP Cloud Run, Cloud SQL, Memorystore, Secret Manager, and
+  least-privilege identities; run cloud smoke and recovery tests.
+- Complete README setup/usage/limitations, reproducible demo, final evidence
+  report, and release checklist without clinical or regulatory claims.
+
+## Exact next milestone after M13
+
+Milestone 14 only. Do not start M15–M17 until their preceding milestone passes
+the complete recorded gate.

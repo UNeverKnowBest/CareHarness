@@ -517,3 +517,90 @@ M12 reuses the existing state machine, `CLOSE_SESSION`, `RUNTIME_FAILURE`, and
 in-memory ledger without adding an event or state. Removing M10–M12 runtime
 orchestration leaves the original offline evaluate, replay, benchmark,
 reporting, frozen fixtures, and generated artifacts operational.
+
+## Milestone 13 full-stack research architecture contract
+
+### FROZEN
+
+M13 freezes the future outer architecture without implementing it:
+
+```text
+Next.js research UI -> FastAPI application boundary
+  -> input route -> provider-neutral draft -> output gates
+  -> PostgreSQL authoritative append -> atomic released answer
+  -> status-only SSE plus atomic gated answers
+  -> simulated review and derived reports
+
+Redis -> ephemeral SSE fan-out and ARQ work only
+offline evaluator/replay/benchmark -> unchanged and independently runnable
+```
+
+The future repository remains a modular monorepo: the existing Python core is
+unchanged; service, persistence, provider, identity, worker, Web, and deployment
+packages are removable outer adapters. Neither Next.js nor FastAPI may call a
+detector, evaluator, provider, or database directly around an application use
+case.
+
+PostgreSQL is the sole authoritative runtime source. Redis loss may delay a
+notification or job but cannot lose or invent a committed state transition.
+SSE resumes from the authoritative event sequence using `Last-Event-ID`.
+Provider streaming may be consumed internally, but the participant boundary
+receives no provider token; it receives progress state followed by one complete
+approved turn.
+
+The future identity boundary accepts OIDC claims and maps them to exactly
+`participant`, `reviewer`, or `admin`. A local synthetic identity adapter exists
+only in explicit development mode and must refuse startup when production mode
+is configured.
+
+Plugin manifests remain version-pinned and preinstalled. Safety-critical
+plugins form locked dependencies. Optional profile changes apply only to a new
+session snapshot; model text cannot enable, disable, install, or invoke an
+undeclared capability.
+
+M13 changes documentation and source inventory only. M14 is the first
+implementation milestone and may add durable persistence, model adapters, and
+plugin profiles after tests; M15 adds supervised orchestration; M16 adds the
+service/Web/Compose surface; M17 adds final evaluation and the GCP template.
+
+## Milestone 14 durable outer-adapter architecture
+
+### FROZEN AND IMPLEMENTED
+
+```text
+existing application services -> RuntimeEventLedgerPort
+  -> PostgresRuntimeStore -> PostgreSQL transaction
+       -> runtime event + transactional outbox + state projection
+
+ARQ WorkerSettings -> RedisOutboxPublisher
+  -> pending SQL outbox -> Redis notification -> mark published
+
+ProviderNeutralModelRuntime -> ModelPort
+  -> DeepSeek / vLLM / Ollama HTTP adapter -> quarantined complete ModelDraft
+```
+
+`careloop.durable_runtime` is a removable outer package. It may import
+SQLAlchemy, psycopg through the SQLAlchemy dialect, redis-py, HTTPX, and inward
+agent-runtime/domain contracts. No domain, process, safety, evaluation,
+reporting, or application module imports it.
+
+`PostgresRuntimeStore` is the authoritative transactional adapter. It locks one
+session projection, validates the existing pure state/event contract, appends
+the event and transactional outbox together, and advances sequence/state before
+commit. Redis publication happens only after commit. Redis loss cannot remove a
+committed event; a new worker instance can retry the pending outbox.
+
+The Alembic environment imports only M14 metadata and accepts an externally
+provided `CARELOOP_DATABASE_URL`. The committed URL is a password-free local
+placeholder used for offline SQL generation, not a deployment credential.
+
+Provider adapters implement the unchanged asynchronous `ModelPort` and have no
+release method. They request a complete non-streaming provider response and
+return a validated quarantined draft. All release, safety, and review decisions
+remain in application/runtime boundaries outside these adapters.
+
+SQLite is used only for deterministic repository behavior tests; PostgreSQL
+dialect DDL and Alembic offline SQL are verified separately. No live database or
+Redis service was available in the M14 execution environment, so online service
+integration remains an explicitly recorded limitation rather than an inferred
+pass.

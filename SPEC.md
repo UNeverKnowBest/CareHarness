@@ -1030,3 +1030,143 @@ dependency, or CLI command.
   participant-facing quality claim, clinical screening, diagnosis, risk
   classification, treatment, crisis service, or claim that a completed
   evaluation establishes session quality or real-world safety.
+
+## Milestone 13 full-stack research contract freeze
+
+Contract status: **FROZEN for Milestone 13**. The owner approved M13–M17 after
+M12. M13 freezes governance and future outer-adapter contracts only; it adds no
+Web server, database, model adapter, authentication system, worker, container,
+cloud resource, real-person workflow, or network runtime.
+
+### Research product boundary
+
+- The only participant-shaped use is adult synthetic role-play for a research
+  demonstration. No protected health information or real patient record is
+  accepted.
+- The system provides a generic MI/CBT-informed supportive-session shell, not
+  diagnosis, treatment, screening, crisis care, or an emergency service.
+- Safety processing is non-diagnostic safety-signal routing. It controls whether
+  a response may be released and never labels a person or declares that risk has
+  cleared.
+- Human escalation is a simulated human-review queue with role-based audit. It
+  has no staffed clinical SLA and contacts no third party.
+- Existing Day 1 and M8–M12 schemas, state/event values, fixtures, evaluator
+  decisions, replay, benchmark, and generated evidence remain unchanged.
+
+### `ReleaseDispositionV1`
+
+The future HTTP API adds a separate release-control vocabulary with the exact
+wire values `allow / hold_for_review / system_failure`.
+
+- `allow` requires input routing, draft gates, and authoritative append to pass.
+- `hold_for_review` covers every non-support routing state, exhausted rewrite,
+  explicit hold, and guidance suppression. It releases no ordinary response.
+- `system_failure` covers critical component or authoritative persistence
+  failure. It releases no ordinary response.
+- This type does not replace the frozen M8 `SafetyDisposition`; the application
+  layer maps the richer internal evidence to one participant release decision.
+- No score, probability, diagnosis, severity, clinical disposition, or
+  `risk_cleared` field is permitted.
+
+### Future API v1 contracts
+
+All future HTTP models use `extra="forbid"`, exact `contract_version="v1"`,
+opaque non-blank identifiers, server-side authorization, and idempotency on
+writes. The participant session projection contains only public state,
+`ReleaseDispositionV1`, and an optional already released `Turn`.
+
+The SSE envelope has exactly `contract_version`, `event_id`, `session_id`,
+`sequence`, `event_type`, `public_state`, `release_disposition`, and
+`released_turn`. Event types are `state_changed`, `review_required`,
+`answer_released`, `session_closed`, `failed_closed`, and `heartbeat`.
+`answer_released` carries one complete gated turn; no event carries a token,
+draft, gate text, provider exception, credential, hidden reasoning, or
+reviewer-only evidence.
+
+### Evidence registry v1
+
+`evidence/evidence_registry.v1.json` is the M13 source inventory. It carries
+exactly `registry_version`, `as_of`, and ordered `entries`. Each entry carries
+exactly `source_id`, `title`, `source_type`, `source_url`, `intended_use`, and
+`review_status`. IDs are unique, URLs are explicit HTTPS links, intended use is
+non-empty, and initial status is `advisor_review_pending`.
+
+The registry records sources for later human review; it is not executable
+policy, a clinical protocol, or evidence that an advisor approved the system.
+Later approval or rejection requires a versioned registry change and recorded
+reviewer identity outside M13.
+
+### M13 exclusions
+
+- No FastAPI, Next.js, PostgreSQL, Redis, SQLAlchemy, Alembic, ARQ, OIDC,
+  provider SDK, Docker, Terraform, GCP, or new runtime dependency.
+- No endpoint implementation, migration, model call, real plugin, reviewer
+  operation, cloud deployment, participant report, or new CLI command.
+- No change to frozen synthetic resources, policies, benchmark inputs, gold,
+  raw artifacts, summaries, or package version.
+
+## Milestone 14 durable runtime and model gateway contract
+
+Contract status: **FROZEN and IMPLEMENTED for Milestone 14**. M14 adds removable
+outer adapters and keeps every Day 1 and M8–M13 public contract unchanged.
+
+### Authoritative runtime store
+
+- `PostgresRuntimeStore` implements the existing synchronous
+  `RuntimeEventLedgerPort` with SQLAlchemy 2 transactions.
+- `runtime_sessions` stores one immutable validated `SessionConfig`, current
+  state, next sequence, and optional explicit retention date.
+- `runtime_events` is authoritative append-only evidence with primary key
+  `(session_id, sequence)` and globally unique `event_id`.
+- An append locks the session projection, verifies sequence and `state_before`,
+  inserts the event and outbox record, then advances the projection in one
+  transaction. Any conflict releases no new projection.
+- `runtime_idempotency` stores one immutable request hash/result per
+  `(session_id, request_id)`. Changed reuse rejects.
+- `plugin_profiles` stores immutable strict `PluginProfileV1` snapshots.
+- PostgreSQL uses JSONB. Database time and delivery metadata do not enter event
+  payload or deterministic replay identity.
+
+### Transactional outbox and ARQ
+
+- `runtime_outbox` is written in the same transaction as `runtime_events`.
+- `RedisOutboxPublisher` publishes canonical complete event JSON and marks the
+  delivery only after Redis accepts it. Redis failure leaves the row pending.
+- Delivery is at least once; consumers deduplicate by authoritative `event_id`
+  and sequence. Redis is never authoritative.
+- `publish_runtime_outbox` and `WorkerSettings` provide an ARQ-compatible worker
+  boundary with deployment resources injected at startup.
+
+### Immutable plugin profiles
+
+- `PluginProfileEntryV1` freezes plugin identity/version/kind, enabled/locked
+  state, and JSON configuration.
+- Model provider, input safety detector, output guard, and resource catalog
+  entries must all exist, be enabled, and be locked.
+- Plugin IDs are unique. A stored profile ID cannot be rebound to different
+  bytes; optional plugins may be disabled only in a new profile.
+
+### Provider adapters
+
+- `DeepSeekModelAdapter` and `VLLMModelAdapter` use a configurable
+  OpenAI-compatible `/chat/completions` endpoint. `OllamaModelAdapter` uses
+  `/api/chat`.
+- Every adapter sets `stream=false`, buffers one complete response, validates a
+  non-blank text field, creates a deterministic draft ID, and returns only a
+  quarantined `ModelDraft`.
+- API keys remain constructor-injected `SecretStr` values and are sent only in
+  the provider authorization header. No credential, raw response, exception
+  detail, tool call, token stream, or fallback draft is returned.
+- HTTP, malformed response, identity, and model errors propagate into the
+  existing provider-neutral runtime, which maps them to `RUNTIME_FAILURE` and
+  `FAILED_CLOSED`.
+
+### Dependencies and M14 exclusions
+
+- Added exact locked dependency families: SQLAlchemy 2, Alembic, psycopg 3,
+  redis-py, ARQ, and HTTPX. No provider SDK or Web framework is added.
+- Alembic revision `20260902_0001` owns the PostgreSQL schema. Offline migration
+  SQL is testable without a database connection.
+- M14 adds no FastAPI endpoint, participant API, Web UI, OIDC implementation,
+  live plugin package, supervision/review queue, Docker service, cloud resource,
+  real-person data, clinical behavior, or new CLI command.

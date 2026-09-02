@@ -1,6 +1,6 @@
 # CareLoop Harness Test Matrix
 
-Status: **FROZEN through Milestone 6 reporting and delivery behavior**
+Status: **FROZEN through Milestone 13 contracts; implemented behavior through Milestone 12**
 
 | Rule ID | Observable evidence | Positive / absent / uncertain coverage | Frozen pair | Source IDs |
 |---|---|---|---|---|
@@ -137,3 +137,36 @@ isolation.
 | Idempotent close | exact versus conflicting `(session_id, request_id)` | exact retry is detached and appends nothing; changed content rejects |
 | Projection isolation | exact participant/research fields | participant has no trajectory, findings, hash, event, failure detail, draft, hidden reasoning, or clinical field |
 | Removability | imports and unchanged offline suites | no CLI/UI/policy/provider/network/database/clock/file/gold dependency; benchmark artifacts remain identical |
+
+## Milestone 13 full-stack contract matrix
+
+| Boundary/control | Contract evidence | Required coverage |
+|---|---|---|
+| Research-only boundary | AGENTS, specification, safety limitations, README | adult synthetic role-play, no PHI, no diagnosis/treatment/emergency service, simulated review only |
+| Release vocabulary | `ReleaseDispositionV1` | exact allow/hold/system-failure values; no risk score, severity, diagnosis, or cleared flag |
+| Participant streaming | API/SSE envelope | status-only events plus one atomic gated turn; no token, draft, gate text, exception, secret, or hidden reasoning |
+| API compatibility | exact `/api/v1` table and existing Python contracts | future endpoints versioned; M8–M12 schemas and offline CLI remain unchanged |
+| Identity | exact OIDC roles and local demo boundary | participant/reviewer/admin authorization; production rejects demo identity |
+| Durable evidence | logical PostgreSQL/Redis contract | PostgreSQL authoritative; append before projection; Redis loss is recoverable; idempotent writes |
+| Plugin controls | manifest/profile contract | critical plugins locked; optional preinstalled features only; session snapshot immutable |
+| Model gateway | vLLM/Ollama/DeepSeek adapter contract | server-side secrets, untrusted tool arguments, no direct model authority or fallback release |
+| Threat coverage | M13 threat table | demo identity, role bypass, SSE leakage, excessive agency, cross-instance loss, report injection, SSRF, race and retention |
+| Evidence governance | `evidence_registry.v1.json` | strict fields, unique IDs, HTTPS links, non-empty intended use, all entries advisor-review pending |
+| Scope isolation | dependency and Git diff checks | no M14 dependency/code, no fixture/gold/policy/generated-artifact change |
+
+## Milestone 14 durable-runtime matrix
+
+| Boundary/control | Observable evidence | Required coverage |
+|---|---|---|
+| Immutable session | SQL store and strict `SessionConfig` | identical bind passes; changed profile rejects; recovered adapter reads same state |
+| Atomic append | session lock, event/outbox inserts, projection update | contiguous state append passes; skip/state/duplicate conflicts roll back |
+| PostgreSQL schema | SQLAlchemy PostgreSQL DDL and Alembic offline SQL | JSONB, event uniqueness, compound sequence key, outbox, idempotency, plugin-profile tables |
+| Distributed idempotency | immutable request hash/result row | exact replay returns same result; changed request or result rejects |
+| Outbox recovery | Redis failure followed by new publisher | failure leaves pending row; retry publishes canonical event and marks afterward |
+| ARQ boundary | registered worker function | injected publisher flushes; missing resource rejects rather than dropping work |
+| Plugin safety | strict profile entries and snapshot store | all four critical kinds enabled/locked; duplicates/missing/changed profile reject |
+| DeepSeek/vLLM | captured OpenAI-compatible request | complete response, `stream=false`, server secret header, stable quarantined draft |
+| Ollama | captured native chat request | complete response, `stream=false`, stable quarantined draft |
+| Provider failure | malformed/error response | no fallback or release; error crosses unchanged fail-closed model runtime |
+| Removability | import graph | inner core never imports durable runtime; no Web/UI/evaluator/policy logic in adapter |
+| Regression isolation | full suite, benchmark, fixture and artifact checks | frozen schemas/policies/fixtures/gold/generated evidence remain unchanged |

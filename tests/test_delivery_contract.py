@@ -37,13 +37,16 @@ def test_readme_first_screen_states_product_boundary() -> None:
         assert phrase in first_screen
 
 
-def test_readme_records_milestone_twelve_with_cli_only_interaction() -> None:
+def test_readme_records_milestone_fourteen_with_cli_only_interaction() -> None:
     readme = " ".join(
         (ROOT / "README.md").read_text(encoding="utf-8").split()
     ).casefold()
 
     for phrase in (
-        "project status: milestone 12 complete",
+        "project status: milestone 14 complete",
+        "postgresql/alembic adapter",
+        "redis transactional-outbox publisher",
+        "deepseek, vllm, and ollama",
         "runsyntheticturn",
         "resolvesyntheticreview",
         "closesyntheticsession",
@@ -56,6 +59,7 @@ def test_readme_records_milestone_twelve_with_cli_only_interaction() -> None:
         "read-only static html",
         "no server",
         "generated artifacts",
+        "next milestone is m15",
     ):
         assert phrase in readme
 

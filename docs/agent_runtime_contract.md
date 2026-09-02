@@ -1,6 +1,9 @@
 # Agent Runtime Contract
 
-Contract status: **FROZEN through Milestone 12**
+Contract status: **FROZEN through Milestone 14**
+
+The implemented M12 contract remains **FROZEN through Milestone 12**; M13 adds
+only future full-stack contracts and does not revise that historical boundary.
 
 ## Product and release boundary
 
@@ -193,3 +196,81 @@ idempotent and conflicting reuse rejects. M12 adds no durable transcript or
 report store, correction workflow, post-session queue, API endpoint, CLI
 command, file writer, provider/plugin, network, or claim that evaluation
 establishes session quality or real-world safety.
+
+## Milestone 13 future full-stack contract
+
+The provisional M8 `/v1/demo-sessions` names are superseded for future
+implementation by the following exact `/api/v1` surface. No endpoint is
+implemented in M13.
+
+| Endpoint | Frozen purpose |
+|---|---|
+| `POST /api/v1/sessions` | Create an adult synthetic role-play session and freeze scenario, model, policy, plugin, locale, and evidence versions. |
+| `POST /api/v1/sessions/{session_id}/turns` | Submit one synthetic participant turn with a required idempotency key. |
+| `GET /api/v1/sessions/{session_id}` | Read participant-safe state and already released turns only. |
+| `GET /api/v1/sessions/{session_id}/events` | Stream state-only SSE and atomic gated answers with resumable event IDs. |
+| `POST /api/v1/reviews/{review_id}/decisions` | Append one reviewer decision with evidence and optimistic concurrency. |
+| `POST /api/v1/sessions/{session_id}/close` | Close and evaluate a completely evidenced trajectory. |
+| `GET /api/v1/sessions/{session_id}/report` | Read canonical JSON for the authorized audience. |
+| `GET /api/v1/sessions/{session_id}/report.html` | Read the derived reviewer HTML artifact. |
+| `GET /api/v1/sessions/{session_id}/report.pdf` | Read the derived reviewer PDF artifact. |
+| `GET /api/v1/plugins` | List preinstalled manifests, effective state, and locked reasons. |
+| `PUT /api/v1/plugin-profiles/{profile_id}` | Replace the next-session optional feature selection under an admin role. |
+
+SSE uses monotonic authoritative event IDs and supports `Last-Event-ID`.
+Reconnect reads committed events from PostgreSQL before subscribing for new
+notifications. `answer_released` contains one complete approved turn. No raw
+token, quarantined draft, repair attempt, provider exception, secret, or hidden
+reasoning appears in a participant stream.
+
+OIDC authorization maps to exactly `participant / reviewer / admin`. Local
+synthetic identities are permitted only in explicit development mode and must
+fail startup in a production configuration.
+
+PostgreSQL is the authoritative source for sessions, turns, runtime events,
+drafts, gate results, reviews, decisions, provenance, reports, plugin snapshots,
+and idempotency records. Redis is never the system of record; it provides only
+ephemeral event fan-out, rate coordination, and ARQ work delivery. A committed
+event remains recoverable after Redis loss.
+
+The default cloud retention for synthetic sessions is 30 days and is
+configuration-visible. A session purge is an audited whole-session operation;
+canonical frozen benchmark and generated regression artifacts follow their
+existing repository ownership instead.
+
+The future model gateway has provider-neutral adapters for vLLM, Ollama, and
+DeepSeek. Credentials remain server-side. Provider tool arguments are treated
+as untrusted JSON and revalidated against a server-owned allowlist before an
+application capability may run. A provider never receives database, network,
+identity, plugin-installation, or secret-management authority.
+
+Safety-critical plugins cannot be disabled: the model provider, input router,
+output gate, authoritative audit, and required resource catalog are locked.
+Only preinstalled optional process, report, and display features can change,
+and the resulting profile applies to new sessions only.
+
+## Milestone 14 implemented durable boundary
+
+M14 implements `PostgresRuntimeStore` behind the existing event-ledger port. A
+session configuration is immutable. Event append verifies the locked session
+state and sequence and inserts `runtime_events` plus `runtime_outbox` before the
+same transaction advances the current projection. Idempotency results and
+plugin profiles are immutable. Alembic revision `20260902_0001` creates the
+five logical M14 tables with PostgreSQL JSONB and constraints.
+
+`RedisOutboxPublisher` reads only committed pending rows. It publishes canonical
+event JSON to a session channel and marks the row afterward. Failure preserves
+the pending row. ARQ-compatible `WorkerSettings` registers the injected flush
+function; M14 does not create a process supervisor or deployment service.
+
+`PluginProfileV1` requires enabled, locked model-provider, input-safety,
+output-guard, and resource-catalog entries. Optional features can be disabled,
+but an existing stored profile ID cannot change.
+
+DeepSeek and vLLM use the OpenAI-compatible chat shape; Ollama uses its native
+chat shape. All set streaming false and produce a complete quarantined
+`ModelDraft`. They expose no release API, raw token stream, fallback, tool
+execution, or provider exception content.
+
+M14 does not implement the frozen HTTP surface, OIDC, participant/reviewer
+queries, supervision queue, browser application, container, or cloud template.

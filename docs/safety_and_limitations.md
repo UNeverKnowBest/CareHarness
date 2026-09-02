@@ -98,3 +98,22 @@ append-before-report and deterministic evaluation of that snapshot; it does not
 establish session quality, model-output safety, clinical appropriateness,
 effective review, or real-world safety. The transcript, ledger, idempotency, and
 reports remain process-local and non-durable.
+
+Milestone 13 freezes only a future full-stack research contract. The allowed
+participant-shaped use remains adult synthetic role-play with no protected
+health information. Its simulated review queue is not staffed clinical care or
+an emergency service. `ReleaseDispositionV1` controls text release only and is
+not a risk assessment. No model rewrite can establish that a person's risk has
+cleared; after at most two repair attempts, unresolved output remains withheld
+for simulated review. The future status-only SSE contract releases no raw model
+token or quarantined draft. The evidence registry is entirely
+`advisor_review_pending` and does not constitute an approved protocol.
+
+Milestone 14 implements storage, notification, and model-provider adapters only.
+It does not establish provider quality, output safety, effective supervision,
+clinical appropriateness, treatment benefit, or crisis detection. Provider
+responses remain quarantined and non-streaming. SQLite repository tests do not
+prove PostgreSQL behavior; the PostgreSQL dialect and offline migration are
+verified, while live PostgreSQL and Redis integration was unavailable in the
+execution environment. Redis publication is at least once and consumers must
+deduplicate from authoritative event identity.
