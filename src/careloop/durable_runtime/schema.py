@@ -6,6 +6,7 @@ from sqlalchemy import (
     Boolean,
     Column,
     Date,
+    DateTime,
     ForeignKey,
     Index,
     Integer,
@@ -87,4 +88,29 @@ plugin_profiles = Table(
     Column("profile_id", String(255), primary_key=True),
     Column("profile_version", String(255), nullable=False),
     Column("payload", json_document, nullable=False),
+)
+
+review_queue = Table(
+    "review_queue",
+    metadata,
+    Column("review_id", String(255), primary_key=True),
+    Column(
+        "session_id",
+        String(255),
+        ForeignKey("runtime_sessions.session_id", ondelete="CASCADE"),
+        nullable=False,
+    ),
+    Column("request_id", String(255), nullable=False),
+    Column("draft_id", String(255), nullable=False, unique=True),
+    Column("status", String(32), nullable=False),
+    Column("revision", Integer, nullable=False),
+    Column("enqueued_at", DateTime(timezone=True), nullable=False),
+    Column("review_target_at", DateTime(timezone=True), nullable=False),
+    Column("payload", json_document, nullable=False),
+    UniqueConstraint("session_id", "request_id"),
+)
+Index(
+    "ix_review_queue_status_target",
+    review_queue.c.status,
+    review_queue.c.review_target_at,
 )

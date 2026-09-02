@@ -117,3 +117,15 @@ prove PostgreSQL behavior; the PostgreSQL dialect and offline migration are
 verified, while live PostgreSQL and Redis integration was unavailable in the
 execution environment. Redis publication is at least once and consumers must
 deduplicate from authoritative event identity.
+
+Milestone 15 composes only adult synthetic role-play controls. Its queue is a
+simulated human-review queue and is not staffed care; it contacts no clinician,
+emergency service, family member, authority, or other third party. The explicit
+review target is a descriptive research target, not a clinical or operational
+SLA. Pending/claimed/resolved counts and before/after-target IDs describe stored
+artifacts only. They do not measure a person's condition, reviewer quality, or
+real-world responsiveness. Approval or replacement does not establish that a
+draft is safe, that risk has cleared, or that the system is clinically
+appropriate. Live PostgreSQL/Redis concurrency, an actual queue worker,
+authentication, staffing, notification, and recovery operations remain
+unverified and outside M15.

@@ -1,6 +1,6 @@
 # CareLoop Harness Test Matrix
 
-Status: **FROZEN through Milestone 13 contracts; implemented behavior through Milestone 12**
+Status: **FROZEN and implemented through Milestone 15 contracts**
 
 | Rule ID | Observable evidence | Positive / absent / uncertain coverage | Frozen pair | Source IDs |
 |---|---|---|---|---|
@@ -170,3 +170,19 @@ isolation.
 | Provider failure | malformed/error response | no fallback or release; error crosses unchanged fail-closed model runtime |
 | Removability | import graph | inner core never imports durable runtime; no Web/UI/evaluator/policy logic in adapter |
 | Regression isolation | full suite, benchmark, fixture and artifact checks | frozen schemas/policies/fixtures/gold/generated evidence remain unchanged |
+
+## Milestone 15 supervised-orchestration matrix
+
+| Boundary/control | Observable evidence | Required coverage |
+|---|---|---|
+| Durable composition | M10 events in `PostgresRuntimeStore` | input route precedes model/gate; approved append precedes ordinary release |
+| Repair bound | draft/gate history | two rewrites maximum; third blocked draft is held and releases no turn |
+| Queue correlation | exact session/request/draft/finding identities | only held final draft enqueues; changed or duplicate identity rejects |
+| Simulated identity | `synthetic-reviewer:` prefix | non-synthetic reviewer identity rejects; no authentication or clinical role claim |
+| Decision concurrency | expected queue revision | one claimant/decision wins; stale claim or resolution changes no authoritative row |
+| Atomic resolution | SQL transaction and outbox | event, outbox, session state, and resolved queue revision commit together |
+| Review decisions | unchanged four M11 values | approve exact draft, explicit replacement, handoff/reject no release |
+| Explicit-time audit | caller-supplied aware timestamp and raw rows | deterministic counts and before/after-target IDs; no wall clock or score |
+| Bilingual corpus | eight strict local cases | English/Chinese allow, override, repair-allow, repair-exhausted coverage |
+| Zero ordinary response | override/failure/hold projections | every non-release path contains no ordinary assistant turn |
+| Removability | import graph and unchanged offline suite | no Web/OIDC/CLI/policy/evaluator logic; P1–P8 gold and artifacts unchanged |

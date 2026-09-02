@@ -6,6 +6,7 @@ AGENT_RUNTIME_ROOT = Path("src/careloop/agent_runtime")
 PLUGIN_RUNTIME_ROOT = Path("src/careloop/plugin_runtime")
 RUNTIME_STORAGE_ROOT = Path("src/careloop/runtime_storage")
 DURABLE_RUNTIME_ROOT = Path("src/careloop/durable_runtime")
+SUPERVISION_ROOT = Path("src/careloop/supervision")
 PROCESS_ROOT = Path("src/careloop/process")
 SAFETY_ROOT = Path("src/careloop/safety")
 EVALUATION_ROOT = Path("src/careloop/evaluation")
@@ -145,6 +146,50 @@ def test_m14_durable_runtime_is_outer_and_removable() -> None:
             and not module.startswith("careloop.durable_runtime.")
             for module in _imported_modules(inner_root)
         )
+
+
+def test_m15_supervision_is_removable_and_has_no_web_or_policy_logic() -> None:
+    forbidden = {
+        "careloop.cli",
+        "careloop.evaluation",
+        "careloop.presentation",
+        "careloop.process",
+        "careloop.reporting",
+        "careloop.safety",
+        "fastapi",
+        "gold",
+        "httpx",
+        "nextjs",
+        "requests",
+        "socket",
+        "typer",
+        "urllib",
+    }
+    imported_modules = _imported_modules(SUPERVISION_ROOT)
+
+    assert all(
+        not any(module == root or module.startswith(f"{root}.") for root in forbidden)
+        for module in imported_modules
+    )
+    for inner_root in (
+        AGENT_RUNTIME_ROOT,
+        DOMAIN_ROOT,
+        PROCESS_ROOT,
+        SAFETY_ROOT,
+        EVALUATION_ROOT,
+        REPORTING_ROOT,
+    ):
+        assert all(
+            module != "careloop.supervision"
+            and not module.startswith("careloop.supervision.")
+            for module in _imported_modules(inner_root)
+        )
+    source = "\n".join(
+        path.read_text(encoding="utf-8") for path in SUPERVISION_ROOT.rglob("*.py")
+    ).casefold()
+    assert "datetime.now" not in source
+    assert "date.today" not in source
+    assert "random" not in source
 
 
 def test_m10_application_has_no_cli_ui_gold_provider_network_or_clock_logic() -> None:

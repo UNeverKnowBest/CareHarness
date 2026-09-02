@@ -1170,3 +1170,60 @@ outer adapters and keeps every Day 1 and M8–M13 public contract unchanged.
 - M14 adds no FastAPI endpoint, participant API, Web UI, OIDC implementation,
   live plugin package, supervision/review queue, Docker service, cloud resource,
   real-person data, clinical behavior, or new CLI command.
+
+## Milestone 15 supervised safety orchestration contract
+
+Contract status: **FROZEN and IMPLEMENTED for Milestone 15**. M15 composes the
+existing M10/M11 runtime contracts with M14 durable storage. It adds no new
+state, event, safety action, clinical vocabulary, evaluator rule, or release
+path.
+
+### Durable input-first supervision
+
+- `SupervisedSyntheticTurn` delegates input routing, quarantined complete-draft
+  generation, output gating, and the existing maximum of two repairs to
+  `RunSyntheticTurn`.
+- Only `AWAITING_HUMAN_REVIEW` creates a queue item. `RELEASED`,
+  `OVERRIDE_SUPPRESSED`, and `FAILED_CLOSED` never create one implicitly.
+- A non-release outcome contains no ordinary assistant turn. Safety override
+  and subsystem-failure paths retain the existing zero-ordinary-release rule.
+- Enqueue time and review target time are explicit timezone-aware command data;
+  orchestration reads no wall clock.
+
+### Simulated review queue and atomic decisions
+
+- `ReviewQueueItemV1` stores exact session/request/draft identity, locale,
+  evidence, explicit times, `pending / claimed / resolved` state, and a
+  monotonically increasing revision. The quarantined draft is reviewer-only.
+- Reviewer identities must start with `synthetic-reviewer:`. This is a research
+  simulation boundary, not authentication, staffing, or a clinician identity.
+- Claim and resolve require the caller's expected revision. Stale revisions,
+  changed reviewers, duplicate identities, and invalid time ordering reject.
+- `append_review_resolution` locks the queue row and session projection, then
+  writes the typed M11 review event, transactional outbox, session state, and
+  resolved queue snapshot in one SQL transaction. A conflict returns no
+  participant projection and changes none of those records.
+- Approval releases only the exact held draft; replacement uses only the
+  explicit reviewer-supplied assistant turn. Handoff and rejection release no
+  ordinary response. These decisions do not establish safety or clinical
+  appropriateness.
+
+### Descriptive queue audit and fixed corpus
+
+- `ReviewQueueAuditV1` derives pending, claimed, and resolved counts plus stable
+  review IDs resolved before/after an explicit target. It contains no score,
+  percentage, ranking, severity, clinical metric, or inferred mental state.
+- The target is descriptive research evidence, not a staffed-care SLA or
+  response guarantee.
+- `benchmarks/supervision/m15.supervision.v1.json` freezes eight adult synthetic
+  English/Chinese cases covering allow, input override, successful repair, and
+  exhausted repair hold. It is not added to the evaluator gold corpus and does
+  not change benchmark decisions.
+
+### M15 exclusions
+
+- No FastAPI, Next.js, SSE endpoint, participant API, Web UI, OIDC, Docker,
+  PDF, deployment, live queue worker, real reviewer, real-person data, or
+  production model/network activation.
+- No change to Day 1/M8–M14 schemas, existing policies, frozen P1–P8 fixtures,
+  evaluator gold, CLI commands, dependency versions, or generated evidence.

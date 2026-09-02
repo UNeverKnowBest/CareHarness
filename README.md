@@ -1,7 +1,7 @@
 # CareLoop Harness
 
-Project status: Milestone 14 complete. M14 implements removable durable-runtime,
-notification, plugin-profile, and model-provider adapters. There is still no Web
+Project status: Milestone 15 complete. M15 implements removable supervised
+synthetic orchestration and a durable simulated-review queue. There is still no Web
 application or participant API. The frozen v1 offline evaluator and M12
 library-level synthetic session flow remain reproducible and independently
 operational.
@@ -37,6 +37,13 @@ default. `RunSyntheticTurn` remains library-only and releases a complete
 synthetic turn only after routing, quarantined drafting, gate approval, and
 event append all succeed.
 
+M15 adds `SupervisedSyntheticTurn` and `ResolveQueuedSyntheticReview` as
+library-only composition. Exhausted repairs retain the final complete draft in
+the reviewer-only SQL queue; claim and decision use optimistic revisions. A
+typed review event, outbox record, session projection, and resolved queue row
+commit together before a participant projection can be returned. The queue is
+simulated research infrastructure, is not staffed care, and contacts nobody.
+
 The M12 in-memory trajectory evaluation and append-only in-memory ledger remain
 available for deterministic tests. No installed plugin is enabled by default;
 M14 profiles describe only explicit preinstalled adapter selections.
@@ -47,10 +54,21 @@ remote assets, editable controls, model calls, uploads, or network dependency.
 Deleting the presentation package and generated HTML does not affect evaluation,
 replay, benchmark execution, or reporting.
 
-`ResolveSyntheticReview` is also library-only. It maps the existing four typed
-review decisions to existing append-only transitions; it is not a reviewer
-queue, staffed service, participant endpoint, or claim that approved model text
-is safe.
+`ResolveSyntheticReview` remains the in-memory library boundary. M15's durable
+wrapper maps the same four typed decisions to existing transitions; neither is
+a staffed service, participant endpoint, or claim that approved model text is
+safe.
+
+`CloseSyntheticSession` is library-only as well. It validates a detached
+synthetic session snapshot against submit, override, and release evidence,
+evaluates a canonical in-memory trajectory with the existing offline
+evaluators, and releases a report only after the close event is appended. It
+adds no CLI command, file writer, server, durable session store, or participant
+workflow.
+
+The next milestone is M16: the frozen research-only Web/API, OIDC, report, and
+Docker Compose surface. It does not authorize real-user data, clinical claims,
+or M17 cloud delivery.
 
 `CloseSyntheticSession` is library-only as well. It validates a detached
 synthetic session snapshot against submit, override, and release evidence,
