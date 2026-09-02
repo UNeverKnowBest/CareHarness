@@ -1,8 +1,8 @@
 # CareLoop Harness Status
 
-Current phase: Milestone 10 complete
+Current phase: Milestone 11 complete
 Next milestone: none approved; future work requires a new versioned milestone
-Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M10.4
+Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M11.4
 
 ## Status vocabulary
 
@@ -1301,9 +1301,110 @@ database, credential, deployment, real-user workflow, or clinical capability.
 - The owner's pre-existing untracked `.python-version` and Chinese engineering
   guide remain untouched and outside the M10 change set.
 
+## M10 closing state (superseded by M11 owner authorization)
+
+At M10 close, no Milestone 11 had been approved. The owner's later instruction
+authorized the harness to freeze and implement the smallest next milestone from
+the mission and current project state while preserving the existing offline
+core, professional/safety boundaries, draft isolation, append-only evidence,
+and generated-artifact ownership.
+
+## Milestone 11 deterministic synthetic review resolution
+
+### Frozen and implemented change boundary
+
+- The owner authorized the harness to freeze the smallest next milestone from
+  the project mission and completed M10 boundary. M11 resolves only one
+  synthetic pre-release review hold and stops before session-close evaluation,
+  durable storage, Web/API, real provider/plugin, or real-user work.
+- Added strict `SyntheticReviewCommand`, `ParticipantReviewView`, and
+  `ResearchReviewResolutionView` models plus exact review status and
+  ledger-failure enums. Participant data contains no draft, decision evidence,
+  internal event, or failure detail.
+- Added library-only `ResolveSyntheticReview`. It binds a detached authoritative
+  `ModelDraft` snapshot, requires the complete command draft and final held
+  ledger event to match it, and rejects stale, cross-session, terminal,
+  different-ID, or same-ID-content-substituted input before mutation.
+- Reused the existing four `ReviewDecision` and `REVIEW_*` transitions without
+  changing the state machine. Approval releases only byte-identical reviewed
+  draft text; replacement releases only an explicit synthetic reviewer turn;
+  handoff and rejection close with no output.
+- A review event must append before a participant turn is projected. A one-shot
+  append failure records category-only `RUNTIME_FAILURE` and releases nothing;
+  persistent unavailability raises `ReviewLedgerUnavailable` with no reply.
+- Exact process-local `(session_id, request_id)` retries return detached cached
+  results and append no second decision; changed reuse rejects.
+- Added no dependency, CLI command, state/event/decision value, policy rule,
+  provider/plugin, network, credential, database, clock, randomness, Web/API/UI,
+  worker, authentication, or deployment behavior. Existing Day 1 schemas,
+  policies, frozen fixtures, gold, evaluator decisions, benchmark, and generated
+  reports remain unchanged.
+
+### Test-first and focused evidence
+
+- Pre-implementation `uv run --locked pytest
+  tests\application_runtime\test_synthetic_review.py
+  tests\test_m11_contract_docs.py tests\test_architecture.py
+  tests\test_delivery_contract.py -q`: exit 2 with the intended collection
+  error `ModuleNotFoundError: No module named
+  'careloop.application.synthetic_review'`.
+- First post-implementation focused command: exit 1; 29 passed and one delivery
+  test failed because README intentionally still said M11 was in progress.
+- After authoritative full-draft snapshot binding, the same scope exited 1;
+  30 passed and only the same final README completion assertion remained red.
+- Expanded M10/M11 application, storage, contract, and architecture regression:
+  exit 0; 49 passed in 0.28 seconds.
+- Final focused command including delivery contracts: exit 0; 53 passed in
+  0.25 seconds.
+- Initial `uv run --locked ruff format --check .`: exit 1; four changed Python
+  files required mechanical formatting. Initial Ruff check found one import
+  ordering issue. `uv run --locked ruff check
+  tests\application_runtime\test_synthetic_review.py --fix` and scoped
+  `ruff format` corrected only those mechanical findings.
+- Initial `uv run --locked mypy src`: exit 0; no issues in 49 source files.
+
+### Required final verification
+
+- `uv run --locked ruff format --check .`: exit 0; 88 files already formatted.
+- `uv run --locked ruff check .`: exit 0; all checks passed.
+- `uv run --locked mypy src`: exit 0; no issues in 49 source files.
+- `uv run --locked pytest -q`: exit 0; 261 passed in 0.72 seconds.
+- `uv run --locked careloop benchmark --manifest
+  benchmarks\manifest.v1.json`: exit 0; 16 cases completed and the existing
+  four raw/summary paths were regenerated.
+- `uv run --locked python tools\generate_milestone2_fixtures.py --check`:
+  exit 0; all generator-owned frozen fixture bytes remain unchanged.
+- `uv lock --check`: exit 0; 23 packages resolved and the lock remains
+  synchronized.
+- `git diff --exit-code -- artifacts/raw artifacts/summary`: exit 0; generated
+  evidence is byte-identical.
+- `git diff --exit-code -- pyproject.toml uv.lock benchmarks artifacts
+  policies`: exit 0; dependencies, lock data, frozen inputs, generated evidence,
+  and policies are unchanged.
+- Negative import/clock/random and CLI/export `rg` checks each exited 1 with no
+  matches, as expected. `git diff --check` exited 0 with only Windows
+  LF-to-CRLF conversion warnings.
+- Post-status documentation check, `uv run --locked pytest
+  tests\test_m11_contract_docs.py tests\test_delivery_contract.py
+  tests\test_architecture.py -q`: exit 0; 18 passed in 0.07 seconds.
+
+### Residual limitations
+
+- The authoritative held draft, ledger, and idempotency cache are process-local
+  demonstrations. There is no durable draft/decision store, transaction,
+  concurrency control, distributed idempotency, reviewer identity, queue,
+  assignment, staffing, notification, or correction workflow.
+- `HANDOFF` is only a closed typed state; it contacts no person or external
+  service. Approval or replacement does not establish model-output safety,
+  clinical appropriateness, effective human review, or real-world safety.
+- Session-close trajectory construction/evaluation/report orchestration remains
+  unimplemented and is not implicitly authorized.
+- The owner's pre-existing untracked `.python-version` and Chinese engineering
+  guide remain untouched and outside the M11 change set.
+
 ## Exact next milestone
 
-No Milestone 11 is approved. Stop after M10. Any later implementation requires a
-new owner-approved versioned milestone that preserves the existing offline core,
-professional/safety boundaries, draft isolation, append-only evidence, and
-generated-artifact ownership.
+No Milestone 12 is approved. Stop after M11. Any later implementation requires a
+new versioned milestone that preserves the offline core, synthetic-only data,
+draft/projection isolation, append-only evidence, and generated-artifact
+ownership.

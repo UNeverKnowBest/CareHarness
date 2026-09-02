@@ -454,3 +454,33 @@ projection can contain an atomically released turn and typed synthetic override
 evidence, but never a model draft, draft-gate result, internal runtime event, or
 failure detail. The research-review projection may contain quarantined drafts
 and ordered evidence but is not a participant response.
+
+## Milestone 11 synthetic review-resolution boundary
+
+### FROZEN
+
+```text
+SyntheticReviewCommand + AWAITING_HUMAN_REVIEW ledger state
+  -> verify last DRAFT_HELD_FOR_REVIEW identity
+  -> map existing ReviewDecision to existing REVIEW_* event
+  -> append decision event
+     -> approve/replace: construct participant released Turn
+     -> handoff/reject: CLOSED with no released Turn
+  -> append failure: RUNTIME_FAILURE or typed ledger-unavailable error
+```
+
+`careloop.application.synthetic_review` owns strict reviewer command/result
+models, an immutable authoritative held-draft snapshot, held-event correlation,
+deterministic event construction, participant versus research-review projection
+isolation, and process-local idempotency. It
+may depend on domain, public agent-runtime contracts, and
+`RuntimeEventLedgerPort`. It cannot import safety/process/evaluation/reporting
+rules, plugin/provider implementations, CLI/UI, benchmark/gold data, network,
+database, clock, or randomness.
+
+M11 reuses the removable M10 ledger without extending its storage API. A review
+decision is evidenced by the existing append-only `RuntimeEvent`; M11 adds no
+mutable review table or projection store. The participant projection is formed
+only after that event append succeeds. Removing M10/M11 runtime orchestration
+leaves the original offline evaluate, replay, benchmark, reporting, fixtures,
+and generated evidence paths operational.

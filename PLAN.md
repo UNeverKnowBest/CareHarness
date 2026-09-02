@@ -692,9 +692,79 @@ frozen application service and in-memory evidence boundary below.
   Docker, authentication, real provider/plugin, credential access, deployment,
   FHIR, real-user data, or clinical claim.
 
+## Milestone 11 — deterministic synthetic review resolution
+
+Plan status: **COMPLETE**. The owner authorized the harness to freeze the
+smallest next milestone from the mission and completed M10 boundary. M11 is
+limited to resolving one synthetic pre-release review hold through existing
+typed decisions and the append-only in-memory event ledger.
+
+### M11.1 Freeze review command, projection, and transition contracts
+
+### COMPLETE
+
+- Freeze exact strict command/result/status/failure fields and decision-specific
+  release requirements.
+- Require correlation with the last held draft, append-before-release,
+  participant/reviewer isolation, exact retry idempotency, and category-only
+  ledger failure evidence.
+- Preserve all existing enums, Day 1 schemas, policies, fixtures, gold,
+  benchmark/report bytes, dependencies, and CLI commands.
+
+### M11.2 Add red review-resolution and failure-injection tests
+
+### COMPLETE
+
+- Cover all four existing review decisions, held-draft/session correlation,
+  strict schemas, projection isolation, event-before-release, exact/conflicting
+  retries, detached snapshots, and terminal-state rejection.
+- Inject one-shot and persistent ledger failures and require no released turn,
+  deterministic failed-closed evidence where writable, and typed unavailability
+  otherwise.
+
+### M11.3 Implement the minimum library-only resolver
+
+### COMPLETE
+
+- Add `ResolveSyntheticReview` and its strict models in a removable application
+  module over `RuntimeEventLedgerPort`.
+- Reuse only `ReviewDecision`, `SessionEvent`, `SessionState`, `RuntimeEvent`,
+  `Turn`, and `ModelDraft`; add no adapter, store, endpoint, command, dependency,
+  policy logic, provider, or reviewer workflow.
+
+### M11.4 Verify, record, and stop
+
+### COMPLETE
+
+- Run focused review/storage/architecture tests and the complete locked quality
+  gate, unchanged benchmark, fixture check, lock check, and generated-artifact
+  diff.
+- Record exact evidence in `STATUS.md` and stop before session-close evaluation,
+  durable persistence, Web/API, real provider/plugin, or real-participant work.
+
+### Milestone 11 acceptance gates
+
+- A reviewed draft or replacement reaches the participant projection only after
+  the matching append-only review event succeeds.
+- Handoff and rejection close the synthetic session without releasing draft or
+  replacement text.
+- A stale, mismatched, terminal, or non-held command rejects without mutation;
+  ledger failure never falls back to an ordinary reply.
+- Participant results contain no draft, decision evidence, internal event, or
+  failure detail; exact retries do not append twice.
+- Removing M10/M11 runtime modules leaves the frozen offline harness and
+  generated artifacts operational.
+
+### Milestone 11 explicit exclusions
+
+- No reviewer queue/assignment, authentication, durable storage, database,
+  HTTP/API/SSE/WebSocket, UI, worker, notification, real provider/plugin,
+  credential, network, deployment, FHIR, real-user data, or clinical claim.
+- No session-close trajectory construction, evaluation/report orchestration, or
+  Milestone 12 behavior.
+
 ## Exact next milestone
 
-No Milestone 11 is currently approved. Stop after M10. Any later work requires a
-new owner-approved versioned milestone and must not assume authorization for a
-Web/API server, database, real provider/plugin, credentials, deployment, or
-real-participant workflow.
+No Milestone 12 is approved. Stop after M11. Any later work requires a new
+versioned milestone and cannot infer authorization for session-close evaluation,
+durable storage, Web/API, real providers/plugins, deployment, or real users.

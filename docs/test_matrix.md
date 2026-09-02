@@ -108,3 +108,17 @@ isolation.
 | Append-only ledger | event tuples and reconstruction | zero-based contiguous sequence, unique IDs, exact state chain; duplicate/skip/divergence rejects before mutation; no update/delete API |
 | Projection isolation | exact participant/research-review model fields | participant sees only released/override projection; drafts/gates/events/failure details remain reviewer-only |
 | Removability | architecture and unchanged offline regressions | M10 application/storage have no CLI/UI/provider/network/database/gold dependency; benchmark artifacts remain identical |
+
+## Milestone 11 synthetic review-resolution matrix
+
+| Boundary/control | Observable evidence | Required coverage |
+|---|---|---|
+| Held-draft correlation | authoritative draft snapshot, ledger state, and final `DRAFT_HELD_FOR_REVIEW` event | exact session/complete draft passes; stale, same-ID-content-substituted, different-ID, cross-session, non-held, and terminal inputs reject before mutation |
+| Typed decisions | existing four `ReviewDecision` values | approve/replacement reach `RESPONSE_RELEASED`; handoff/reject reach `CLOSED`; exact existing `REVIEW_*` event recorded |
+| Approval integrity | reviewed draft and proposed assistant turn | approved text is byte-identical to draft; role/non-blank mismatch rejects |
+| Replacement integrity | explicit reviewer-supplied assistant turn | replacement is released only for `REPLACE_WITH_SAFE_TEMPLATE`; absent/invalid turn rejects |
+| Append-before-release | ledger spy and participant result | decision append occurs before projection construction; append failure exposes no turn |
+| Ledger failure | one-shot and persistent append failures | writable failure path records category-only `RUNTIME_FAILURE`; persistent failure raises typed unavailability with no reply |
+| Idempotent resolution | exact versus conflicting `(session_id, request_id)` | exact retry is detached and byte-identical with no append; changed content rejects |
+| Projection isolation | exact participant/research-review fields | participant has no draft, decision/evidence, runtime event, failure detail, hidden reasoning, or clinical field |
+| Removability | source imports and unchanged offline suites | resolver has no safety/evaluator/CLI/UI/provider/network/database/clock/gold dependency; generated artifacts remain identical |

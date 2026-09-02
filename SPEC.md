@@ -906,3 +906,67 @@ fixtures, replay, benchmark, reporting, or existing CLI commands.
 - No complete reviewer decision service, session-close evaluation/report flow,
   real-person data, clinical screening, diagnosis, risk classification,
   treatment, crisis service, or real-world/model-safety claim.
+
+## Milestone 11 deterministic synthetic review-resolution contract
+
+Contract status: **FROZEN for Milestone 11**. M11 adds one library-only
+application use case, `ResolveSyntheticReview`, over the existing typed review
+decisions, state machine, and append-only runtime-event ledger. It resolves only
+an M10 pre-release review hold and changes no Day 1 schema, detector, policy,
+evaluator, frozen fixture, gold label, benchmark, report, dependency, or CLI
+command.
+
+### Command and projection models
+
+- `SyntheticReviewCommand` has exactly `contract_version`, `request_id`,
+  `session_id`, `decision`, `reviewed_draft`, `release_turn`, and
+  `evidence_ids`. It uses exact `v1`, rejects unknown fields, requires unique
+  non-empty evidence IDs, and retains the draft only on the research-review
+  side.
+- `APPROVE` requires one non-blank assistant `release_turn` whose text exactly
+  equals the reviewed draft. `REPLACE_WITH_SAFE_TEMPLATE` requires one
+  non-blank assistant replacement turn. `HANDOFF` and `REJECT` require no
+  release turn.
+- `SyntheticReviewStatus` has exactly `approved_released`,
+  `replacement_released`, `handed_off`, `rejected`, and `failed_closed`.
+- `SyntheticReviewFailureCode` has exactly `ledger_failure`.
+- `ParticipantReviewView` has exactly `contract_version`, `request_id`,
+  `session_id`, `status`, `state`, and `released_turn`. It contains no draft,
+  decision evidence, internal event, failure detail, hidden reasoning, score,
+  diagnosis, or clinical disposition.
+- `ResearchReviewResolutionView` has exactly `contract_version`, `participant`,
+  `decision`, `reviewed_draft`, `runtime_event`, and `failure_code`. It is never
+  used as a participant projection.
+
+### Resolution order and evidence
+
+- The resolver binds one detached authoritative `ModelDraft` snapshot obtained
+  from the M10 research-review result. Resolution is valid only from
+  `AWAITING_HUMAN_REVIEW` when the command's complete revalidated draft equals
+  that snapshot and the ledger's last `DRAFT_HELD_FOR_REVIEW`
+  causation/evidence identity matches its draft ID. Session, identity, or draft
+  content mismatch rejects before mutation.
+- The service maps the existing `ReviewDecision` values to the existing
+  `REVIEW_APPROVED`, `REVIEW_REPLACED`, `REVIEW_HANDOFF`, and
+  `REVIEW_REJECTED` events. It adds no enum value or alternate transition.
+- The decision event is appended before a released turn is placed in the
+  participant projection. Approval and replacement end in `RESPONSE_RELEASED`;
+  handoff and rejection end in `CLOSED` with no released turn.
+- A normal decision-event append failure attempts one category-only
+  `RUNTIME_FAILURE` append from the last persisted state and releases no turn.
+  If the ledger remains unavailable, the service raises a typed local error and
+  still exposes no participant reply.
+- Repeating an exact `(session_id, request_id)` command on one service returns
+  the same detached immutable result without another append. Conflicting reuse
+  rejects visibly before mutation.
+
+### Milestone 11 exclusions
+
+- No reviewer assignment, queue, authentication, staffing, notification,
+  comment stream, correction/supersession workflow, durable decision store,
+  database, transaction coordinator, Web/API/SSE/WebSocket server, UI, worker,
+  provider/plugin, credential, network, clock, randomness, or new CLI command.
+- No session-close trajectory assembly/evaluation/report orchestration, real
+  participant workflow, clinical screening, diagnosis, risk classification,
+  treatment, crisis service, or claim that a reviewer decision makes model
+  output safe or clinically appropriate.
