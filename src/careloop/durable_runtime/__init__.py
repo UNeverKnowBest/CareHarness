@@ -19,6 +19,7 @@ from careloop.durable_runtime.outbox import (
 from careloop.durable_runtime.schema import (
     metadata,
     plugin_profiles,
+    review_queue,
     runtime_events,
     runtime_idempotency,
     runtime_outbox,
@@ -53,4 +54,5 @@ __all__ = [
     "runtime_idempotency",
     "runtime_outbox",
     "runtime_sessions",
+    "review_queue",
 ]

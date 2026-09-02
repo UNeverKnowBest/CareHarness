@@ -904,11 +904,22 @@ Plan status: **COMPLETE**.
 
 ## Milestone 15 — supervised safety orchestration and review queue
 
+Plan status: **COMPLETE**.
+
 - Compose input-first routing, complete draft quarantine, deterministic output
   gates, at most two repairs, and fail-closed durable review holds.
 - Add the simulated reviewer queue, decision concurrency controls, audit SLA
   metrics, and fixed bilingual synthetic golden/red-team corpus.
 - Prove every safety or subsystem-failure path releases zero ordinary responses.
+- Preserve existing M10/M11 schemas and transitions; add a strict queue snapshot,
+  explicit timezone-aware research targets, optimistic revisions, and one SQL
+  transaction for review event/outbox/session/queue resolution.
+- Keep the eight-case bilingual corpus separate from evaluator gold and retain
+  all existing fixture, policy, CLI, dependency, and generated-artifact bytes.
+- Acceptance evidence includes queue lifecycle/concurrency tests, durable
+  repair-to-hold orchestration, atomic review resolution, explicit-time audit
+  derivation, corpus/schema coverage, offline PostgreSQL migration SQL,
+  architecture isolation, and the complete unchanged regression suite.
 
 ## Milestone 16 — FastAPI, Next.js, OIDC, reports, and Docker Compose
 
@@ -928,7 +939,8 @@ Plan status: **COMPLETE**.
 - Complete README setup/usage/limitations, reproducible demo, final evidence
   report, and release checklist without clinical or regulatory claims.
 
-## Exact next milestone after M13
+## Exact next milestone after M15
 
-Milestone 14 only. Do not start M15–M17 until their preceding milestone passes
-the complete recorded gate.
+Milestone 16 only: implement the frozen FastAPI/Next.js/OIDC/report and Docker
+Compose research surface. Do not start M17 cloud delivery until M16 passes its
+complete recorded gate.

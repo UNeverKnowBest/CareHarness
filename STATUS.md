@@ -1,8 +1,8 @@
 # CareLoop Harness Status
 
-Current phase: Milestone 14 complete
-Next milestone: Milestone 15 — supervised safety orchestration and review queue
-Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M14
+Current phase: Milestone 15 complete
+Next milestone: Milestone 16 — research Web/API, OIDC, reports, and Docker Compose
+Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M15
 
 ## Status vocabulary
 
@@ -1708,3 +1708,110 @@ milestone passes its complete recorded gate.
 Milestone 15 only: compose durable input-first routing, quarantined output
 gates, bounded repair, and the simulated reviewer queue. Do not begin M16 Web,
 OIDC, Docker Compose, participant API, or M17 cloud delivery until M15 passes.
+
+## Milestone 15 supervised safety orchestration and review queue
+
+### Frozen and implemented change boundary
+
+- Added removable `careloop.supervision` contracts and composition. Existing
+  input-first routing, complete draft quarantine, deterministic output gating,
+  and the maximum of two repairs remain owned by M10/M8 behavior; M15 queues
+  only the final held draft after those controls succeed.
+- Added strict `ReviewQueueItemV1` pending/claimed/resolved lifecycle with exact
+  session/request/draft/evidence identity, timezone-aware explicit enqueue and
+  research-target times, `synthetic-reviewer:` identities, and monotonically
+  increasing optimistic revisions.
+- Added PostgreSQL `review_queue` metadata and Alembic revision
+  `20260902_0002`. Claim races reject. `append_review_resolution` commits the
+  existing typed M11 review event, outbox row, session projection, and resolved
+  queue revision in one transaction before a participant projection exists.
+- Approval retains the exact held draft; replacement remains explicit reviewer
+  text; handoff/reject release no ordinary response. No M8–M14 state/event or
+  public schema value changed.
+- Added explicit-time `ReviewQueueAuditV1` raw counts and stable before/after
+  research-target IDs. It contains no score, percentage, severity, clinical
+  metric, or wall-clock input.
+- Added `benchmarks/supervision/m15.supervision.v1.json`: eight fixed adult
+  synthetic English/Chinese cases covering allow, input override, successful
+  repair, and exhausted repair hold. Each case drives the real M15 composition
+  in tests; it remains separate from evaluator gold and P1–P8 benchmark inputs.
+- Added no dependency, CLI command, FastAPI/Next.js/OIDC/UI/SSE surface, Docker
+  service, worker operation, credential, real reviewer, real-person data,
+  clinical behavior, evaluator rule, policy edit, or generated result edit.
+
+### Test-first and focused evidence
+
+- Baseline `uv run --locked pytest -q`: exit 0; 303 passed in 1.81 seconds.
+- Pre-implementation `uv run --locked pytest tests\supervision -q`: the first
+  sandboxed run exited 2 before startup because the restricted process could
+  not access the existing user-level uv cache. The approved rerun exited 2 with
+  three intended collection errors for missing `careloop.supervision`.
+- First queue/orchestration implementation focused run: exit 0; 5 passed in
+  0.55 seconds.
+- Pre-atomic-resolution `uv run --locked pytest
+  tests\supervision\test_supervised_review.py -q`: exit 2 with the intended
+  missing `QueuedSyntheticReviewCommand` import.
+- First complete supervision run: exit 1 with six passes; the one failure was a
+  test attempting schema-invalid claimed revision zero. The corrected legal
+  stale revision case then produced 7 passes in 0.62 seconds.
+- Pre-documentation M15 contract/architecture/migration command: exit 1; 16
+  passed and two intended M15 normative-document failures remained. After the
+  contract freeze, the expanded focused command exited 0; 25 passed in 1.30
+  seconds.
+- Initial preflight recorded 12 unformatted files and 16 Ruff findings limited
+  to import order, line width, unused imports, and the Python 3.12 `UTC` alias;
+  mypy already passed 62 source files. Scoped Ruff fixes changed only M15 files.
+- Fixed bilingual corpus focused execution: exit 0; nine tests passed, including
+  all eight manifest cases through input routing, draft/gate behavior, release
+  isolation, and optional durable enqueue.
+
+### Required final verification
+
+- `uv run ruff format --check .`: exit 0; 118 files already formatted.
+- `uv run ruff check .`: exit 0; all checks passed.
+- `uv run mypy src`: exit 0; no issues in 62 source files.
+- The first complete `uv run pytest -q` after implementation exited 1 with 311
+  passes and two historical README assertions still freezing current status at
+  M14. They were updated to retain M14 implementation facts while requiring the
+  current M15/M16 status. The focused delivery regression then exited 0; eight
+  passed.
+- Final `uv run pytest -q`: exit 0; 321 passed in 2.07 seconds.
+- `uv run alembic upgrade head --sql`: exit 0; PostgreSQL offline SQL includes
+  the M14 schema plus M15 `review_queue`, JSONB payload, timezone-aware columns,
+  unique identities, foreign key, revision, target index, and transaction.
+- `uv run careloop benchmark --manifest benchmarks\manifest.v1.json`: exit 0;
+  16 cases completed and the existing four raw/summary paths were regenerated.
+- `uv run python tools\generate_milestone2_fixtures.py --check`: exit 0 with no
+  output; generator-owned P1–P8 fixture bytes match.
+- `uv lock --check`: exit 0; 42 packages resolved and synchronized.
+- `git diff --exit-code -- artifacts\raw artifacts\summary`: exit 0; generated
+  evidence is byte-identical.
+- `git diff --exit-code -- pyproject.toml uv.lock policies
+  benchmarks\manifest.v1.json benchmarks\trajectories benchmarks\gold
+  benchmarks\failure_fixtures`: exit 0; dependencies, lock data, executable
+  policies, and existing benchmark inputs are unchanged.
+- `git diff --check`: exit 0 with only Windows LF-to-CRLF conversion warnings.
+
+### Environment-limited integration and residual risks
+
+- No live PostgreSQL or Redis service is installed in this environment. SQLite
+  covers deterministic repository behavior and PostgreSQL offline SQL covers
+  dialect DDL; neither is represented as a live concurrency, crash-recovery, or
+  multi-instance pass.
+- Queue enqueue follows the already committed fail-closed held event. A process
+  crash between those writes releases no ordinary response but can leave a
+  durable held session without its queue row; reconciliation/recovery ownership
+  remains M16 operational work.
+- There is no queue poller, actual ARQ process, authentication, assignment,
+  staffing, notification, retry/dead-letter workflow, or reviewer correction
+  workflow. The explicit target is descriptive research evidence, not a staffed
+  SLA.
+- A simulated approval or replacement does not establish model-output safety,
+  effective human review, clinical appropriateness, treatment effectiveness,
+  crisis detection, or real-world safety.
+
+## Exact next milestone
+
+Milestone 16 only: implement the frozen research-only FastAPI/Next.js/OIDC,
+status-only SSE, report, and Docker Compose surface. Do not start M17 cloud
+delivery until M16 passes its complete recorded gate.

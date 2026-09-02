@@ -17,4 +17,6 @@ def test_alembic_head_renders_postgresql_offline_sql() -> None:
     assert "create table runtime_outbox" in sql
     assert "create table runtime_idempotency" in sql
     assert "create table plugin_profiles" in sql
+    assert "create table review_queue" in sql
+    assert "ix_review_queue_status_target" in sql
     assert "jsonb" in sql

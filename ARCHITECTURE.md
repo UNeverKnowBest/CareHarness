@@ -604,3 +604,39 @@ dialect DDL and Alembic offline SQL are verified separately. No live database or
 Redis service was available in the M14 execution environment, so online service
 integration remains an explicitly recorded limitation rather than an inferred
 pass.
+
+## Milestone 15 supervised orchestration architecture
+
+### FROZEN AND IMPLEMENTED
+
+```text
+SupervisedSyntheticTurn -> RunSyntheticTurn -> input route -> quarantined drafts
+  -> deterministic gate -> at most two repairs
+  -> durable held event -> ReviewQueueItemV1
+
+ResolveQueuedSyntheticReview -> append_review_resolution
+  -> one SQL transaction:
+       review event + outbox + session projection + queue revision
+
+explicit as_of -> raw review rows -> ReviewQueueAuditV1
+```
+
+`careloop.supervision` is a removable composition package. It may depend inward
+on agent-runtime and application contracts, but owns no safety signal, output
+policy, evaluator, persistence, provider, network, UI, or CLI rule. Inner
+domain/process/safety/evaluation packages never import it.
+
+`careloop.durable_runtime` implements the queue persistence port because
+PostgreSQL is authoritative. Enqueue retains the final quarantined draft and
+finding IDs only in the reviewer-side queue. Claim uses an expected revision.
+Resolution locks both authoritative queue and session rows and commits the
+existing typed review transition together with its outbox and queue update.
+No participant projection is constructed until that transaction succeeds.
+
+Queue audit is a pure derivation from raw rows at a caller-supplied aware
+timestamp. It does not read database or process time and produces no aggregate
+score. The fixed bilingual corpus is local synthetic test data and is isolated
+from P1–P8 gold and the offline benchmark application.
+
+Alembic revision `20260902_0002` adds only the queue table and its status/target
+index. M15 adds no Web/service/authentication package; those remain M16 work.
