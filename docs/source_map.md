@@ -1,6 +1,6 @@
 # CareLoop Harness Source Map
 
-Status: **FROZEN through Milestone 6**
+Status: **FROZEN through Milestone 13**
 
 This map records the local normative sources for the deterministic process
 policy. It does not claim clinical validity, treatment effectiveness, or
@@ -63,3 +63,14 @@ proficiency against a clinical coding instrument.
 - Verification raw records local replay agreement and expected rejection of the
   four frozen invalid fixtures. It is engineering evidence, not a safety or
   treatment claim.
+
+## Milestone 13 evidence-governance boundary
+
+- `evidence/evidence_registry.v1.json` inventories external governance,
+  fidelity, security, and technical sources considered during contract design.
+- Every entry remains `advisor_review_pending`; inclusion is not endorsement,
+  clinical approval, executable policy, or a claim that the product conforms to
+  the source.
+- Runtime policies continue to use their existing local versioned registries.
+  The evidence inventory cannot silently change a detector, route, prompt,
+  evaluator, report, or benchmark decision.

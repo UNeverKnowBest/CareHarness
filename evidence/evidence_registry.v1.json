@@ -1,0 +1,86 @@
+{
+  "registry_version": "v1",
+  "as_of": "2026-09-02",
+  "entries": [
+    {
+      "source_id": "who-lmm-governance-2024",
+      "title": "Ethics and governance of artificial intelligence for health: guidance on large multi-modal models",
+      "source_type": "official_health_governance",
+      "source_url": "https://www.who.int/publications/b/70584",
+      "intended_use": ["human oversight", "research boundary", "transparent limitations"],
+      "review_status": "advisor_review_pending"
+    },
+    {
+      "source_id": "who-ai-health-ethics-2021",
+      "title": "Ethics and governance of artificial intelligence for health",
+      "source_type": "official_health_governance",
+      "source_url": "https://www.who.int/publications/i/item/9789240029200",
+      "intended_use": ["accountability", "privacy", "human autonomy"],
+      "review_status": "advisor_review_pending"
+    },
+    {
+      "source_id": "nist-ai-rmf-genai-2024",
+      "title": "Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile",
+      "source_type": "official_risk_framework",
+      "source_url": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence",
+      "intended_use": ["risk register", "measurement", "lifecycle governance"],
+      "review_status": "advisor_review_pending"
+    },
+    {
+      "source_id": "fda-clinical-decision-support-2026",
+      "title": "Clinical Decision Support Software: Guidance for Industry and Food and Drug Administration Staff",
+      "source_type": "official_regulatory_guidance",
+      "source_url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/clinical-decision-support-software",
+      "intended_use": ["automation-bias boundary", "independent review", "non-diagnostic positioning"],
+      "review_status": "advisor_review_pending"
+    },
+    {
+      "source_id": "mint-miti-4-2-1",
+      "title": "Motivational Interviewing Treatment Integrity Coding Manual 4.2.1",
+      "source_type": "measurement_manual",
+      "source_url": "https://motivationalinterviewing.org/sites/default/files/miti4_2.pdf",
+      "intended_use": ["observer coding reference", "fidelity limitations", "research evaluation"],
+      "review_status": "advisor_review_pending"
+    },
+    {
+      "source_id": "pubmed-ai-mi-scoping-review-2025",
+      "title": "Scoping Review of AI Systems Delivering Motivational Interviewing for Health Behavior Change",
+      "source_type": "peer_reviewed_review",
+      "source_url": "https://pubmed.ncbi.nlm.nih.gov/40957014/",
+      "intended_use": ["evidence limitations", "fidelity evaluation", "research framing"],
+      "review_status": "advisor_review_pending"
+    },
+    {
+      "source_id": "owasp-llm-top-ten",
+      "title": "OWASP Top 10 for Large Language Model Applications",
+      "source_type": "security_guidance",
+      "source_url": "https://owasp.org/www-project-top-10-for-large-language-model-applications/",
+      "intended_use": ["prompt injection", "excessive agency", "plugin security"],
+      "review_status": "advisor_review_pending"
+    },
+    {
+      "source_id": "fastapi-sse",
+      "title": "FastAPI Server-Sent Events",
+      "source_type": "official_technical_documentation",
+      "source_url": "https://fastapi.tiangolo.com/tutorial/server-sent-events/",
+      "intended_use": ["status streaming", "event resume contract", "proxy buffering"],
+      "review_status": "advisor_review_pending"
+    },
+    {
+      "source_id": "nextjs-self-hosting-streaming",
+      "title": "Next.js Self-Hosting: Streaming and Suspense",
+      "source_type": "official_technical_documentation",
+      "source_url": "https://nextjs.org/docs/app/guides/self-hosting",
+      "intended_use": ["web streaming", "reverse-proxy configuration", "container deployment"],
+      "review_status": "advisor_review_pending"
+    },
+    {
+      "source_id": "deepseek-responses-api",
+      "title": "DeepSeek Responses API",
+      "source_type": "official_technical_documentation",
+      "source_url": "https://api-docs.deepseek.com/api/create-response/",
+      "intended_use": ["provider adapter", "tool argument validation", "usage provenance"],
+      "review_status": "advisor_review_pending"
+    }
+  ]
+}

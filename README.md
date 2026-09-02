@@ -1,9 +1,10 @@
 # CareLoop Harness
 
-Project status: Milestone 12 complete. The frozen v1 offline evaluator remains
-implemented and reproducible from `uv.lock`; M12 adds only library-level
-synthetic session close and in-memory trajectory evaluation over the same
-append-only in-memory runtime-event ledger.
+Project status: Milestone 14 complete. M14 implements removable durable-runtime,
+notification, plugin-profile, and model-provider adapters. There is still no Web
+application or participant API. The frozen v1 offline evaluator and M12
+library-level synthetic session flow remain reproducible and independently
+operational.
 
 CareLoop Harness is an **offline-first**, **deterministic** evaluation harness
 for **synthetic** support-agent trajectories. It is deliberately
@@ -28,12 +29,17 @@ The CLI is the primary interaction surface. There is no web application, Web
 API, hosted service, live chat page, transcript upload flow, or remote user
 session. No server is started by any supported command.
 
-The API, durable storage, and browser surfaces remain versioned future
-contracts, not implemented capabilities. No installed plugin is enabled by
-default, and the model runtime has no real provider adapter, credential access,
-or network behavior. `RunSyntheticTurn` is not a CLI command: it releases a
-complete synthetic turn only after input routing, quarantined drafting, gate
-approval, and event append all succeed.
+The HTTP API and browser surfaces remain versioned future contracts. M14 adds a
+PostgreSQL/Alembic adapter, Redis transactional-outbox publisher, ARQ-compatible
+worker function, immutable plugin profiles, and explicit DeepSeek, vLLM, and
+Ollama model adapters. None is enabled by the CLI or supplied credentials by
+default. `RunSyntheticTurn` remains library-only and releases a complete
+synthetic turn only after routing, quarantined drafting, gate approval, and
+event append all succeed.
+
+The M12 in-memory trajectory evaluation and append-only in-memory ledger remain
+available for deterministic tests. No installed plugin is enabled by default;
+M14 profiles describe only explicit preinstalled adapter selections.
 
 `careloop evaluate` can optionally generate read-only static HTML for local
 audit. That HTML is a file opened by the user: it has no server, JavaScript,
@@ -52,6 +58,10 @@ evaluates a canonical in-memory trajectory with the existing offline
 evaluators, and releases a report only after the close event is appended. It
 adds no CLI command, file writer, server, durable session store, or participant
 workflow.
+
+The next milestone is M15: durable supervised safety orchestration and the
+simulated review queue. It does not authorize real-user data or a participant
+Web/API surface.
 
 ## Reproduce from the lockfile
 

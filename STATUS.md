@@ -1,8 +1,8 @@
 # CareLoop Harness Status
 
-Current phase: Milestone 12 complete
-Next milestone: none approved; future work requires a new versioned milestone
-Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M12.4
+Current phase: Milestone 14 complete
+Next milestone: Milestone 15 — supervised safety orchestration and review queue
+Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M14
 
 ## Status vocabulary
 
@@ -1518,3 +1518,193 @@ No Milestone 13 is approved. Stop after M12. Any later implementation requires a
 new versioned milestone that preserves the offline core, synthetic-only data,
 draft/projection isolation, append-only evidence, and generated-artifact
 ownership.
+
+## Milestone 13 full-stack research contract freeze
+
+### Owner-approved and implemented change boundary
+
+- The owner approved the five-milestone M13–M17 research-only full-stack plan
+  after M12. In accordance with the one-milestone rule, this delivery implements
+  only M13 governance, contracts, threat analysis, and tests and stops before
+  M14 persistence or provider work.
+- Updated the engineering contract to adult synthetic role-play, no protected
+  health information, non-diagnostic safety-signal routing, bounded repair, and
+  a simulated human-review queue that is not clinical or emergency care.
+- Froze future `ReleaseDispositionV1` values as `allow`, `hold_for_review`, and
+  `system_failure`. This future API vocabulary does not change the implemented
+  M8 `SafetyDisposition` or any M8–M12 schema.
+- Froze exact `/api/v1` endpoint intent, status-only resumable SSE, atomic gated
+  answers, OIDC roles, PostgreSQL authority, Redis non-authority, 30-day default
+  synthetic-session retention, and locked safety-plugin behavior.
+- Froze provider-neutral future vLLM, Ollama, and DeepSeek adapter boundaries.
+  Model tool arguments remain untrusted, server-validated data and grant no
+  direct authority.
+- Added `evidence/evidence_registry.v1.json` with ten linked governance,
+  fidelity, security, and technical sources. Every source remains
+  `advisor_review_pending`; none is executable policy or claimed approval.
+- Extended the threat model for production demo-identity leakage, OIDC bypass,
+  SSE leakage, excessive tool agency, cross-instance event loss, report
+  injection, SSRF, secret disclosure, database races, retention, and resource
+  exhaustion.
+- Added no source implementation, dependency, lock entry, provider, plugin,
+  endpoint, database, worker, Web UI, container, cloud resource, CLI command,
+  real-person data, or clinical behavior. Frozen fixtures, policies, gold,
+  benchmark decisions, and generated evidence remain unchanged.
+
+### Test-first evidence
+
+- Initial sandboxed `uv run --locked pytest tests\test_m13_contract_docs.py
+  tests\test_delivery_contract.py -q`: exit 2 before test startup because the
+  restricted process could not read the existing user-level uv cache.
+- The same pre-documentation command with approved cache access: exit 1; five
+  intended failures and three passes. Missing evidence included M13 normative
+  text, `/api/v1` paths, full-stack threats, the evidence registry, and the M13
+  README status.
+- First post-documentation focused compatibility run: exit 1; seven passes and
+  three failures. The remaining failures were exact wording and the historical
+  M12 status assertion, not implementation behavior.
+- Final `uv run --locked pytest tests\test_m13_contract_docs.py
+  tests\test_delivery_contract.py tests\test_m12_contract_docs.py -q`: exit 0;
+  10 passed in 0.04 seconds.
+- Initial `uv run --locked ruff format --check .`: exit 1; one edited delivery
+  test required mechanical formatting.
+- Initial `uv run --locked ruff check .`: exit 1; one new test import block
+  required mechanical ordering.
+- Initial `uv run --locked mypy src`: exit 0; no issues in 50 source files.
+- Scoped Ruff fix/format corrected only the two M13 test files.
+
+### Required final verification
+
+- `uv run --locked ruff format --check .`: exit 0; 92 files already formatted.
+- `uv run --locked ruff check .`: exit 0; all checks passed.
+- `uv run --locked mypy src`: exit 0; no issues in 50 source files.
+- Final post-status `uv run --locked pytest -q`: exit 0; 282 passed in 0.83
+  seconds.
+- The first sandboxed `uv run --locked careloop benchmark --manifest
+  benchmarks\manifest.v1.json`: exit 2 before project startup because the
+  restricted process could not read the user-level uv cache.
+- The same benchmark command with approved cache access: exit 0; 16 cases and
+  the existing four raw/summary paths were written.
+- The first sandboxed `uv run --locked python
+  tools\generate_milestone2_fixtures.py --check`: exit 2 for the same uv-cache
+  restriction. The approved rerun exited 0 with no output; all frozen generated
+  fixture bytes match.
+- `uv lock --check`: exit 0; 23 packages resolved and the lock is synchronized.
+- `git diff --exit-code -- artifacts\raw artifacts\summary`: exit 0; regenerated
+  evidence is byte-identical.
+- `git diff --exit-code -- pyproject.toml uv.lock benchmarks policies src`:
+  exit 0; dependencies, lock data, source implementation, frozen inputs, and
+  policies are unchanged.
+- `git diff --check`: exit 0; only Windows LF-to-CRLF conversion warnings were
+  emitted.
+
+### Residual limitations
+
+- M13 is a decision-complete contract, not an operational full-stack product.
+  FastAPI, durable storage, provider adapters, authentication, Web UI, Docker,
+  GCP, and simulated reviewer operation remain unimplemented.
+- Evidence-registry entries have not been approved by a clinical, ethics, or
+  security advisor. They cannot be treated as a clinical protocol or proof of
+  compliance.
+- Existing exact synthetic policies and deterministic tests do not establish
+  model-output safety, clinical validity, treatment effectiveness, crisis
+  detection, effective oversight, or real-world performance.
+
+## Exact next milestone
+
+Milestone 14 only: durable PostgreSQL/Redis runtime adapters, provider-neutral
+vLLM/Ollama/DeepSeek gateways, and immutable plugin profiles. Do not start M15
+supervised orchestration, M16 Web/API, or M17 cloud delivery until their prior
+milestone passes its complete recorded gate.
+
+## Milestone 14 durable runtime, model gateway, and plugin profiles
+
+### Implemented change boundary
+
+- Added SQLAlchemy 2 metadata and `PostgresRuntimeStore` behind the existing
+  synchronous `RuntimeEventLedgerPort`. Session config is immutable; append
+  locks and revalidates state/sequence, inserts event plus outbox, and advances
+  the projection in one transaction.
+- Added immutable distributed idempotency records and immutable strict
+  `PluginProfileV1` persistence. Profiles require enabled/locked provider,
+  input-safety, output-guard, and resource-catalog entries.
+- Added Alembic revision `20260902_0001` for PostgreSQL JSONB session, event,
+  outbox, idempotency, and plugin-profile tables. The repository contains no
+  database credential.
+- Added Redis transactional-outbox publishing. Redis failure leaves committed
+  work pending; a new publisher can retry. Delivery is at least once and event
+  identity remains authoritative in SQL.
+- Added an ARQ-compatible worker function and `WorkerSettings` with deployment
+  resources injected rather than read by the core.
+- Added DeepSeek and vLLM OpenAI-compatible adapters and one native Ollama
+  adapter. All explicitly disable streaming, validate one complete response,
+  return only a quarantined draft, and perform no fallback or tool execution.
+- Added SQLAlchemy, Alembic, psycopg, redis-py, ARQ, and HTTPX as explicit
+  locked outer-adapter dependencies. No provider SDK or Web framework was
+  introduced.
+- Existing public Day 1/M8–M13 schemas, state/events, policies, fixtures, gold,
+  evaluator decisions, CLI commands, benchmark, and generated evidence remain
+  unchanged.
+
+### Test-first and implementation evidence
+
+- Pre-implementation `uv run --locked pytest tests\durable_runtime
+  tests\test_m14_contract_docs.py -q`: exit 2 with four intended collection
+  errors for the missing `careloop.durable_runtime` package and SQLAlchemy.
+- `uv lock --python 3.12`: exit 0; dependency graph expanded from 23 to 42
+  locked packages. `uv sync --locked`: exit 0; 20 packages installed.
+- First post-implementation durable-runtime focused suite: exit 0; 15 passed in
+  1.60 seconds.
+- Initial M14 preflight truthfully recorded six unformatted files, one Ruff
+  line-length error, and 12 mypy errors in HTTP/Redis typing. Scoped formatting
+  and explicit protocol/cast fixes corrected them without weakening behavior.
+- Extended persistence/migration/recovery/architecture suite: first exit 1 with
+  30 passes and one architecture failure because the test incorrectly treated
+  M14's legal HTTPX outer dependency as a forbidden core dependency. The test
+  was narrowed to the actual no-reverse-import invariant.
+- Pre-documentation `uv run --locked pytest tests\test_m14_contract_docs.py -q`:
+  exit 1; two intended failures because M14 normative text and delivery status
+  were absent.
+- Final focused M14/compatibility/architecture command: exit 0; 42 passed in
+  1.10 seconds.
+
+### Required final verification
+
+- `uv run --locked alembic upgrade head --sql`: exit 0; PostgreSQL transactional
+  offline SQL contains JSONB, compound event identity, outbox, idempotency,
+  plugin profiles, index, version insert, and commit.
+- `uv run --locked ruff format --check .`: exit 0; 107 files already formatted.
+- `uv run --locked ruff check .`: exit 0; all checks passed.
+- `uv run --locked mypy src`: exit 0; no issues in 57 source files.
+- Final `uv run --locked pytest -q`: exit 0; 303 passed in 1.65 seconds.
+- `uv run --locked careloop benchmark --manifest
+  benchmarks\manifest.v1.json`: exit 0; 16 cases and the existing four
+  raw/summary paths were written.
+- `uv run --locked python tools\generate_milestone2_fixtures.py --check`: exit
+  0 with no output; all generator-owned fixture bytes match.
+- `uv lock --check`: exit 0; 42 packages resolved and synchronized.
+- `git diff --exit-code -- artifacts\raw artifacts\summary`: exit 0; generated
+  evidence remains byte-identical.
+- `git diff --exit-code -- benchmarks policies`: exit 0; frozen benchmark and
+  executable policy inputs are unchanged.
+
+### Environment-limited integration and residual risks
+
+- Docker daemon is unavailable, and neither PostgreSQL nor Redis executable or
+  service is installed. A live PostgreSQL/Redis integration suite could not be
+  run. SQLite exercises repository behavior only; PostgreSQL DDL and Alembic
+  offline SQL are verified separately and are not represented as a live pass.
+- TLS, credential rotation, connection-pool sizing, database backup/restore,
+  multi-instance load, Redis reconnect, and an actual ARQ worker process remain
+  deployment validation for M16/M17.
+- Provider adapters were verified with deterministic HTTP test clients and were
+  not sent credentials or network requests to DeepSeek, vLLM, or Ollama.
+- M14 storage and provider controls do not establish provider quality, model
+  output safety, effective supervision, clinical validity, treatment effect,
+  crisis detection, or real-world performance.
+
+## Exact next milestone
+
+Milestone 15 only: compose durable input-first routing, quarantined output
+gates, bounded repair, and the simulated reviewer queue. Do not begin M16 Web,
+OIDC, Docker Compose, participant API, or M17 cloud delivery until M15 passes.

@@ -1,0 +1,90 @@
+"""SQLAlchemy metadata for the M14 PostgreSQL durable-runtime boundary."""
+
+from sqlalchemy import (
+    JSON,
+    BigInteger,
+    Boolean,
+    Column,
+    Date,
+    ForeignKey,
+    Index,
+    Integer,
+    MetaData,
+    String,
+    Table,
+    UniqueConstraint,
+)
+from sqlalchemy.dialects.postgresql import JSONB
+
+metadata = MetaData()
+json_document = JSON().with_variant(JSONB(), "postgresql")
+outbox_identity = Integer().with_variant(BigInteger(), "postgresql")
+
+runtime_sessions = Table(
+    "runtime_sessions",
+    metadata,
+    Column("session_id", String(255), primary_key=True),
+    Column("config", json_document, nullable=False),
+    Column("current_state", String(64), nullable=False),
+    Column("next_sequence", Integer, nullable=False),
+    Column("retention_until", Date, nullable=True),
+)
+
+runtime_events = Table(
+    "runtime_events",
+    metadata,
+    Column(
+        "session_id",
+        String(255),
+        ForeignKey("runtime_sessions.session_id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+    Column("sequence", Integer, primary_key=True),
+    Column("event_id", String(255), nullable=False),
+    Column("payload", json_document, nullable=False),
+    UniqueConstraint("event_id"),
+)
+
+runtime_outbox = Table(
+    "runtime_outbox",
+    metadata,
+    Column("outbox_id", outbox_identity, primary_key=True, autoincrement=True),
+    Column(
+        "session_id",
+        String(255),
+        ForeignKey("runtime_sessions.session_id", ondelete="CASCADE"),
+        nullable=False,
+    ),
+    Column("event_id", String(255), nullable=False),
+    Column("sequence", Integer, nullable=False),
+    Column("payload", json_document, nullable=False),
+    Column("published", Boolean, nullable=False, default=False),
+    UniqueConstraint("event_id"),
+)
+Index(
+    "ix_runtime_outbox_unpublished",
+    runtime_outbox.c.published,
+    runtime_outbox.c.outbox_id,
+)
+
+runtime_idempotency = Table(
+    "runtime_idempotency",
+    metadata,
+    Column(
+        "session_id",
+        String(255),
+        ForeignKey("runtime_sessions.session_id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+    Column("request_id", String(255), primary_key=True),
+    Column("request_hash", String(71), nullable=False),
+    Column("result_payload", json_document, nullable=False),
+)
+
+plugin_profiles = Table(
+    "plugin_profiles",
+    metadata,
+    Column("profile_id", String(255), primary_key=True),
+    Column("profile_version", String(255), nullable=False),
+    Column("payload", json_document, nullable=False),
+)

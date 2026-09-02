@@ -1,10 +1,12 @@
-# CareLoop Harness engineering contract
+# CareLoop Research Harness engineering contract
 
 ## Mission
 
-Build an offline-first, deterministic evaluation harness for synthetic support-agent
-trajectories. The core contribution is versioned evidence, trajectory-aware evaluation,
-crisis-flow suppression, deterministic replay, and matched-pair benchmarking.
+Build an end-to-end research harness for adult synthetic role-play while preserving the
+offline-first deterministic evaluator as an independently removable core. The product
+contribution is versioned evidence, non-diagnostic safety-signal routing, quarantined
+generation, a simulated human-review queue, deterministic replay, and matched-pair
+benchmarking. Full-stack adapters must remain outside the core dependency boundary.
 
 ## Read before editing
 
@@ -15,11 +17,15 @@ docs/test_matrix.md. Do not infer requirements from README marketing copy.
 ## Professional boundary
 
 - This is not therapy, diagnosis, suicide-risk assessment, crisis care, or a medical device.
-- Use synthetic data only. Never add real patient or user data.
+- Use adult synthetic role-play only. Never add real patient or user data, protected
+  health information, or production clinical records.
+- No protected health information is accepted in any research-demo path.
 - Never claim clinical validity, treatment effectiveness, MITI proficiency, regulatory
   compliance, suicide detection accuracy, or real-world safety.
 - Do not implement PHQ/ASQ/BSSA administration, a complete safety plan, medication advice,
   automatic third-party contact, or a suicide risk score/probability.
+- The research UI must say that the simulated human-review queue is not staffed care and
+  does not contact clinicians, emergency services, family, or authorities.
 
 ## Process invariants
 
@@ -48,6 +54,26 @@ docs/test_matrix.md. Do not infer requirements from README marketing copy.
 - Benchmark evaluates first and loads gold only for comparison afterward.
 - Replay never calls an agent, model, network, or wall clock.
 - All summaries are derived from raw artifacts. Never hand-edit generated numbers.
+- Future FastAPI, Next.js, PostgreSQL, Redis, provider, OIDC, Docker, and cloud modules are
+  outer adapters. They call application services and never move their dependencies inward.
+- Participant streaming is status-only. A complete answer becomes visible atomically only
+  after every required gate and append succeeds; raw tokens and quarantined drafts remain
+  reviewer-only.
+- PostgreSQL will be authoritative when durable persistence is implemented. Redis may
+  distribute ephemeral events and jobs but is never the system of record.
+
+## Full-stack research invariants
+
+- The API-level release disposition is only `allow`, `hold_for_review`, or
+  `system_failure`; it describes release control, never a person's condition.
+- A rewrite may repair text but cannot establish that a person's risk has cleared.
+- Safety-critical model, input-routing, output-gate, and audit plugins cannot be disabled.
+- Optional preinstalled features are frozen into a session snapshot and cannot hot-swap.
+- Model tool calls use server-side allowlists and schema validation. Model output never
+  installs code, grants permissions, selects credentials, or directly performs an action.
+- Local demo identities are synthetic and must be impossible to enable in production.
+- External evidence stays versioned, source-linked, and pending until an identified
+  advisor review explicitly approves it. It is not executable runtime policy by default.
 
 ## Working method
 
