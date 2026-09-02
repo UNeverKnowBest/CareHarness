@@ -4,7 +4,7 @@ from datetime import date
 from pathlib import Path
 from typing import Self
 
-from careloop.artifacts import load_frozen_trajectory_artifact
+from careloop.artifacts import FrozenTrajectoryArtifact, load_frozen_trajectory_artifact
 from careloop.domain import (
     BenchmarkManifest,
     EvaluationManifest,
@@ -141,8 +141,21 @@ class EvaluateTrajectory:
         output_path: str | Path | None = None,
     ) -> TrajectoryEvaluationResult:
         artifact = load_frozen_trajectory_artifact(path)
+        result = self.evaluate_artifact(artifact)
+        if output_path is not None:
+            destination = Path(output_path)
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(result.canonical_bytes())
+        return result
+
+    def evaluate_artifact(
+        self,
+        artifact: FrozenTrajectoryArtifact,
+    ) -> TrajectoryEvaluationResult:
+        """Evaluate one already validated in-memory frozen artifact."""
+        artifact = FrozenTrajectoryArtifact.model_validate(artifact.model_dump())
         final_answer = self._final_answer_view(artifact.trajectory)
-        result = TrajectoryEvaluationResult(
+        return TrajectoryEvaluationResult(
             result_schema_version="v1",
             case_id=artifact.case_id,
             canonical_hash=artifact.canonical_hash,
@@ -156,8 +169,3 @@ class EvaluateTrajectory:
             ),
             resource_references=self._resource_references(artifact.trajectory),
         )
-        if output_path is not None:
-            destination = Path(output_path)
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            destination.write_bytes(result.canonical_bytes())
-        return result

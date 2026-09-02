@@ -484,3 +484,36 @@ mutable review table or projection store. The participant projection is formed
 only after that event append succeeds. Removing M10/M11 runtime orchestration
 leaves the original offline evaluate, replay, benchmark, reporting, fixtures,
 and generated evidence paths operational.
+
+## Milestone 12 synthetic session-close and evaluation boundary
+
+### FROZEN
+
+```text
+detached SyntheticSessionSnapshot + RESPONSE_RELEASED ledger evidence
+  -> validate submit / suppressed-override / release identity
+  -> assemble unchanged Trajectory and canonical artifact in memory
+  -> evaluate in memory through existing isolated evaluator boundaries
+  -> append CLOSE_SESSION before report release
+     -> participant: final released answer and closed status only
+     -> research review: raw evaluation plus close evidence
+```
+
+`careloop.application.synthetic_close` owns strict close command/snapshot/result
+models, runtime-evidence correlation, canonical in-memory artifact construction,
+close idempotency, and append-before-report ordering. It may depend on domain,
+artifacts, evaluation result types, the existing application evaluator boundary,
+and public agent-runtime contracts/ports. It cannot import CLI/UI,
+process/safety policy implementations, reporting, plugin/provider adapters,
+benchmark/gold data, network, database, clock, or randomness.
+
+`EvaluateTrajectory.evaluate_artifact` is the same no-gold evaluation path used
+by the existing local-file `run` method after artifact loading. M12 supplies a
+validated in-memory artifact and adds no file output. Evaluation is complete
+before the close event is attempted, but neither participant nor research
+report is formed if the append fails.
+
+M12 reuses the existing state machine, `CLOSE_SESSION`, `RUNTIME_FAILURE`, and
+in-memory ledger without adding an event or state. Removing M10–M12 runtime
+orchestration leaves the original offline evaluate, replay, benchmark,
+reporting, frozen fixtures, and generated artifacts operational.

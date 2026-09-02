@@ -1,6 +1,6 @@
 # Agent Runtime Threat Model
 
-Status: **FROZEN through the synthetic Milestone 11 runtime boundary**
+Status: **FROZEN through the synthetic Milestone 12 runtime boundary**
 
 ## Assets and trust boundaries
 
@@ -76,6 +76,24 @@ The project uses Synthetic data only and is not approved for real patient data.
 - A one-shot decision append failure records `RUNTIME_FAILURE` when possible;
   persistent ledger failure exposes no reply. This remains process-local
   control-flow evidence, not durable audit or effective human oversight.
+
+## Milestone 12 implemented controls
+
+- Close binds a detached synthetic snapshot and exact session/trajectory
+  identity. Every user turn requires submit or suppressed-override evidence;
+  every assistant turn requires an existing direct or reviewed release event.
+- The canonical artifact is built and evaluated in memory. The existing
+  final-only evaluator still receives only `FinalAnswerView`, the trajectory
+  evaluator receives the complete ordered trajectory, and neither receives
+  gold.
+- Evaluation identity, hash, and trajectory are revalidated. No participant or
+  research report is returned until the append-only `CLOSE_SESSION` event
+  succeeds.
+- Evaluation and ledger failures expose only stable categories, append
+  `RUNTIME_FAILURE` when possible, and return neither a final answer nor raw
+  evaluation. Persistent ledger failure releases no report.
+- Exact close retries return detached local snapshots without a second event.
+  This is not durable, concurrent, or distributed session/report storage.
 
 ## Existing offline harness controls retained
 

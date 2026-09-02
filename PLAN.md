@@ -765,6 +765,82 @@ typed decisions and the append-only in-memory event ledger.
 
 ## Exact next milestone
 
-No Milestone 12 is approved. Stop after M11. Any later work requires a new
-versioned milestone and cannot infer authorization for session-close evaluation,
-durable storage, Web/API, real providers/plugins, deployment, or real users.
+No Milestone 12 was approved at M11 close. The owner's later instruction to
+complete M12 authorizes only the versioned session-close boundary below.
+
+## Milestone 12 — deterministic synthetic session close and evaluation
+
+Plan status: **COMPLETE**. Work is limited to one library-only close service,
+in-memory trajectory assembly, reuse of existing offline evaluators, and
+append-before-report evidence.
+
+### M12.1 Freeze close, snapshot, and projection contracts
+
+### COMPLETE
+
+- Freeze exact strict snapshot, command, status, failure, participant, and
+  research-review fields.
+- Require complete submit/override/release evidence, in-memory canonical artifact
+  identity, evaluator-before-close execution, and close-append-before-report
+  release.
+- Preserve existing states/events, public schemas, policies, fixtures, gold,
+  benchmark/report bytes, dependencies, and CLI commands.
+
+### M12.2 Add red close, failure-injection, and delivery tests
+
+### COMPLETE
+
+- Cover direct release and suppressed override assembly, identity/evidence
+  mismatch, evaluator ordering, close append, exact/conflicting retries,
+  strict schemas, projection isolation, and detached snapshots.
+- Inject evaluator, one-shot ledger, and persistent ledger failures and require
+  category-only failed-closed evidence with no report release.
+- Add architecture, normative-document, and README boundary tests.
+
+### M12.3 Implement the minimum library-only close service
+
+### COMPLETE
+
+- Add `CloseSyntheticSession` over `RuntimeEventLedgerPort`, canonical in-memory
+  artifact construction, and `EvaluateTrajectory.evaluate_artifact`.
+- Add no file writer, gold comparison, mutable store, endpoint, CLI command,
+  dependency, policy logic, provider/plugin, network, clock, or randomness.
+
+### M12.4 Verify, record, and stop
+
+### COMPLETE
+
+- Run focused M10–M12, evaluation, storage, architecture, and delivery tests,
+  then the complete locked quality gate and unchanged benchmark/fixture/artifact
+  checks.
+- Record exact evidence in `STATUS.md` and stop before durable persistence,
+  Web/API, real provider/plugin, operational review, or real-participant work.
+
+### Milestone 12 acceptance gates
+
+- A complete trajectory is evaluated only when every turn has submit,
+  suppressed-override, or release evidence and the session is
+  `RESPONSE_RELEASED`.
+- The existing final-only evaluator receives only `FinalAnswerView`; the
+  complete evaluator receives the assembled trajectory and never gold.
+- No participant or research report is returned unless `CLOSE_SESSION` appends;
+  evaluation/ledger failure produces no final answer or raw evaluation report.
+- Exact retries append no second close; conflicting, stale, mismatched, or
+  unevidenced input rejects before mutation.
+- Removing M10–M12 leaves evaluate, replay, benchmark, reporting, frozen
+  fixtures, and generated artifacts fully operational.
+
+### Milestone 12 explicit exclusions
+
+- No durable session/turn/draft/review/report store, transaction, concurrency or
+  distributed idempotency, post-session review queue, authentication,
+  HTTP/API/SSE/WebSocket, UI, worker, notification, real provider/plugin,
+  credential, network, deployment, FHIR, real-user data, or clinical claim.
+- No Milestone 13 behavior.
+
+## Exact next milestone
+
+No Milestone 13 is approved. Stop after M12. Any later work requires a new
+versioned milestone that preserves the offline core, synthetic-only data,
+draft/projection isolation, append-only evidence, and generated-artifact
+ownership.
