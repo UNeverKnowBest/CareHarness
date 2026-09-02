@@ -70,6 +70,17 @@ The next milestone is M16: the frozen research-only Web/API, OIDC, report, and
 Docker Compose surface. It does not authorize real-user data, clinical claims,
 or M17 cloud delivery.
 
+`CloseSyntheticSession` is library-only as well. It validates a detached
+synthetic session snapshot against submit, override, and release evidence,
+evaluates a canonical in-memory trajectory with the existing offline
+evaluators, and releases a report only after the close event is appended. It
+adds no CLI command, file writer, server, durable session store, or participant
+workflow.
+
+The next milestone is M15: durable supervised safety orchestration and the
+simulated review queue. It does not authorize real-user data or a participant
+Web/API surface.
+
 ## Reproduce from the lockfile
 
 Python 3.12 and `uv` are required. No API key, model provider, database, browser,
