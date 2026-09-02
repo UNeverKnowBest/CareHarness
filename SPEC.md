@@ -970,3 +970,63 @@ command.
   participant workflow, clinical screening, diagnosis, risk classification,
   treatment, crisis service, or claim that a reviewer decision makes model
   output safe or clinically appropriate.
+
+## Milestone 12 deterministic synthetic session-close contract
+
+Contract status: **FROZEN for Milestone 12**. M12 adds one library-only
+application use case, `CloseSyntheticSession`, which assembles and evaluates one
+detached synthetic session snapshot before recording the existing
+`CLOSE_SESSION` transition. It changes no Day 1 public model, evaluator or
+safety-policy decision, frozen fixture, gold label, benchmark, report,
+dependency, or CLI command.
+
+### Snapshot, command, and audience projections
+
+- `SyntheticSessionSnapshot` has exactly `contract_version`, `session_id`,
+  `trajectory_id`, `turns`, `process_markers`, and `safety_events`. It builds an
+  unchanged `Trajectory`, requires at least one already released assistant turn,
+  and requires every safety event to reference a synthetic user turn.
+- `SyntheticSessionCloseCommand` has exactly `contract_version`, `request_id`,
+  `session_id`, `trajectory_id`, and unique non-empty `evidence_ids`. Transcript
+  or evaluator content is not duplicated in the command.
+- `SyntheticSessionCloseStatus` has exactly `evaluated` and `failed_closed`.
+  `SyntheticSessionCloseFailureCode` has exactly `evaluation_failure` and
+  `ledger_failure`.
+- `ParticipantSessionCloseView` has exactly `contract_version`, `request_id`,
+  `session_id`, `status`, `state`, `trajectory_id`, and `final_answer`. It has no
+  trajectory, finding ledger, canonical hash, internal event, failure category,
+  draft, score, diagnosis, or clinical disposition.
+- `ResearchSessionCloseView` adds the complete immutable
+  `TrajectoryEvaluationResult`, the close/failure event, and a stable failure
+  category. It is not a participant projection.
+
+### Assembly, evaluation, and append order
+
+- Close is valid only when the command matches the detached authoritative
+  snapshot and the ledger is in `RESPONSE_RELEASED`. Every user turn must match
+  `SUBMIT_TURN` evidence or a recorded suppressed override; every assistant turn
+  must match an existing direct or reviewed release event. Missing or omitted
+  turn evidence rejects before evaluator execution or ledger mutation.
+- The service builds the unchanged `Trajectory` and a canonical in-memory
+  `FrozenTrajectoryArtifact`, then invokes the existing `EvaluateTrajectory`
+  final-only and complete-trajectory boundaries without a file write or gold
+  input. Returned identity, hash, and trajectory are revalidated.
+- Evaluation completes before `CLOSE_SESSION`, but no report is projected until
+  that append succeeds. The close event records trajectory identity and hash.
+  Exact local retries return detached results and append no second close;
+  conflicting reuse rejects.
+- Evaluation failure or a one-shot close append failure emits a category-only
+  `RUNTIME_FAILURE`, returns no evaluation or final answer, and reaches
+  `FAILED_CLOSED`. Persistent ledger unavailability raises a typed local error
+  and releases no report.
+
+### Milestone 12 exclusions
+
+- No session/turn database, durable transcript, transaction, concurrency
+  control, distributed idempotency, correction workflow, post-session review
+  queue, Web/API/SSE/WebSocket, UI, worker, notification, provider/plugin,
+  credential, network, clock, randomness, deployment, or new CLI command.
+- No benchmark/gold comparison for runtime sessions, generated result file,
+  participant-facing quality claim, clinical screening, diagnosis, risk
+  classification, treatment, crisis service, or claim that a completed
+  evaluation establishes session quality or real-world safety.

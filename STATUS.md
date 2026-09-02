@@ -1,8 +1,8 @@
 # CareLoop Harness Status
 
-Current phase: Milestone 11 complete
+Current phase: Milestone 12 complete
 Next milestone: none approved; future work requires a new versioned milestone
-Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M11.4
+Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M12.4
 
 ## Status vocabulary
 
@@ -1381,6 +1381,9 @@ and generated-artifact ownership.
 - `git diff --exit-code -- pyproject.toml uv.lock benchmarks artifacts
   policies`: exit 0; dependencies, lock data, frozen inputs, generated evidence,
   and policies are unchanged.
+- Post-status `uv run --locked pytest tests\test_m12_contract_docs.py
+  tests\test_delivery_contract.py tests\test_architecture.py -q`: exit 0; 19
+  passed in 0.08 seconds.
 - Negative import/clock/random and CLI/export `rg` checks each exited 1 with no
   matches, as expected. `git diff --check` exited 0 with only Windows
   LF-to-CRLF conversion warnings.
@@ -1402,9 +1405,116 @@ and generated-artifact ownership.
 - The owner's pre-existing untracked `.python-version` and Chinese engineering
   guide remain untouched and outside the M11 change set.
 
+## M11 closing state (superseded by M12 owner authorization)
+
+At M11 close, no Milestone 12 had been approved. The owner's later instruction
+to complete M12 authorized the smallest next runtime milestone: deterministic
+synthetic session close, in-memory trajectory assembly/evaluation, and
+append-before-report evidence. It did not authorize persistence, Web/API, real
+providers/plugins, operational review, deployment, or real-participant work.
+
+## Milestone 12 deterministic synthetic session close and evaluation
+
+### Frozen and implemented change boundary
+
+- Added strict `SyntheticSessionSnapshot`, `SyntheticSessionCloseCommand`,
+  `ParticipantSessionCloseView`, and `ResearchSessionCloseView` contracts plus
+  exact close status and failure enums. The participant projection contains no
+  trajectory, findings, canonical hash, runtime event, failure category, draft,
+  hidden reasoning, score, diagnosis, or clinical disposition.
+- Added library-only `CloseSyntheticSession`. It binds a deep detached synthetic
+  session snapshot, requires exact command session/trajectory identity and
+  `RESPONSE_RELEASED`, and validates every user/assistant turn against submit,
+  suppressed-override, direct approval, or reviewed-release evidence before
+  evaluator execution or ledger mutation.
+- The service builds the unchanged domain `Trajectory` and canonical
+  `FrozenTrajectoryArtifact` in memory. Added
+  `EvaluateTrajectory.evaluate_artifact`, with the existing file-based `run`
+  method delegating to the same no-gold evaluation path.
+- Evaluation result case ID, canonical hash, and trajectory are revalidated.
+  `CLOSE_SESSION` records the evaluated identity and must append before either
+  participant or research-review result is returned.
+- Evaluation or one-shot close-append failure records category-only
+  `RUNTIME_FAILURE`, exposes neither final answer nor raw evaluation, and reaches
+  `FAILED_CLOSED`. Persistent ledger failure raises typed local unavailability
+  and releases no report.
+- Exact process-local `(session_id, request_id)` retries return detached cached
+  results and append no second close; changed reuse rejects.
+- Added no state/event value, Day 1 public field, policy rule, dependency, CLI
+  command, file writer, provider/plugin, network, credential, database, clock,
+  randomness, Web/API/UI, worker, authentication, or deployment behavior.
+  Existing fixtures, gold, benchmark decisions, and generated evidence remain
+  unchanged.
+
+### Test-first and focused evidence
+
+- Baseline `uv run --locked pytest -q`: exit 0; 261 passed in 0.68 seconds.
+- Pre-implementation `uv run --locked pytest
+  tests\application_runtime\test_synthetic_close.py -q`: exit 1 during
+  collection with the intended `ModuleNotFoundError: No module named
+  'careloop.application.synthetic_close'`.
+- First implementation/evaluation focused command: exit 0; 25 passed in 0.16
+  seconds.
+- Documentation/architecture red command: exit 1; three intended documentation
+  failures and 16 passes because normative files and README still described
+  M11. After freezing M12, the same scope exited 0; 19 passed in 0.12 seconds.
+- Expanded M10–M12/storage/evaluation/architecture focused command: exit 0; 71
+  passed in 0.32 seconds. The strengthened M12 close suite then exited 0; 14
+  passed in 0.14 seconds.
+- Initial focused preflight: mypy passed 50 source files and 71 tests passed;
+  format check reported four changed files and Ruff reported import/line-length
+  findings. Scoped Ruff formatting changed exactly those four files.
+
+### Required final verification
+
+- The first restarted `uv run --locked ruff format --check .`: exit 0; 91 files
+  already formatted. The following Ruff check exited 1 for one 89-character
+  error-message line; it was wrapped without behavior change and the complete
+  sequence restarted.
+- The next complete sequence passed format, Ruff, and mypy, but `uv run --locked
+  pytest -q` exited 1 with two historical M11 documentation failures and 276
+  passes. Those tests were updated to preserve the M11 closing fact and M11
+  implemented section without requiring the current project to remain frozen at
+  M11. Focused M11/M12 documentation regression then exited 0; four passed.
+- Final `uv run --locked ruff format --check .`: exit 0; 91 files already
+  formatted.
+- Final `uv run --locked ruff check .`: exit 0; all checks passed.
+- Final `uv run --locked mypy src`: exit 0; no issues in 50 source files.
+- Final `uv run --locked pytest -q`: exit 0; 278 passed in 0.71 seconds.
+- `uv run --locked careloop benchmark --manifest
+  benchmarks\manifest.v1.json`: exit 0; 16 cases completed and the existing
+  four raw/summary paths were regenerated.
+- `uv run --locked python tools\generate_milestone2_fixtures.py --check`:
+  exit 0 with no output; all generator-owned frozen fixture bytes remain
+  unchanged.
+- `uv lock --check`: exit 0; 23 packages resolved and the lock remains
+  synchronized.
+- `git diff --exit-code -- artifacts\raw artifacts\summary`: exit 0; generated
+  evidence is byte-identical.
+- `git diff --exit-code -- pyproject.toml uv.lock benchmarks artifacts
+  policies`: exit 0; dependencies, lock data, frozen inputs, generated evidence,
+  and policies are unchanged.
+
+### Residual limitations
+
+- The authoritative transcript snapshot, event ledger, idempotency cache, and
+  close reports are process-local demonstrations. There is no durable turn or
+  report store, transaction, concurrency control, distributed idempotency,
+  correction workflow, post-session queue, or recovery coordinator.
+- M12 trusts the application-supplied snapshot as authoritative after strict
+  schema and event-identity correlation. The append-only M10/M11 ledger does not
+  retain released turn text, so it cannot independently reconstruct transcript
+  bytes without the bound snapshot.
+- Evaluation uses the existing exact synthetic policy rules. A successful close
+  does not establish session quality, model-output safety, clinical
+  appropriateness, treatment effectiveness, effective review, or real-world
+  safety.
+- The owner-directed post-M11 commit added the formerly untracked Python version
+  file and Chinese engineering guide; M12 did not modify either file.
+
 ## Exact next milestone
 
-No Milestone 12 is approved. Stop after M11. Any later implementation requires a
+No Milestone 13 is approved. Stop after M12. Any later implementation requires a
 new versioned milestone that preserves the offline core, synthetic-only data,
 draft/projection isolation, append-only evidence, and generated-artifact
 ownership.

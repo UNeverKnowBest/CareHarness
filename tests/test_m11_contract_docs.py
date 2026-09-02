@@ -15,7 +15,7 @@ def test_m11_contract_is_frozen_in_normative_documents() -> None:
     assert "APPROVE" in spec
     assert "REPLACE_WITH_SAFE_TEMPLATE" in spec
     assert "append decision event" in architecture
-    assert "No Milestone 12 is approved" in plan
+    assert "No Milestone 12 was approved at M11 close" in plan
 
 
 def test_m11_limits_are_recorded_in_safety_and_threat_documents() -> None:
@@ -24,7 +24,7 @@ def test_m11_limits_are_recorded_in_safety_and_threat_documents() -> None:
     safety = _normalized("docs/safety_and_limitations.md")
     matrix = _normalized("docs/test_matrix.md")
 
-    assert "FROZEN through Milestone 11" in runtime
+    assert "Milestone 11 implemented contract" in runtime
     assert "Milestone 11 implemented controls" in threat
     assert "does not contact a person" in safety
     assert "Milestone 11 synthetic review-resolution matrix" in matrix

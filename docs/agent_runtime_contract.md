@@ -1,6 +1,6 @@
 # Agent Runtime Contract
 
-Contract status: **FROZEN through Milestone 11**
+Contract status: **FROZEN through Milestone 12**
 
 ## Product and release boundary
 
@@ -170,3 +170,26 @@ only. Exact local retries are idempotent and conflicting reuse rejects. M11
 adds no reviewer queue, identity/authentication, durable decision table,
 endpoint, staffed response, session-close evaluation, or claim that human
 approval establishes model or clinical safety.
+
+## Milestone 12 implemented contract
+
+`CloseSyntheticSession` binds a detached `SyntheticSessionSnapshot` containing
+only synthetic turns plus typed process and safety evidence. It accepts a close
+command only for the exact session/trajectory identity in
+`RESPONSE_RELEASED`. Submitted user turns, suppressed override turns, and direct
+or reviewed assistant releases must all be evidenced before evaluation.
+
+The service assembles the unchanged domain `Trajectory`, builds a canonical
+artifact in memory, and invokes the existing no-gold `EvaluateTrajectory`
+boundary. Evaluation occurs before the existing `CLOSE_SESSION` append, while
+both participant and research-review reports remain withheld until that append
+succeeds. The participant projection contains only the final already released
+answer and closed status; the research projection retains the raw evaluation
+and close event.
+
+Evaluation or close-append failure returns no report and attempts the existing
+category-only `RUNTIME_FAILURE` transition. Exact local close retries are
+idempotent and conflicting reuse rejects. M12 adds no durable transcript or
+report store, correction workflow, post-session queue, API endpoint, CLI
+command, file writer, provider/plugin, network, or claim that evaluation
+establishes session quality or real-world safety.

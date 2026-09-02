@@ -89,3 +89,12 @@ professionally reviewed. Handoff is only a closed local state; it does not
 contact a person, clinician, emergency service, or external system. No reviewer
 identity, staffing, notification, authentication, durable queue, or operational
 response is implemented.
+
+Milestone 12 assembles and evaluates only a detached synthetic session snapshot
+whose turns already have submit, suppressed-override, or release evidence. It
+reuses exact offline evaluator rules and produces no new detector, clinical
+interpretation, benchmark comparison, or score. A successful close proves only
+append-before-report and deterministic evaluation of that snapshot; it does not
+establish session quality, model-output safety, clinical appropriateness,
+effective review, or real-world safety. The transcript, ledger, idempotency, and
+reports remain process-local and non-durable.

@@ -1,9 +1,9 @@
 # CareLoop Harness
 
-Project status: Milestone 11 complete. The frozen v1 offline evaluator
-remains implemented and reproducible from `uv.lock`; M11 is limited to a
-library-only deterministic resolver for an M10 synthetic review hold over the
-same append-only in-memory runtime-event ledger.
+Project status: Milestone 12 complete. The frozen v1 offline evaluator remains
+implemented and reproducible from `uv.lock`; M12 adds only library-level
+synthetic session close and in-memory trajectory evaluation over the same
+append-only in-memory runtime-event ledger.
 
 CareLoop Harness is an **offline-first**, **deterministic** evaluation harness
 for **synthetic** support-agent trajectories. It is deliberately
@@ -45,6 +45,13 @@ replay, benchmark execution, or reporting.
 review decisions to existing append-only transitions; it is not a reviewer
 queue, staffed service, participant endpoint, or claim that approved model text
 is safe.
+
+`CloseSyntheticSession` is library-only as well. It validates a detached
+synthetic session snapshot against submit, override, and release evidence,
+evaluates a canonical in-memory trajectory with the existing offline
+evaluators, and releases a report only after the close event is appended. It
+adds no CLI command, file writer, server, durable session store, or participant
+workflow.
 
 ## Reproduce from the lockfile
 

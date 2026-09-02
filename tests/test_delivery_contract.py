@@ -37,15 +37,17 @@ def test_readme_first_screen_states_product_boundary() -> None:
         assert phrase in first_screen
 
 
-def test_readme_records_milestone_eleven_with_cli_only_interaction() -> None:
+def test_readme_records_milestone_twelve_with_cli_only_interaction() -> None:
     readme = " ".join(
         (ROOT / "README.md").read_text(encoding="utf-8").split()
     ).casefold()
 
     for phrase in (
-        "project status: milestone 11 complete",
+        "project status: milestone 12 complete",
         "runsyntheticturn",
         "resolvesyntheticreview",
+        "closesyntheticsession",
+        "in-memory trajectory evaluation",
         "append-only in-memory",
         "no installed plugin is enabled by default",
         "not a reviewer queue",

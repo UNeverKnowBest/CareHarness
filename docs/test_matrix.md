@@ -122,3 +122,18 @@ isolation.
 | Idempotent resolution | exact versus conflicting `(session_id, request_id)` | exact retry is detached and byte-identical with no append; changed content rejects |
 | Projection isolation | exact participant/research-review fields | participant has no draft, decision/evidence, runtime event, failure detail, hidden reasoning, or clinical field |
 | Removability | source imports and unchanged offline suites | resolver has no safety/evaluator/CLI/UI/provider/network/database/clock/gold dependency; generated artifacts remain identical |
+
+## Milestone 12 synthetic session-close matrix
+
+| Boundary/control | Observable evidence | Required coverage |
+|---|---|---|
+| Snapshot assembly | detached turns, markers, and safety events | unchanged `Trajectory` validates; at least one released assistant turn; safety events reference user turns |
+| Turn authorization | submit, suppressed-override, direct approval, and reviewed-release events | every user/assistant turn is evidenced; missing, omitted, stale, or mismatched identity rejects before evaluation and append |
+| Evaluator isolation | canonical in-memory artifact | existing final-only evaluator receives only `FinalAnswerView`; complete evaluator receives trajectory; no gold/file input |
+| Append-before-report | evaluator and ledger spies | evaluation runs from `RESPONSE_RELEASED`; `CLOSE_SESSION` succeeds before participant/research result construction |
+| Evaluation integrity | case ID, canonical hash, and trajectory | returned raw result exactly matches the assembled artifact; substituted result fails closed |
+| Evaluation failure | injected evaluator exception | category-only `RUNTIME_FAILURE`, `FAILED_CLOSED`, no final answer or raw evaluation |
+| Ledger failure | one-shot and persistent close append failures | writable failure path records `RUNTIME_FAILURE`; persistent failure raises typed unavailability with no report |
+| Idempotent close | exact versus conflicting `(session_id, request_id)` | exact retry is detached and appends nothing; changed content rejects |
+| Projection isolation | exact participant/research fields | participant has no trajectory, findings, hash, event, failure detail, draft, hidden reasoning, or clinical field |
+| Removability | imports and unchanged offline suites | no CLI/UI/policy/provider/network/database/clock/file/gold dependency; benchmark artifacts remain identical |
