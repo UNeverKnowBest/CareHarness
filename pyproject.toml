@@ -13,12 +13,15 @@ requires-python = ">=3.12,<3.13"
 dependencies = [
     "alembic>=1.16,<2",
     "arq>=0.26,<1",
+    "fastapi>=0.116,<1",
     "httpx>=0.28,<1",
     "psycopg[binary]>=3.2,<4",
     "pydantic>=2.11,<3",
+    "pyjwt[crypto]>=2.10,<3",
     "redis>=5,<9",
     "sqlalchemy>=2.0,<3",
     "typer>=0.24,<1",
+    "uvicorn>=0.35,<1",
 ]
 
 [project.scripts]

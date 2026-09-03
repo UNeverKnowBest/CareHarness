@@ -1,8 +1,8 @@
 # CareLoop Harness Status
 
-Current phase: Milestone 15 complete
-Next milestone: Milestone 16 — research Web/API, OIDC, reports, and Docker Compose
-Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M15
+Current phase: Milestone 16 complete
+Next milestone: Milestone 17 — final evaluation, cloud template, and delivery
+Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M16
 
 ## Status vocabulary
 
@@ -1815,3 +1815,135 @@ OIDC, Docker Compose, participant API, or M17 cloud delivery until M15 passes.
 Milestone 16 only: implement the frozen research-only FastAPI/Next.js/OIDC,
 status-only SSE, report, and Docker Compose surface. Do not start M17 cloud
 delivery until M16 passes its complete recorded gate.
+
+## Milestone 16 research Web/API, reports, identity, and Docker Compose
+
+### Implemented change boundary
+
+- Added strict v1 FastAPI request, participant projection,
+  `ReleaseDispositionV1`, and status-only SSE contracts. The exact frozen M13
+  routes are implemented over an injected application-service protocol.
+- Added asymmetric-key OIDC claim verification and issuer, audience, expiry,
+  nonce, and exact-role validation. The separate local synthetic identity
+  adapter accepts only explicit development mode and refuses production.
+- Added participant ownership checks, role-separated routes, required write
+  idempotency keys, exact create retry, and cross-subject session-ID rejection.
+- Added PostgreSQL-backed research-session and public-event projections plus
+  Alembic revision `20260903_0003`. A public projection and event append share
+  one transaction; `Last-Event-ID` replay reads authoritative ordered rows.
+- Added `LocalResearchService`, which composes the existing input-first routing,
+  deterministic local complete-draft adapter, output gate, supervised hold,
+  durable runtime, and M12 no-gold evaluator close boundary. Non-release paths
+  expose no ordinary assistant turn.
+- Added one strict research report source with canonical JSON, participant-only
+  summary projection, escaped script-free reviewer HTML, and deterministic
+  passive PDF rendering.
+- Added English/Chinese Next.js participant, simulated-reviewer, and admin role
+  surfaces with persistent research-only and unstaffed-queue disclosure.
+- Added fixed bilingual scenario metadata, non-root locked API/Web images, and a
+  five-service local Compose topology. Its ARQ worker injects PostgreSQL/Redis
+  resources and periodically retries committed runtime outbox rows.
+- Added FastAPI, Uvicorn, and PyJWT crypto dependencies to the Python lock and
+  pinned Next.js/React/TypeScript/Playwright dependencies to the Node lock.
+- Added ignore boundaries so Node dependencies/build/test outputs do not enter
+  Git or Docker context while `web/lib` remains tracked source.
+- Added no M17 Terraform/GCP resource, production credential, real identity,
+  provider activation, tool execution, clinical behavior, evaluator rule,
+  executable-policy change, or generated-artifact edit.
+
+### Test-first and focused evidence
+
+- Initial `uv run --locked pytest tests\web_api
+  tests\test_m16_contract_docs.py -q`: exit 1; 27 passed and two intended
+  documentation failures remained. One Starlette `TestClient` deprecation
+  warning was emitted.
+- New Compose/image/tracking boundary tests first exited 1 with two failures:
+  API runtime inputs and Node ignore rules were absent. After the scoped image,
+  worker, and ignore fixes, the command exited 0; four passed.
+- New exact-create-retry and cross-subject ownership tests first exited 1 with
+  two failures. After checking the durable idempotency result before current
+  projection state and enforcing stored ownership, the focused service command
+  exited 0; five passed.
+- A first full suite attempt exposed a Python test-module basename collision;
+  the new Web contract test was renamed without changing assertions.
+- The next full suite exited 1 with 349 passes and only the two intended M16
+  completion-document failures. After normative document updates, the focused
+  Web/document command had 31 passes and only the pending STATUS next-milestone
+  assertion.
+- First full Ruff preflight found one long test signature; scoped Ruff format
+  corrected only that M16 test. Full mypy already exited 0 with no issues in 72
+  source files.
+
+### Verification completed before the final recorded gate
+
+- `uv run --locked alembic upgrade head --sql`: exit 0; PostgreSQL offline SQL
+  includes M14/M15 plus M16 JSONB research sessions, explicit retention date and
+  index, compound ordered public events, unique event identity, foreign keys,
+  version advance, and transaction.
+- `uv lock --check`: exit 0; 48 packages resolved and the lock is synchronized.
+- `npm run typecheck`: exit 0 with no TypeScript diagnostics.
+- `npm run build`: exit 0 under Next.js 16.3.4; five application routes compiled
+  and all three dynamic role routes were produced.
+- `npm run test:e2e`: exit 0 against the locally started built Web server; one
+  Chromium test passed across English/Chinese participant, reviewer, and admin
+  routes. The temporary server was then terminated.
+- `docker compose config -q`: exit 0; the five-service topology parses. Docker
+  emitted user-config access warnings that did not invalidate the Compose file.
+- `uv run --locked careloop benchmark --manifest
+  benchmarks\manifest.v1.json`: exit 0; 16 cases completed and the existing
+  four raw/summary paths were regenerated.
+- `uv run --locked python tools\generate_milestone2_fixtures.py --check`: exit
+  0 with no output; generator-owned fixture bytes match.
+- `git diff --exit-code -- artifacts\raw artifacts\summary`: exit 0;
+  regenerated evidence is byte-identical.
+- `git diff --exit-code -- policies benchmarks\manifest.v1.json
+  benchmarks\trajectories benchmarks\gold benchmarks\failure_fixtures`: exit
+  0; executable policies and frozen P1–P8 inputs/gold are unchanged.
+- `git diff --check`: exit 0 with only Windows LF-to-CRLF warnings.
+
+### Required final verification
+
+- The first complete final sequence had successful Ruff lint, mypy, and pytest,
+  but `uv run --locked ruff format --check .` exited 1 because one historical
+  delivery-test file contained mixed line endings after a scoped assertion
+  update. Ruff formatted that file mechanically; no assertion changed.
+- Final `uv run --locked ruff format --check .`: exit 0; 138 files already
+  formatted.
+- Final `uv run --locked ruff check .`: exit 0; all checks passed.
+- Final `uv run --locked mypy src`: exit 0; no issues in 72 source files.
+- Final `uv run --locked pytest -q`: exit 0; 353 passed in 2.86 seconds with the
+  single recorded Starlette `TestClient` deprecation warning.
+- Focused historical/current delivery compatibility after the README update:
+  `uv run --locked pytest tests\test_delivery_contract.py
+  tests\test_m14_contract_docs.py tests\test_m15_contract_docs.py
+  tests\test_m16_contract_docs.py -q`: exit 0; 10 passed in 0.05 seconds.
+
+### Environment-limited integration and residual risks
+
+- `docker info`: exit 1. Docker CLI/Compose are installed, but the Docker daemon
+  is not running. API/Web image builds, container health, the ARQ process, and
+  live PostgreSQL/Redis integration were therefore not run and are not claimed.
+- SQLite covers deterministic repository behavior; PostgreSQL dialect migration
+  SQL covers DDL only. Multi-instance locking, process-crash reconciliation,
+  Redis reconnect/fan-out latency, backup/restore, and retention purge remain
+  unverified operational work.
+- The local Compose server uses a fixed deterministic model and development-only
+  identities. No vLLM/Ollama/DeepSeek credential or network request was used.
+- The browser test covers role pages and disclosure, not a live five-container
+  participant/reviewer transaction. OIDC discovery/key rotation, rate limits,
+  TLS, secret rotation, load tests, image scanning, and cloud recovery remain
+  M17/deployment validation.
+- FastAPI's current Starlette `TestClient` emits one deprecation warning for its
+  HTTPX integration. Runtime and focused tests pass without adding an unrelated
+  replacement dependency.
+- These controls do not establish model-output safety, effective review,
+  clinical validity, treatment effectiveness, crisis detection, regulatory
+  compliance, or real-world safety.
+
+## Exact next milestone
+
+Milestone 17 only: extend the matched-pair/red-team evaluation under existing
+gold isolation, add the frozen GCP Terraform template and available
+smoke/recovery validation, then complete the final research delivery evidence.
+Do not broaden the system to real-person, protected-health-information,
+clinical, emergency, or autonomous-action use.

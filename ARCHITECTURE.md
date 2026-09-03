@@ -640,3 +640,56 @@ from P1–P8 gold and the offline benchmark application.
 
 Alembic revision `20260902_0002` adds only the queue table and its status/target
 index. M15 adds no Web/service/authentication package; those remain M16 work.
+
+## Milestone 16 removable service and Web architecture
+
+### FROZEN AND IMPLEMENTED
+
+```text
+Next.js role surface -> FastAPI HTTP/SSE adapter -> ResearchApiService
+  -> LocalResearchService -> existing M10/M12/M15 application composition
+  -> PostgreSQL runtime evidence + research/public projections
+
+ARQ deployment worker -> committed SQL outbox -> ephemeral Redis publication
+canonical ResearchReportV1 -> participant JSON | reviewer JSON/HTML/PDF
+offline evaluator/replay/benchmark -> unchanged and independently runnable
+```
+
+`careloop.web_api` is a removable outer package. FastAPI depends on a strict
+service protocol and never imports a detector, policy implementation, evaluator,
+provider, or SQL table directly. The local service composition may call existing
+application services and durable adapters; inner domain, process, safety,
+evaluation, reporting, agent-runtime, and supervision packages never import the
+Web adapter. Deleting `careloop.web_api`, `web/`, and Compose files leaves the
+offline CLI and core operational.
+
+The participant boundary is a projection boundary. Existing input-first routing,
+quarantined complete generation, output gates, bounded repair, and runtime append
+complete before a released turn is eligible for the public projection. The SQL
+research projection and its public event append share one transaction. SSE replay
+reads the authoritative ordered event rows and treats `Last-Event-ID` as a
+session-bound cursor; Redis never supplies authoritative content.
+
+Identity is injected into FastAPI as a request dependency. OIDC signature
+verification uses a deployment-owned asymmetric key and validates issuer,
+audience, expiry, nonce, and exact role before authorization. The Compose server
+uses the separate local synthetic adapter and refuses it in production mode.
+Participant session/report access additionally checks stored ownership; reviewer
+and admin operations are separately authorized.
+
+`ResearchReportV1` is the sole versioned report source. Canonical JSON is derived
+with the existing canonical serializer. Participant responses remove reviewer
+evidence; reviewer HTML escapes every untrusted value and has no script or remote
+asset; the minimal PDF contains no action, JavaScript, or link capability.
+
+The Next.js adapter uses server components for the static role shells and a
+narrow client component for participant fetch/SSE interaction. The bilingual
+limitation banner is present across participant, simulated reviewer, and admin
+routes. Node build products and dependencies are ignored; `web/lib` remains
+tracked source despite the repository's generic Python `lib/` ignore rule.
+
+Compose is a local research topology, not a production deployment. PostgreSQL is
+the only durable service volume. The ARQ worker receives its SQL and Redis
+settings from environment configuration and periodically retries committed
+outbox rows. Health routes and container checks establish process readiness only;
+they do not establish clinical, safety, provider, or recovery performance.

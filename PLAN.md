@@ -923,12 +923,26 @@ Plan status: **COMPLETE**.
 
 ## Milestone 16 — FastAPI, Next.js, OIDC, reports, and Docker Compose
 
+Plan status: **COMPLETE**.
+
 - Implement the frozen API, resumable status-only SSE, role-separated bilingual
   UI, OIDC adapter, local synthetic identities, and admin plugin profiles.
 - Produce canonical JSON research reports plus derived reviewer HTML/PDF and an
   approved non-diagnostic participant summary.
 - Deliver Docker Compose, health checks, seed scenarios, observability, and
   end-to-end browser tests.
+
+### M16 acceptance gates
+
+- Strict HTTP/SSE models, owner checks, exact roles, development-only local
+  identity, and atomic complete-answer visibility are covered by focused tests.
+- Canonical research JSON and participant/reviewer projection isolation are
+  covered together with escaped passive HTML/PDF rendering.
+- PostgreSQL migration SQL, durable public replay, local worker injection,
+  Compose validation, bilingual Next.js type/build checks, and Playwright role
+  smoke coverage are recorded in `STATUS.md`.
+- The complete Python suite, unchanged offline benchmark, fixture generator,
+  lock check, and generated-artifact diff gate pass before M16 closes.
 
 ## Milestone 17 — final evaluation, cloud template, and delivery
 
@@ -939,8 +953,9 @@ Plan status: **COMPLETE**.
 - Complete README setup/usage/limitations, reproducible demo, final evidence
   report, and release checklist without clinical or regulatory claims.
 
-## Exact next milestone after M15
+## Exact next milestone after M16
 
-Milestone 16 only: implement the frozen FastAPI/Next.js/OIDC/report and Docker
-Compose research surface. Do not start M17 cloud delivery until M16 passes its
-complete recorded gate.
+Milestone 17 only: final matched-pair/red-team evaluation, the frozen GCP
+Terraform template, recovery/smoke validation where infrastructure is available,
+and final research delivery documentation. Preserve every M16 release and
+professional boundary.

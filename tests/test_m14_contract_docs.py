@@ -29,4 +29,5 @@ def test_m14_limits_and_tests_are_recorded() -> None:
     assert "Milestone 14 durable-runtime matrix" in matrix
     assert "does not establish provider quality" in safety
     assert "M14 adds a PostgreSQL/Alembic adapter" in readme
-    assert "no Web application or participant API" in readme
+    assert "M14 itself added no Web application or participant API" in readme
+    assert "Project status: Milestone 16 complete" in readme
