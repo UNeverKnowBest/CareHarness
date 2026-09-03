@@ -1,10 +1,10 @@
 # CareLoop Harness
 
-Project status: Milestone 15 complete. M15 implements removable supervised
-synthetic orchestration and a durable simulated-review queue. There is still no Web
-application or participant API. The frozen v1 offline evaluator and M12
-library-level synthetic session flow remain reproducible and independently
-operational.
+Project status: Milestone 16 complete. M16 adds a removable FastAPI/Next.js
+research demonstration, OIDC and development-only synthetic identity adapters,
+status-only SSE, versioned reports, and a local Docker Compose topology. The
+frozen v1 offline evaluator and M12 library-level synthetic session flow remain
+reproducible and independently operational.
 
 CareLoop Harness is an **offline-first**, **deterministic** evaluation harness
 for **synthetic** support-agent trajectories. It is deliberately
@@ -25,17 +25,21 @@ frozen trajectory -> final-only + trajectory evaluation -> raw JSONL
 
 ## Interaction model
 
-The CLI is the primary interaction surface. There is no web application, Web
-API, hosted service, live chat page, transcript upload flow, or remote user
-session. No server is started by any supported command.
+The offline CLI remains the primary reproducible evaluation surface and starts
+no server. M16 additionally provides an explicitly local research Web/API demo
+for adult synthetic role-play only; it accepts no protected health information
+and is not a hosted, clinical, crisis, or emergency service.
 
-The HTTP API and browser surfaces remain versioned future contracts. M14 adds a
+M14 adds a
 PostgreSQL/Alembic adapter, Redis transactional-outbox publisher, ARQ-compatible
 worker function, immutable plugin profiles, and explicit DeepSeek, vLLM, and
 Ollama model adapters. None is enabled by the CLI or supplied credentials by
 default. `RunSyntheticTurn` remains library-only and releases a complete
 synthetic turn only after routing, quarantined drafting, gate approval, and
 event append all succeed.
+
+M14 itself added no Web application or participant API; that historical scope
+remains unchanged even though M16 now supplies a removable outer surface.
 
 M15 adds `SupervisedSyntheticTurn` and `ResolveQueuedSyntheticReview` as
 library-only composition. Exhausted repairs retain the final complete draft in
@@ -66,9 +70,33 @@ evaluators, and releases a report only after the close event is appended. It
 adds no CLI command, file writer, server, durable session store, or participant
 workflow.
 
-The next milestone is M16: the frozen research-only Web/API, OIDC, report, and
-Docker Compose surface. It does not authorize real-user data, clinical claims,
-or M17 cloud delivery.
+M16 implements the frozen `/api/v1` participant, review, report, and plugin
+surface behind strict roles. Participant SSE contains public status and only a
+complete already gated answer. The Next.js application has English and Chinese
+participant, simulated reviewer, and admin routes. The simulated review queue is
+not staffed care and contacts no clinicians, emergency services, family,
+authorities, or other third parties.
+
+The next milestone is M17: final evaluation, cloud-template validation, and
+delivery work. M16 does not authorize real-user data, clinical claims, provider
+credentials, or a cloud deployment.
+
+## Local research Web demonstration
+
+The Compose topology uses fixed development credentials and an explicit local
+synthetic identity adapter; that adapter refuses production mode. With Docker
+and the required images available, start the five local services with:
+
+```text
+docker compose up --build
+```
+
+Then open `http://localhost:3000/en/participant` or
+`http://localhost:3000/zh-CN/participant`. API readiness is exposed at
+`http://localhost:8000/health/ready`. Do not enter real-person or protected
+health information. Stopping/removing the Compose topology does not affect the
+offline evaluator; the named PostgreSQL development volume persists until the
+operator explicitly removes it.
 
 ## Reproduce from the lockfile
 
@@ -87,6 +115,11 @@ uv run --locked pytest -q
 uv run --locked careloop benchmark --manifest benchmarks/manifest.v1.json
 uv run --locked python tools/generate_milestone2_fixtures.py --check
 git diff --exit-code -- artifacts/raw artifacts/summary
+cd web
+npm ci
+npm run typecheck
+npm run build
+npm run test:e2e
 ```
 
 A successful run proves only deterministic behavior for the frozen synthetic

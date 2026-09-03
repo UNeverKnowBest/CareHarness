@@ -1,6 +1,6 @@
 # Agent Runtime Contract
 
-Contract status: **FROZEN through Milestone 14**
+Contract status: **FROZEN and implemented through Milestone 16**
 
 The implemented M12 contract remains **FROZEN through Milestone 12**; M13 adds
 only future full-stack contracts and does not revise that historical boundary.
@@ -274,3 +274,21 @@ execution, or provider exception content.
 
 M14 does not implement the frozen HTTP surface, OIDC, participant/reviewer
 queries, supervision queue, browser application, container, or cloud template.
+
+## Milestone 16 implemented Web/service boundary
+
+M16 implements the exact M13 `/api/v1` table through a removable FastAPI
+adapter over `ResearchApiService`. Strict `ReleaseDispositionV1`, participant
+session, request, and SSE models expose no internal draft/gate/failure detail.
+PostgreSQL research projections and public event rows provide ordered
+`Last-Event-ID` replay; Redis remains only an outbox notification/work channel.
+
+OIDC verification uses deployment-injected asymmetric key material and checks
+issuer, audience, expiry, nonce, and exact role. The separate local synthetic
+identity adapter is development-only and refuses production construction.
+Participant session and report reads remain owner-bound.
+
+The local Compose service calls the existing input-first M10/M15 composition and
+M12 evaluator close boundary. One versioned report snapshot derives canonical
+JSON, participant-reduced JSON, escaped reviewer HTML, and passive PDF. The
+Next.js role surfaces and Docker/ARQ adapters remain outside every core package.

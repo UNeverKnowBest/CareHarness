@@ -114,3 +114,38 @@ Index(
     review_queue.c.status,
     review_queue.c.review_target_at,
 )
+
+research_sessions = Table(
+    "research_sessions",
+    metadata,
+    Column(
+        "session_id",
+        String(255),
+        ForeignKey("runtime_sessions.session_id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+    Column("owner_subject", String(255), nullable=False),
+    Column("scenario_id", String(255), nullable=False),
+    Column("locale", String(32), nullable=False),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+    Column("retention_until", Date, nullable=False),
+    Column("request_payload", json_document, nullable=False),
+    Column("participant_payload", json_document, nullable=False),
+    Column("transcript_payload", json_document, nullable=False),
+    Column("report_payload", json_document, nullable=True),
+)
+Index("ix_research_sessions_retention", research_sessions.c.retention_until)
+
+public_session_events = Table(
+    "public_session_events",
+    metadata,
+    Column(
+        "session_id",
+        String(255),
+        ForeignKey("research_sessions.session_id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+    Column("sequence", Integer, primary_key=True),
+    Column("event_id", String(255), nullable=False, unique=True),
+    Column("payload", json_document, nullable=False),
+)

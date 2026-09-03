@@ -1,6 +1,6 @@
 # CareLoop Harness Test Matrix
 
-Status: **FROZEN and implemented through Milestone 15 contracts**
+Status: **FROZEN and implemented through Milestone 16 contracts**
 
 | Rule ID | Observable evidence | Positive / absent / uncertain coverage | Frozen pair | Source IDs |
 |---|---|---|---|---|
@@ -186,3 +186,22 @@ isolation.
 | Bilingual corpus | eight strict local cases | English/Chinese allow, override, repair-allow, repair-exhausted coverage |
 | Zero ordinary response | override/failure/hold projections | every non-release path contains no ordinary assistant turn |
 | Removability | import graph and unchanged offline suite | no Web/OIDC/CLI/policy/evaluator logic; P1–P8 gold and artifacts unchanged |
+
+## Milestone 16 Web/API matrix
+
+| Boundary/control | Observable evidence | Required coverage |
+|---|---|---|
+| Strict release API | exact `ReleaseDispositionV1` and v1 models | allow/hold/system-failure only; unknown fields and non-atomic released turns reject |
+| Participant isolation | HTTP session/report projections and status-only SSE | only owned public state and complete released assistant turns; no draft, token, gate, exception, secret, reasoning, or reviewer evidence |
+| SSE recovery | SQL public-event sequence and `Last-Event-ID` | ordered committed replay after the exact session-bound event; unknown cursor rejects |
+| Write identity | required idempotency key and immutable request evidence | exact create retry returns its original projection; changed reuse conflicts; guessed session ID cannot bypass ownership |
+| OIDC boundary | injected asymmetric verifier and configured claims | signature, issuer, audience, expiry, nonce, and exact role pass; every mismatch denies |
+| Local identity | explicit environment and synthetic subject prefix | development accepts exact synthetic roles; production startup refuses the adapter |
+| Role separation | endpoint authorization | participant session/turn/summary only; reviewer decisions/reports; admin plugin/profile controls |
+| Atomic public event | SQL research-session update plus event insert | released answer and event commit together only after existing gate/runtime append succeeds |
+| Reports | one strict report snapshot | canonical JSON repeats byte-for-byte; participant evidence removed; HTML escaped/script-free; PDF passive/deterministic |
+| Plugin profile | locked critical entries and immutable snapshots | locked reasons visible; replacement applies to a new profile and cannot hot-swap a session |
+| Next.js surface | TypeScript build and Playwright browser | English/Chinese participant, reviewer, and admin routes retain non-clinical and unstaffed-queue disclosure |
+| Compose/worker | parsed Compose, image inputs, health checks, ARQ startup injection | PostgreSQL durable volume; Redis non-authoritative; fixed seeds; generated Node outputs excluded from images/version control |
+| PostgreSQL schema | SQLAlchemy metadata and Alembic offline SQL | research sessions, retention index, public event compound order, unique event identity, JSONB payloads |
+| Removability/regression | import graph, full suite, benchmark and artifact diffs | inner layers never import Web/FastAPI; frozen policies, P1–P8 inputs/gold, evaluator decisions, and generated evidence unchanged |

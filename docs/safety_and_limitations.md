@@ -129,3 +129,16 @@ draft is safe, that risk has cleared, or that the system is clinically
 appropriate. Live PostgreSQL/Redis concurrency, an actual queue worker,
 authentication, staffing, notification, and recovery operations remain
 unverified and outside M15.
+
+Milestone 16 exposes those controls through a research-only Web/API demonstration
+for adult synthetic role-play. `ReleaseDispositionV1` controls whether complete
+text is visible; it is not a statement about a person. Status-only SSE, strict
+role checks, escaped reviewer reports, and a bounded local identity adapter are
+software isolation controls, not proof of safe model output or effective human
+oversight. The simulated review queue is not staffed care and does not contact
+clinicians, emergency services, family, authorities, or any other third party.
+The local deterministic model, bilingual seed scenarios, browser smoke test,
+SQLite repository tests, offline PostgreSQL migration SQL, and Compose
+configuration do not establish live multi-instance recovery, provider quality,
+clinical validity, treatment effectiveness, crisis detection, or real-world
+safety. No protected health information is accepted.

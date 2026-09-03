@@ -1227,3 +1227,74 @@ path.
   production model/network activation.
 - No change to Day 1/M8–M14 schemas, existing policies, frozen P1–P8 fixtures,
   evaluator gold, CLI commands, dependency versions, or generated evidence.
+
+## Milestone 16 research Web and service contract
+
+Contract status: **FROZEN and IMPLEMENTED for Milestone 16**. M16 adds removable
+research-only outer adapters while preserving every Day 1/M8–M15 domain,
+runtime, evaluator, replay, benchmark, and generated-artifact contract.
+
+### HTTP, identity, and participant release
+
+- The exact `/api/v1` endpoints frozen in M13 are implemented behind a FastAPI
+  application-service facade. Every write requires an `Idempotency-Key`; strict
+  v1 request and response models reject unknown fields.
+- `ReleaseDispositionV1` has exactly `allow`, `hold_for_review`, and
+  `system_failure`. It describes release control only and never a person's
+  condition, diagnosis, severity, or clinical disposition.
+- OIDC verification accepts only deployment-injected asymmetric key material,
+  validates issuer, audience, expiry, nonce, and an exact server-mapped
+  `participant / reviewer / admin` role, and retains no raw credential.
+- The local synthetic identity adapter accepts only `synthetic-local:` subjects
+  in explicit development mode and refuses construction in production mode.
+- Participant reads are owner-bound. They expose only public state and complete
+  already released assistant turns. A held or failed turn exposes no ordinary
+  answer, quarantined draft, repair detail, gate evidence, exception, secret,
+  or hidden reasoning.
+- Public SSE events use the frozen strict envelope, authoritative monotonic
+  PostgreSQL sequence, and `Last-Event-ID` replay. `answer_released` contains
+  exactly one complete gated assistant turn; other event types contain none.
+
+### Authoritative projections and reports
+
+- Alembic revision `20260903_0003` adds PostgreSQL JSONB research-session and
+  public-event projections. A participant projection update and its public SSE
+  event are committed in one transaction after existing runtime gates and
+  append-only evidence succeed.
+- The default synthetic-session retention date is the explicit creation time
+  plus 30 days. M16 adds an index for later audited whole-session purge but no
+  automatic purge or benchmark-artifact deletion.
+- One strict `ResearchReportV1` is the source for canonical UTF-8 JSON, escaped
+  script-free reviewer HTML, a passive deterministic reviewer PDF, and an
+  audience-reduced non-diagnostic `ParticipantSummaryV1`.
+- Reviewer/admin report routes may read evaluation evidence. Participant report
+  routes receive only the summary and released assistant turns.
+- Plugin administration lists immutable critical entries with locked reasons.
+  A replacement profile is a new immutable next-session snapshot; no active
+  session is hot-swapped and no model output can install or enable code.
+
+### Web, worker, and local Compose surface
+
+- The Next.js application provides English and Chinese participant, simulated
+  reviewer, and admin role surfaces with persistent research-only limitations.
+  Participant code uses only the public API/SSE contracts.
+- Docker Compose defines API, Web, ARQ worker, PostgreSQL, and Redis services,
+  health checks, a durable PostgreSQL volume, and fixed bilingual seed scenario
+  metadata. Local credentials and local synthetic identities are development
+  demo values only.
+- The deployment worker injects PostgreSQL and Redis resources into the existing
+  outbox publisher. PostgreSQL remains authoritative; Redis carries ephemeral
+  work and notifications only.
+
+### M16 exclusions and interpretation limits
+
+- M16 accepts adult synthetic role-play only and no protected health
+  information. It is not therapy, diagnosis, screening, crisis care, an
+  emergency service, a medical device, or evidence of real-world safety.
+- The simulated review queue is not staffed care and contacts no clinician,
+  emergency service, family member, authority, or other third party.
+- M16 adds no real identity tenant, production credential, provider activation,
+  tool execution, automatic contact, clinical workflow, Terraform, GCP
+  resource, cloud deployment, or M17 evaluation change.
+- Frozen P1–P8 fixtures, gold, executable policies, evaluator decisions,
+  replay, CLI behavior, and generated raw/summary artifacts remain unchanged.

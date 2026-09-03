@@ -19,4 +19,7 @@ def test_alembic_head_renders_postgresql_offline_sql() -> None:
     assert "create table plugin_profiles" in sql
     assert "create table review_queue" in sql
     assert "ix_review_queue_status_target" in sql
+    assert "create table research_sessions" in sql
+    assert "create table public_session_events" in sql
+    assert "ix_research_sessions_retention" in sql
     assert "jsonb" in sql

@@ -28,5 +28,6 @@ def test_m15_limits_matrix_and_delivery_status_are_recorded() -> None:
     assert "Milestone 15 supervised-orchestration matrix" in matrix
     assert "descriptive research target" in safety
     assert "not staffed care" in safety
-    assert "Project status: Milestone 15 complete" in readme
-    assert "There is still no Web application or participant API" in readme
+    assert "M15 adds `SupervisedSyntheticTurn`" in readme
+    assert "library-only composition" in readme
+    assert "Project status: Milestone 16 complete" in readme

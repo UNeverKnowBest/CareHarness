@@ -1,6 +1,6 @@
 # Agent Runtime Threat Model
 
-Status: **FROZEN through the Milestone 13 full-stack research contract**
+Status: **FROZEN and implemented through the Milestone 16 research surface**
 
 ## Assets and trust boundaries
 
@@ -157,3 +157,33 @@ capabilities.
 - Live PostgreSQL/Redis availability, TLS, credential rotation, connection-pool
   sizing, database backup, and multi-instance load behavior are not proven by
   M14 local tests and remain deployment risks for M16/M17.
+
+## Milestone 16 implemented controls
+
+- FastAPI authorizes every protected route through one injected identity
+  boundary. Participant reads also compare the authenticated subject with the
+  authoritative stored owner; a guessed session ID does not disclose a
+  projection.
+- OIDC tokens require an asymmetric signature and configured issuer, audience,
+  expiry, nonce, and exact role. The separate header-driven synthetic identity
+  exists only for the explicit local Compose server and refuses production mode.
+- Participant contracts cannot contain quarantined drafts or reviewer evidence.
+  Status-only SSE replays committed PostgreSQL rows by a session-bound
+  `Last-Event-ID`; only `answer_released` can contain one complete assistant turn.
+- Public projection and event writes share a SQL transaction after existing
+  input routing, draft gates, bounded repair, and runtime append. Exact create
+  retries return their recorded projection, while conflicting reuse and
+  cross-subject session creation reject.
+- Reviewer HTML escapes untrusted report fields and contains no script or remote
+  asset. The deterministic PDF contains no JavaScript, open action, or link.
+  Participant JSON omits the reviewer evidence object entirely.
+- API request text is bounded, model/provider destinations remain server-owned,
+  plugin criticality is revalidated by immutable profiles, and active sessions
+  never load code or hot-swap a profile from model output.
+- Compose images run as non-root users, build from lockfiles, exclude local
+  build/dependency directories, provide health checks, and persist PostgreSQL.
+  The worker publishes only committed outbox rows; Redis remains ephemeral.
+- Remaining operational threats include absent live PostgreSQL/Redis concurrency
+  and crash-recovery evidence, rate limiting, TLS/secret rotation, backup/purge
+  execution, full OIDC discovery/key rotation, dependency/image scanning, and
+  production load testing. These are not represented as M16 passes.

@@ -216,3 +216,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Next.js research adapter
+web/node_modules/
+web/.next/
+web/test-results/
+web/playwright-report/
+web/*.tsbuildinfo
+
+# The generic Python lib/ rule above must not hide Next.js source.
+!web/lib/
+!web/lib/**

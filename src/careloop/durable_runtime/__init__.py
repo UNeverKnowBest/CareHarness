@@ -19,6 +19,8 @@ from careloop.durable_runtime.outbox import (
 from careloop.durable_runtime.schema import (
     metadata,
     plugin_profiles,
+    public_session_events,
+    research_sessions,
     review_queue,
     runtime_events,
     runtime_idempotency,
@@ -49,7 +51,9 @@ __all__ = [
     "create_redis_client",
     "metadata",
     "plugin_profiles",
+    "public_session_events",
     "publish_runtime_outbox",
+    "research_sessions",
     "runtime_events",
     "runtime_idempotency",
     "runtime_outbox",
