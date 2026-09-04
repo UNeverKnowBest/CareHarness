@@ -37,6 +37,21 @@ satisfied and applicable evidence counts with concrete IDs. It has no combined
 score, percentage, ranking, confidence interval, significance statement, or
 population estimate.
 
+Milestone 17 adds a separate integration evidence chain. Sixteen new adult
+synthetic cases form eight ordered English/Chinese control/challenge stimulus
+pairs. Actual runtime observations complete before the separate M17 expectation
+file is loaded. The canonical raw evidence is
+`artifacts/raw/m17.final-evaluation.v1.json`; the human-readable report at
+`artifacts/summary/m17.final-evaluation.v1.md` is derived from that raw model by
+the M17 generator. These files neither replace nor modify the original P1–P8
+benchmark evidence.
+
+The GCP Terraform directory is delivery architecture evidence only. It defaults
+service deployment off and describes restricted Cloud Run, authoritative
+regional private Cloud SQL, ephemeral private Memorystore, Secret Manager, and
+separate service accounts. No live cloud validation occurred; see the recovery
+runbook and release checklist for prerequisites and stop conditions.
+
 ## Reproducibility and mutation evidence
 
 The locked verification sequence is documented in the README and automated in

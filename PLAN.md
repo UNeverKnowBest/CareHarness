@@ -946,16 +946,68 @@ Plan status: **COMPLETE**.
 
 ## Milestone 17 — final evaluation, cloud template, and delivery
 
-- Extend matched-pair evaluation and red-team suites without weakening existing
-  gold isolation or deterministic replay.
-- Add Terraform for GCP Cloud Run, Cloud SQL, Memorystore, Secret Manager, and
-  least-privilege identities; run cloud smoke and recovery tests.
-- Complete README setup/usage/limitations, reproducible demo, final evidence
-  report, and release checklist without clinical or regulatory claims.
+Plan status: **COMPLETE**. Work remained within the approved final evaluation,
+removable deployment template, and research delivery boundary.
 
-## Exact next milestone after M16
+### M17.1 Freeze final-evaluation and cloud-delivery contracts
 
-Milestone 17 only: final matched-pair/red-team evaluation, the frozen GCP
-Terraform template, recovery/smoke validation where infrastructure is available,
-and final research delivery documentation. Preserve every M16 release and
-professional boundary.
+### COMPLETE
+
+- Freeze separate stimuli/expectation schemas, evaluate-before-gold order,
+  canonical raw/derived evidence, production-only OIDC composition, staged GCP
+  resources, and explicit environment-limited validation claims.
+
+### M17.2 Add red evaluation, deployment, and delivery tests
+
+### COMPLETE
+
+- Add strict corpus/gold, actual-before-gold, zero-challenge-release,
+  deterministic artifact, production identity, Terraform boundary, recovery
+  runbook, normative document, README, and release-checklist tests before the
+  corresponding implementation.
+
+### M17.3 Implement final matched-pair/red-team evidence
+
+### COMPLETE
+
+- Add eight bilingual matched stimulus pairs/16 cases in a new M17 corpus,
+  exercise existing input/generation/gate/queue controls, load isolated
+  expectations only afterward, and generate canonical raw plus derived Markdown
+  evidence without changing P1–P8.
+
+### M17.4 Add production composition and GCP template
+
+### COMPLETE
+
+- Add a production-only OIDC FastAPI factory and a disabled-by-default GCP
+  template for restricted Cloud Run, regional private Cloud SQL, private
+  authenticated Memorystore, scoped Secret Manager access, and separate service
+  accounts.
+- Add read-only smoke, Redis-outbox recovery, new-instance database restore, and
+  held-session reconciliation guidance. No cloud command runs without explicit
+  operator approval.
+
+### M17.5 Complete documentation and verification
+
+### COMPLETE
+
+- Complete the README run/demo/video guide, final evidence navigation, release
+  checklist, normative boundaries, and exact STATUS evidence.
+- Run focused tests, locked Python gates, unchanged P1–P8 benchmark and fixture
+  check, M17 evidence regeneration check, Web type/build/browser gates, Compose
+  validation, and all locally available deployment checks.
+
+### Milestone 17 explicit exclusions
+
+- No real-person/PHI use, real provider credential, staffed reviewer, automatic
+  contact, clinical or regulatory claim, public cloud deployment, or autonomous
+  tool action.
+- No claim that static Terraform tests, offline SQL, local browser smoke, or
+  synthetic evidence establish cloud recovery, production readiness, model
+  safety, clinical validity, treatment effectiveness, or real-world safety.
+
+## Exact next milestone
+
+None. The approved M1–M17 project sequence is complete. Any future behavior,
+deployment, study, schema, policy, or corpus change requires a new
+owner-approved versioned milestone.

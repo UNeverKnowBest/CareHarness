@@ -1298,3 +1298,67 @@ runtime, evaluator, replay, benchmark, and generated-artifact contract.
   resource, cloud deployment, or M17 evaluation change.
 - Frozen P1–P8 fixtures, gold, executable policies, evaluator decisions,
   replay, CLI behavior, and generated raw/summary artifacts remain unchanged.
+
+## Milestone 17 final evaluation and cloud delivery contract
+
+Contract status: **FROZEN and IMPLEMENTED for Milestone 17**. M17 closes the
+approved M13–M17 sequence with a separate final integration evaluation, a
+removable GCP infrastructure template, explicit production OIDC composition,
+and reproducible delivery guidance. It changes no Day 1/M8–M16 public schema,
+state/event value, executable policy, P1–P8 input/gold, or earlier generated
+artifact.
+
+### Final synthetic evaluation
+
+- `benchmarks/final/m17.cases.v1.json` contains exactly eight ordered matched
+  stimulus pairs/16 adult synthetic cases across English and Chinese. Each pair
+  has one control followed by one challenge.
+- The challenges cover input preemption, prompt injection, diagnosis and
+  medication output tags, over-reassurance, clinical overclaim, provider
+  failure, bounded-repair exhaustion, and missing-jurisdiction resource
+  behavior. They are deterministic regression fixtures, not realistic attacks
+  or measurements of model understanding.
+- Stimuli and expectations are separate strict `v1` files. Every actual case is
+  executed before `benchmarks/final/gold/m17.expectations.v1.json` is loaded for
+  comparison. The original benchmark gold-isolation rule therefore remains
+  intact.
+- `careloop.final_evaluation` is a removable integration package over existing
+  runtime/application ports. It adds no evaluator rule, policy phrase, network
+  request, model provider, credential, wall-clock decision, or participant
+  release path.
+- The generator owns `artifacts/raw/m17.final-evaluation.v1.json` and derives
+  `artifacts/summary/m17.final-evaluation.v1.md` only from the validated raw
+  evidence. The evidence contains case/pair observations and no aggregate
+  score, percentage, ranking, confidence, clinical metric, or population claim.
+
+### Production identity and GCP template
+
+- `careloop.web_api.production` accepts only `environment=production` with
+  local synthetic identity disabled. It requires deployment-injected database,
+  HTTPS Web origin, OIDC issuer/audience, asymmetric public key, and algorithm;
+  no private key or provider credential is part of its public settings model.
+- `deploy/gcp` is a removable, staged Terraform template for restricted Cloud
+  Run API/Web, a Cloud Run worker pool, regional private Cloud SQL for
+  authoritative state, private Standard HA Memorystore for ephemeral delivery,
+  dedicated service accounts, VPC access, and Secret Manager containers.
+- The template defaults `deploy_services=false`, creates no public `allUsers`
+  invoker, grants no Owner/Editor role, and requires operator-supplied secret
+  versions and digest-pinned images before the service stage is enabled.
+- Cloud SQL deletion protection, regional availability, backups, and
+  point-in-time recovery are template properties. Redis never becomes the
+  system of record. Restore exercises target a new database instance and never
+  overwrite the authoritative instance automatically.
+
+### M17 exclusions and interpretation limits
+
+- Terraform, gcloud, live PostgreSQL/Redis, cloud image, OIDC tenant, network,
+  credentials, and an approved GCP project were unavailable in the execution
+  environment. No `terraform init/validate/plan/apply`, deployment, live smoke,
+  failover, backup restore, load, security scan, or recovery-time result is
+  claimed.
+- The GCP files are a reviewed research template, not a production-ready or
+  regulatory-compliant deployment. Provider schema and managed-service behavior
+  require validation in an approved disposable project.
+- M17 accepts no real-person or protected health information. It adds no
+  therapy, diagnosis, screening, risk score, treatment, crisis care, emergency
+  contact, staffed review, autonomous tool action, or real-world safety claim.

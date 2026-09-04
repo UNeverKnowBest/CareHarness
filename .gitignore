@@ -227,3 +227,11 @@ web/*.tsbuildinfo
 # The generic Python lib/ rule above must not hide Next.js source.
 !web/lib/
 !web/lib/**
+
+# Terraform local state, downloaded providers, plans, and crash logs
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log

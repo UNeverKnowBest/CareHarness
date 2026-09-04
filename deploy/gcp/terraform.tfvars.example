@@ -1,0 +1,11 @@
+project_id      = "replace-with-dedicated-research-project"
+region          = "us-central1"
+name_prefix     = "careloop-research"
+deploy_services = false
+
+api_image = "us-docker.pkg.dev/replace-project/careloop/api@sha256:replace-digest"
+web_image = "us-docker.pkg.dev/replace-project/careloop/web@sha256:replace-digest"
+
+web_origin   = "https://research.example.invalid"
+oidc_issuer  = "https://identity.example.invalid"
+oidc_audience = "careloop-research"

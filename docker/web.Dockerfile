@@ -1,5 +1,7 @@
 FROM node:24-bookworm-slim AS build
 WORKDIR /app
+ARG NEXT_PUBLIC_API_BASE=http://localhost:8000
+ENV NEXT_PUBLIC_API_BASE=$NEXT_PUBLIC_API_BASE
 COPY web/package.json web/package-lock.json ./
 RUN npm ci
 COPY web ./

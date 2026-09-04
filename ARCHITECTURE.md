@@ -693,3 +693,44 @@ the only durable service volume. The ARQ worker receives its SQL and Redis
 settings from environment configuration and periodically retries committed
 outbox rows. Health routes and container checks establish process readiness only;
 they do not establish clinical, safety, provider, or recovery performance.
+
+## Milestone 17 removable evaluation and GCP template architecture
+
+### FROZEN AND IMPLEMENTED
+
+```text
+versioned M17 stimuli -> existing supervised runtime -> actual observations
+                    -> only then load isolated M17 expectations
+                    -> canonical raw evidence -> derived Markdown
+
+restricted identity-aware ingress -> Cloud Run Web/API + OIDC application gate
+                                  -> private Cloud SQL (authoritative)
+                                  -> SQL outbox -> worker pool -> Redis (ephemeral)
+```
+
+`careloop.final_evaluation` is a removable outer integration harness. It may
+compose existing agent-runtime, application, safety, durable-runtime, and
+supervision interfaces with a fixed evaluation-only model adapter. No inner
+package imports it, and the original offline evaluator/replay/benchmark does not
+call it. Removing the package, the M17 corpus, and its generated evidence leaves
+all M1–M16 paths operational.
+
+The production FastAPI composition remains in the removable `web_api` adapter.
+It constructs the same application-service facade with an OIDC request identity
+instead of the development header adapter. Its strict settings make
+development mode or local synthetic identity invalid. Infrastructure injects
+only an asymmetric public verification key; private signing material stays with
+the deployment-owned identity provider.
+
+`deploy/gcp` contains no application or policy logic. Service creation is a
+second, disabled-by-default Terraform stage after network, Cloud SQL,
+Memorystore, service accounts, and empty secret containers. No public invoker is
+created. A deployment-owned identity-aware ingress and browser OIDC integration
+remain prerequisites rather than hidden template defaults.
+
+Cloud SQL remains authoritative across every failure scenario. Redis loss may
+delay notification only; recovery republishes committed outbox rows. A database
+restore is created as a separate instance for integrity comparison before any
+explicitly approved promotion. Terraform state, provider downloads, cloud
+credentials, live smoke tests, and recovery execution are operational inputs
+outside the offline core and were not available during M17 verification.
