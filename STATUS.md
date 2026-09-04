@@ -1,8 +1,8 @@
 # CareLoop Harness Status
 
-Current phase: Milestone 16 complete
-Next milestone: Milestone 17 — final evaluation, cloud template, and delivery
-Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M16
+Current phase: Milestone 17 complete
+Next milestone: none
+Implementation status: COMPLETE for D1.0–D1.5 and M2.1–M17
 
 ## Status vocabulary
 
@@ -1947,3 +1947,138 @@ gold isolation, add the frozen GCP Terraform template and available
 smoke/recovery validation, then complete the final research delivery evidence.
 Do not broaden the system to real-person, protected-health-information,
 clinical, emergency, or autonomous-action use.
+
+## Milestone 17 final evaluation, cloud template, and delivery
+
+### Implemented change boundary
+
+- Added a separate strict M17 corpus with eight ordered English/Chinese
+  control/challenge pairs (16 adult synthetic cases) and a separately stored
+  expectation file. All actual cases execute before the expectation loader is
+  invoked.
+- Added removable `careloop.final_evaluation` composition over the existing
+  input router, provider-neutral model runtime, ethical gate, repair bound,
+  durable event adapter, and simulated review queue. It introduces no new
+  policy phrase, evaluator rule, participant release path, provider, network,
+  clock decision, or credential.
+- Added a deterministic generator for canonical
+  `artifacts/raw/m17.final-evaluation.v1.json` and its raw-derived
+  `artifacts/summary/m17.final-evaluation.v1.md`. The original benchmark raw,
+  summary, P1–P8 trajectories/gold, and policies remain unchanged.
+- Added a production-only FastAPI factory whose strict settings require OIDC,
+  HTTPS origins, an injected asymmetric public key, production mode, and local
+  synthetic identity disabled.
+- Added a staged `deploy/gcp` Terraform template for restricted Cloud Run
+  API/Web, a worker pool, regional private Cloud SQL, private authenticated/TLS
+  Memorystore, VPC access, scoped Secret Manager access, and separate service
+  accounts. Service deployment defaults off and no public invoker is created.
+- Added the cloud smoke/recovery runbook, final release checklist, threat/test/
+  safety/architecture contracts, final evidence navigation, complete README
+  operating guide, and a 5–7 minute demonstration-video storyboard.
+- Changed no dependency version, migration, public Day 1/M8–M16 schema,
+  state/event value, executable policy, existing fixture/gold, or existing
+  generated evidence contract.
+
+### Test-first and focused evidence
+
+- Baseline `uv run --locked pytest -q`: exit 0; 353 passed with one existing
+  Starlette `TestClient` deprecation warning.
+- The first sandboxed M17 focused test command exited before pytest because the
+  restricted process could not access the existing uv cache. The approved
+  rerun exited 2 with three intended collection errors for the missing
+  `careloop.final_evaluation` and `careloop.web_api.production` modules.
+- First final-evaluation implementation run: exit 1; two tests passed and three
+  failed for an over-specific validation assertion, one deliberately incorrect
+  missing-jurisdiction expectation, and not-yet-generated evidence. After the
+  scoped fixes and generator run, the focused evaluation suite passed.
+- The production-config HTTPS/nonblank red test exited 1 as intended before the
+  validator was added. The Web image build-argument red test also exited 1
+  before the Dockerfile boundary was added.
+- Final `uv run --locked pytest tests\final_evaluation -q`: exit 0; 6 passed.
+- Final `uv run --locked pytest tests\deployment
+  tests\web_api\test_production_entrypoint.py -q`: exit 0; 7 passed.
+- `uv run --locked python tools\generate_milestone17_evidence.py --check`:
+  exit 0; committed raw and Markdown bytes reproduce exactly.
+- Focused Ruff check: exit 0 after mechanical formatting/import fixes.
+- `uv run --locked mypy src`: exit 0; no issues in 76 source files.
+
+### Required final verification
+
+- The first complete M17 gate reached Ruff format/check and mypy successfully,
+  then `uv run --locked pytest -q` exited 2 during collection because the new
+  final-evaluation contract test duplicated an existing test-module basename.
+  The file was renamed without changing its assertions.
+- Final `uv run --locked ruff format --check .`: exit 0; 152 files already
+  formatted.
+- Final `uv run --locked ruff check .`: exit 0; all checks passed.
+- Final `uv run --locked mypy src`: exit 0; no issues in 76 source files.
+- Final `uv run --locked pytest -q`: exit 0; 368 passed in 3.69 seconds with the
+  one existing Starlette `TestClient` deprecation warning.
+- Post-record `uv run --locked pytest tests\test_m17_contract_docs.py -q`:
+  the sandboxed attempt exited 2 before pytest because the process could not
+  access the existing user-level uv cache; the approved rerun exited 0 with two
+  tests passed in 0.02 seconds.
+- `uv run --locked careloop benchmark --manifest
+  benchmarks\manifest.v1.json`: exit 0; all 16 existing P1–P8 cases completed
+  and the four original raw/summary paths were regenerated.
+- `uv run --locked python tools\generate_milestone2_fixtures.py --check`: exit
+  0 with no output; frozen generator-owned fixture bytes match.
+- `uv run --locked python tools\generate_milestone17_evidence.py --check`:
+  exit 0 with no output; M17 raw and Markdown evidence reproduce exactly.
+- `uv lock --check`: exit 0; 48 packages resolved and the lock is synchronized.
+- `uv run --locked alembic upgrade head --sql`: exit 0; offline PostgreSQL SQL
+  renders every existing M14–M16 migration. M17 adds no migration.
+- `npm run typecheck`: exit 0 with no TypeScript diagnostics.
+- `npm run build`: exit 0 under Next.js 16.3.4; five application routes were
+  produced, including the three dynamic role routes.
+- The first `npm run test:e2e` attempt completed its Playwright assertion with
+  one Chromium test passed, but its spawned Web server did not terminate with
+  the command wrapper and the wrapper was stopped manually. On the final rerun,
+  the Next.js development server was started separately and `npm run test:e2e`
+  exited 0; one Chromium test passed across the English/Chinese participant,
+  reviewer, and admin pages in 2.4 seconds. The temporary server was then
+  terminated and no listener remained on port 3000.
+- `docker compose config -q`: exit 0; the five-service local topology parses.
+  Docker emitted user-config access warnings that did not invalidate it.
+- Byte-diff checks over the four original benchmark artifacts and over existing
+  policies, manifest, trajectories, gold, and failure fixtures: exit 0; all are
+  unchanged.
+- `git diff --check`: exit 0; only Windows LF-to-CRLF conversion warnings were
+  emitted.
+
+### Tool availability and environment-limited validation
+
+- `where terraform` and `terraform version`: unavailable; Terraform is not
+  installed. No provider initialization, format, validate, plan, policy scan,
+  or apply was run.
+- `where gcloud` and `gcloud version`: unavailable. No GCP credential, project,
+  resource, image, cloud smoke test, failover, restore, or purge was used.
+- `docker version`: the 29.2.1 Windows client is present but exited 1 because
+  the Docker daemon pipe is absent. No container image build or live
+  PostgreSQL/Redis/worker integration is claimed.
+- Static Terraform tests verify committed intent only. The Google provider
+  schema, Cloud Run worker-pool availability, effective IAM/organization policy,
+  quotas, costs, private connectivity, secret bootstrap, and managed-service
+  behavior remain unverified until an approved disposable project exercise.
+
+### Residual risks and interpretation boundary
+
+- The GCP template is intentionally not turnkey. Database/Redis secret versions,
+  migration/bootstrap ownership, an identity-aware ingress, and a production
+  browser OIDC flow are deployment-owned prerequisites.
+- The production OIDC composition uses an injected static asymmetric public
+  key; discovery, rotation, revocation, tenant mapping, and end-user login were
+  not exercised.
+- No live concurrency, cross-instance reconnect, Redis redelivery, Cloud SQL
+  PITR, backup integrity, RTO/RPO, load, rate-limit, TLS, image/dependency scan,
+  audit-log, cost, privacy, legal, or operational response claim is made.
+- M17 evidence covers fixed exact-tag adult synthetic cases only. It does not
+  establish model quality, adversarial robustness, staffed review, clinical
+  validity, treatment effectiveness, crisis detection, regulatory compliance,
+  cloud recovery, production readiness, or real-world safety.
+
+## Exact next milestone
+
+None. The approved M1–M17 sequence is complete. Any future behavior,
+deployment, real-participant study, schema/policy/corpus change, or operational
+claim requires a new owner-approved versioned milestone.

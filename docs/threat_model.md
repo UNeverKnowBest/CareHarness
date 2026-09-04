@@ -187,3 +187,16 @@ capabilities.
   and crash-recovery evidence, rate limiting, TLS/secret rotation, backup/purge
   execution, full OIDC discovery/key rotation, dependency/image scanning, and
   production load testing. These are not represented as M16 passes.
+
+## Milestone 17 deployment-template controls
+
+| Threat | Implemented template or delivery control | Residual validation |
+|---|---|---|
+| Accidental public research surface | Cloud Run resources use restricted ingress and create no `allUsers` invoker binding. | Deployment-owned gateway/IAP and OIDC browser flow must be reviewed in an approved project. |
+| Development identity in production | Strict production settings accept only `production` with local synthetic identity disabled; Terraform injects those exact values. | OIDC discovery, key rotation, tenant configuration, and end-user flow were not exercised. |
+| Secret disclosure through source or state | Terraform creates empty secret containers and grants per-secret access; README requires out-of-band versions and encrypted remote state. | Operator plan/state handling, rotation, and audit logging require a live exercise. |
+| Excessive cloud identity | API, Web, and worker use separate service accounts; no Owner/Editor role is granted. | Organization policy and effective IAM must be inspected after apply. |
+| Redis mistaken for authoritative storage | Only PostgreSQL retains events/outbox/projections; recovery guidance republishes committed outbox rows after Redis loss. | Live disconnect/reconnect, duplicate delivery, and multi-instance behavior remain untested. |
+| Destructive database recovery | Deletion protection and PITR are configured; the runbook restores to a new Cloud SQL instance and requires explicit approval before promotion. | Backup creation, restore duration, integrity comparison, and RTO/RPO are not claimed. |
+| Provider/IaC drift | Provider and Terraform version constraints, static contract tests, digest-image inputs, and generated evidence checks are committed. | Terraform/gcloud were unavailable, so provider initialization, schema validation, plan, policy scan, and apply were not run. |
+| Cloud template mistaken for production assurance | README, safety limits, release checklist, and generated M17 evidence label the stack synthetic/non-clinical and enumerate unverified operations. | Independent security, privacy, legal, cost, load, recovery, and operational review remain mandatory. |

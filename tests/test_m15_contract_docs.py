@@ -30,4 +30,4 @@ def test_m15_limits_matrix_and_delivery_status_are_recorded() -> None:
     assert "not staffed care" in safety
     assert "M15 adds `SupervisedSyntheticTurn`" in readme
     assert "library-only composition" in readme
-    assert "Project status: Milestone 16 complete" in readme
+    assert "Project status: Milestone 17 complete" in readme

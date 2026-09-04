@@ -37,13 +37,13 @@ def test_readme_first_screen_states_product_boundary() -> None:
         assert phrase in first_screen
 
 
-def test_readme_preserves_m15_history_and_records_current_m16_surface() -> None:
+def test_readme_preserves_m15_m16_history_and_records_current_m17_delivery() -> None:
     readme = " ".join(
         (ROOT / "README.md").read_text(encoding="utf-8").split()
     ).casefold()
 
     for phrase in (
-        "project status: milestone 16 complete",
+        "project status: milestone 17 complete",
         "postgresql/alembic adapter",
         "redis transactional-outbox publisher",
         "deepseek, vllm, and ollama",
@@ -60,7 +60,10 @@ def test_readme_preserves_m15_history_and_records_current_m16_surface() -> None:
         "read-only static html",
         "no server",
         "generated artifacts",
-        "next milestone is m17",
+        "there is no next approved milestone",
+        "m17 adds eight english/chinese control/challenge pairs",
+        "gcp terraform template",
+        "recommended demonstration video",
     ):
         assert phrase in readme
 

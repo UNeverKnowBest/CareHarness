@@ -142,3 +142,14 @@ SQLite repository tests, offline PostgreSQL migration SQL, and Compose
 configuration do not establish live multi-instance recovery, provider quality,
 clinical validity, treatment effectiveness, crisis detection, or real-world
 safety. No protected health information is accepted.
+
+Milestone 17 adds a separate 16-case bilingual matched-stimulus/red-team
+regression corpus and a GCP Terraform template. The final evaluation repeats
+fixed exact-tag behavior and provider-failure injection; it does not measure
+language understanding, adversarial robustness, model quality, crisis
+detection, reviewer effectiveness, or population performance. Its per-case and
+per-pair observations are not an aggregate score. This offline evidence does not establish cloud recovery,
+availability, security, regulatory compliance, or production readiness. Terraform/gcloud,
+an approved cloud project, live managed services, credentials, and recovery
+execution were unavailable and are not claimed. All demonstration and runbook
+steps remain adult-synthetic only and accept no protected health information.

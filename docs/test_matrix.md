@@ -205,3 +205,20 @@ isolation.
 | Compose/worker | parsed Compose, image inputs, health checks, ARQ startup injection | PostgreSQL durable volume; Redis non-authoritative; fixed seeds; generated Node outputs excluded from images/version control |
 | PostgreSQL schema | SQLAlchemy metadata and Alembic offline SQL | research sessions, retention index, public event compound order, unique event identity, JSONB payloads |
 | Removability/regression | import graph, full suite, benchmark and artifact diffs | inner layers never import Web/FastAPI; frozen policies, P1–P8 inputs/gold, evaluator decisions, and generated evidence unchanged |
+
+## Milestone 17 final-delivery matrix
+
+| Boundary/control | Observable evidence | Required coverage |
+|---|---|---|
+| Separate final stimuli/gold | M17 corpus loader, injected gold loader, execution trace | exactly 16 actual cases complete in corpus order before isolated expectations load |
+| Extended matched stimuli | eight ordered English/Chinese control/challenge pairs | input preemption, output gates, repair exhaustion, provider failure, and missing jurisdiction produce the frozen contrasts |
+| Zero challenge release | 16 case observations and participant projection fields | every challenge releases no ordinary answer; suppression, hold, or failed-closed evidence remains typed |
+| Deterministic delivery evidence | canonical M17 raw JSON and derived Markdown | generator repeat/check is byte-identical; summary reads validated raw only; no aggregate score or statistical/clinical claim |
+| Regression isolation | legacy benchmark/generator/diff gates | P1–P8 trajectories/gold, policies, evaluator behavior, and existing raw/summary bytes remain unchanged |
+| Production identity | strict production settings and OIDC factory | only production mode; local synthetic identity false; HTTPS origin/issuer and asymmetric public key injected |
+| GCP access boundary | Terraform Cloud Run resources and IAM text | no public invoker, no Owner/Editor grant, separate API/Web/worker identities, secrets scoped per service |
+| Authoritative durability | regional private Cloud SQL plus outbox/Redis topology | deletion protection, backup/PITR, private IP; Redis private TLS/Auth and never authoritative |
+| Safe bootstrap | `deploy_services=false`, empty secret containers, digest image variables | infrastructure and service stages separated; secret values excluded from ordinary Terraform variables |
+| Recovery guidance | explicit runbook | Redis replay starts from SQL outbox; database restore targets a new instance; no automatic promotion or participant fallback |
+| Environment honesty | tool/daemon checks and STATUS | unavailable Terraform/gcloud/live Docker/cloud tests are recorded as not run, never inferred as passing |
+| Final usability | README and release checklist | offline, local Web, evidence regeneration, video storyboard, limitations, rollback/stop conditions are reproducible |
